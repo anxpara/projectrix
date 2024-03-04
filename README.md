@@ -36,7 +36,7 @@ Projectrix provides a pure function that returns the styles needed to align a ta
   targetElement.style.transform = toSubject.transform;
 ```
 
-## Animating target to subject with Anime.js v3
+## Animating target to subject using Anime.js v3
 
 ```ts
   import { getProjection } from 'projectrix';
@@ -63,7 +63,7 @@ Projectrix provides a pure function that returns the styles needed to align a ta
 
 ###### (Shoutout [Anime.js v4 beta early access](https://github.com/sponsors/juliangarnier))
 
-## Animating with FLIP technique from subject to target with Motion One
+## Animating with FLIP technique from subject to target using Motion One
 
 ```ts
 import { getProjection } from 'projectrix';
