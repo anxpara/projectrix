@@ -3,7 +3,7 @@
 <div align="center">
     <img width="300px" src="https://i.imgur.com/BRPoG7B.png"/>
     <h1>Projectrix</h1>
-    <h3 align="center">minimalist dom projection library in js/ts</h3>
+    <h3 align="center">minimalist dom projection library in js/ts | v0.1.0 alpha</h3>
 </div>
 
 ```bash
@@ -20,7 +20,7 @@ Projectrix provides a pure function that returns the styles needed to align a ta
 
 # Usage
 
-## Setting inline styles directly
+## Matching target to subject by directly setting inline styles
 
 ```ts
   import { getProjection } from 'projectrix';
@@ -63,7 +63,7 @@ Projectrix provides a pure function that returns the styles needed to align a ta
 
 ###### (Shoutout [Anime.js v4 beta early access](https://github.com/sponsors/juliangarnier))
 
-## Animating with FLIP technique from subject to target using Motion One
+## Animating from subject to target with FLIP technique using Motion One
 
 ```ts
 import { getProjection } from 'projectrix';
@@ -130,7 +130,7 @@ export type ProjectionResults = {
 export type Projection = {
   width: string; // 'Wpx'
   height: string; // 'Hpx'
-  borderStyle?: string;
+  borderStyle: string; // '' | 'none' | 'solid' | 'dashed' | etc.
   borderWidth: string; // 'Tpx Rpx Bpx Lpx'
   borderRadius: string; // 'TLpx TRpx BRpx BLpx'
   transformOrigin: string; // 'X% Y% Zpx'
