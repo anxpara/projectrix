@@ -44,7 +44,7 @@ export type ProjectionResults = {
  *
  * @member width: string; // 'Wpx'
  * @member height: string; // 'Hpx'
- * @member borderStyle?: string;
+ * @member borderStyle: string; // '' | 'none' | 'solid' | 'dashed' | etc.
  * @member borderWidth: string; // 'Tpx Rpx Bpx Lpx'
  * @member borderRadius: string; // 'TLpx TRpx BRpx BLpx'
  * @member — transformOrigin: string; // 'X% Y% Zpx'
