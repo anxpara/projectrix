@@ -8,14 +8,15 @@
   "umd:main": "dist/umd/projectrix.min.js",
   "umd:name": "projectrix",
   "unpkg": "dist/umd/projectrix.min.js",
-  "types": "dist/cjs/projectrix.d.ts",
+  "types": "dist/es/projectrix.d.ts",
   "files": [
     "dist/**"
   ],
   "scripts": {
     "clean": "rm -rf dist",
     "build": "bash build.bsh",
-    "watch": "pm2 start pm2.config.js --only projectrix-watcher"
+    "buildForTrials": "bash fastBuildForTrials.bsh",
+    "watch": "bash watch.bsh"
   },
   "repository": {
     "type": "git",
@@ -23,29 +24,36 @@
   },
   "keywords": [
     "dom projection",
+    "projection",
     "web animation",
     "cross-dom animation",
+    "flip animation",
     "flip",
     "getBoundingClientRect",
-    "gBCR"
+    "getActualClientRect"
   ],
   "author": "anxpara anx@anxpara.com",
   "license": "MIT",
+  "funding": {
+    "type": "patreon",
+    "url": "https://www.patreon.com/anxpara"
+  },
   "bugs": {
     "url": "https://github.com/anxpara/projectrix/issues"
   },
   "homepage": "https://github.com/anxpara/projectrix#readme",
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.0.1",
-    "pm2": "^5.2.0",
     "rollup": "^3.7.4",
     "rollup-plugin-dts": "^5.0.0",
     "sass": "^1.54.0",
     "terser": "^5.14.2",
     "ts-node": "^10.9.1",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "watch": "^0.13.0"
   },
   "dependencies": {
+    "actual-client-rect": "^0.2.0",
     "gl-matrix": "^3.4.3"
   }
 }

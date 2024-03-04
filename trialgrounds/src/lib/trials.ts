@@ -1,0 +1,88 @@
+import type { ComponentType, SvelteComponent } from 'svelte';
+import type { ProjectionOptions, Projection } from 'projectrix';
+import { TrialName as TrialName } from './trialNames';
+import type OriginMarker from '../components/OriginMarker.svelte';
+import Control from '../components/trials/Control.svelte';
+import TargetInPadded from '../components/trials/TargetInPadded.svelte';
+import TargetMargined from '../components/trials/TargetMargined.svelte';
+import Target2ndChild from '../components/trials/Target2ndChild.svelte';
+import TargetRelative from '../components/trials/TargetRelative.svelte';
+import TargetAbsolute from '../components/trials/TargetAbsolute.svelte';
+import TargetSmaller from '../components/trials/TargetSmaller.svelte';
+import TargetBigger from '../components/trials/TargetBigger.svelte';
+import TargetDeepAbsolute from '../components/trials/TargetDeepAbsolute.svelte';
+import TargetFixed from '../components/trials/TargetFixed.svelte';
+import TargetRotated from '../components/trials/TargetRotated.svelte';
+import TargetInRotated from '../components/trials/TargetInRotated.svelte';
+import TargetInScroll from '../components/trials/TargetInScroll.svelte';
+import TargetSticky from '../components/trials/TargetSticky.svelte';
+import TargetOrigin0 from '../components/trials/TargetOrigin0.svelte';
+import SubjectOrigin0 from '../components/trials/SubjectOrigin0.svelte';
+import TargetInOrigin0 from '../components/trials/TargetInOrigin0.svelte';
+import UseSubjectBorder from '../components/trials/UseSubjectBorder.svelte';
+import UseTargetBorder from '../components/trials/UseTargetBorder.svelte';
+import UseZeroBorder from '../components/trials/UseZeroBorder.svelte';
+import TargetRotatedBigger from '../components/trials/TargetRotatedBigger.svelte';
+import SubjectOrigin0Bigger from '../components/trials/SubjectOrigin0Bigger.svelte';
+import TargetOrigin0Bigger from '../components/trials/TargetOrigin0Bigger.svelte';
+import TargetInOrigin0Bigger from '../components/trials/TargetInOrigin0Bigger.svelte';
+import TargetInRotatedBigger from '../components/trials/TargetInRotatedBigger.svelte';
+import UseTransformType from '../components/trials/UseTransformType.svelte';
+import UseMat4Type from '../components/trials/UseMat4Type.svelte';
+import type { AnimationControls } from 'motion';
+
+export interface TrialControls {
+  getSubjectElement: () => HTMLElement | undefined;
+  getTargetElement: () => HTMLElement;
+  getProjectionOptions: () => ProjectionOptions | undefined;
+}
+
+export type TrialComponent = SvelteComponent & TrialControls;
+
+export type Trial = {
+  name: TrialName;
+  trialType: ComponentType<TrialComponent>;
+  trialComponent?: TrialComponent;
+  originMarker?: OriginMarker;
+  toTargetOrigin?: Projection;
+  animation?: AnimationControls;
+};
+
+export const allTrials: Trial[] = [
+  { name: TrialName.Control, trialType: Control },
+  { name: TrialName.UseSubjectBorder, trialType: UseSubjectBorder },
+  { name: TrialName.UseTargetBorder, trialType: UseTargetBorder },
+  { name: TrialName.UseZeroBorder, trialType: UseZeroBorder },
+  { name: TrialName.TargetSmaller, trialType: TargetSmaller },
+  { name: TrialName.TargetBigger, trialType: TargetBigger },
+  { name: TrialName.TargetInPadded, trialType: TargetInPadded },
+  { name: TrialName.TargetMargined, trialType: TargetMargined },
+  { name: TrialName.Target2ndChild, trialType: Target2ndChild },
+  { name: TrialName.TargetRelative, trialType: TargetRelative },
+  { name: TrialName.TargetAbsolute, trialType: TargetAbsolute },
+  { name: TrialName.TargetDeepAbsolute, trialType: TargetDeepAbsolute },
+  { name: TrialName.TargetFixed, trialType: TargetFixed },
+  { name: TrialName.TargetRotated, trialType: TargetRotated },
+  { name: TrialName.TargetRotatedBigger, trialType: TargetRotatedBigger },
+  { name: TrialName.TargetInRotated, trialType: TargetInRotated },
+  { name: TrialName.TargetInRotatedBigger, trialType: TargetInRotatedBigger },
+  { name: TrialName.TargetInScroll, trialType: TargetInScroll },
+  { name: TrialName.TargetSticky, trialType: TargetSticky },
+  { name: TrialName.SubjectOrigin0, trialType: SubjectOrigin0 },
+  { name: TrialName.SubjectOrigin0Bigger, trialType: SubjectOrigin0Bigger },
+  { name: TrialName.TargetOrigin0, trialType: TargetOrigin0 },
+  { name: TrialName.TargetOrigin0Bigger, trialType: TargetOrigin0Bigger },
+  { name: TrialName.TargetInOrigin0, trialType: TargetInOrigin0 },
+  { name: TrialName.TargetInOrigin0Bigger, trialType: TargetInOrigin0Bigger },
+  { name: TrialName.UseTransformType, trialType: UseTransformType },
+  { name: TrialName.UseMat4Type, trialType: UseMat4Type },
+];
+export const trialsByName = new Map<TrialName, Trial>(
+  allTrials.map((trial) => [trial.name, trial]),
+);
+
+export function getTrials(trialNames: string[]): Trial[] {
+  return trialNames
+    .map((name) => trialsByName.get(name as TrialName))
+    .filter((trial) => !!trial) as Trial[];
+}

@@ -1,0 +1,5 @@
+cd ..
+npm run build
+npm link
+cd trialgrounds
+npm link projectrix

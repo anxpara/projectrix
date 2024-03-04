@@ -1,0 +1,53 @@
+@font-face {
+  font-family: 'Inconsolata';
+  src: url('/fonts/Inconsolata.ttf') format('truetype');
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100svh;
+}
+
+body {
+  font-family: 'Inconsolata';
+  color: coral;
+  background: #111521;
+}
+
+.target-container {
+  width: 14em;
+  height: 12em;
+  color: purple;
+  outline: solid 2px;
+}
+
+.subject-element,
+.target-element {
+  font-size: 2em;
+  font-weight: 100;
+  width: 5em;
+  height: 4em;
+  color: yellow;
+  outline: solid 2px;
+}
+
+.target-element {
+  color: lime;
+}
+
+.default-subject-element {
+  position: fixed;
+  top: 0;
+  left: 0;
+  transform: translate(50px, 50px) rotate(15deg);
+
+  display: flex;
+  align-items: end;
+}
+
+.hideSubject {
+  opacity: 0;
+}
