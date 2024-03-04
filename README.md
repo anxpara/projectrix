@@ -81,7 +81,7 @@ const flipAnimation = animate(
     ...toTargetOrigin,
   },
   {
-    duration: 1000,
+    duration: 1,
     easing: 'ease-out',
   },
 );
