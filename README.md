@@ -88,7 +88,7 @@ const flipAnimation = animate(
 
 // clear inline styles when FLIP is done, if you care to
 flipAnimation.finished.then(() => {
-  target.transform = '';
+  target.style.transform = '';
   // etc...
 });
 ```
