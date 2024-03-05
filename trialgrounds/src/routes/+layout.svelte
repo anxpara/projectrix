@@ -1,13 +1,7 @@
 <script lang="ts">
-  import { showDefaultSubject } from '$lib/showDefaultSubject';
-  import { writable } from 'svelte/store';
   import '../app.scss';
-  import { setContext } from 'svelte';
 
   export let data;
-
-  const defaultSubject = writable<HTMLElement | undefined>(undefined);
-  setContext('default-subject', defaultSubject);
 </script>
 
 {#if !data.forPlaywright}
@@ -23,14 +17,6 @@
     </ul>
   </nav>
 {/if}
-
-<div
-  bind:this={$defaultSubject}
-  class="subject-element default-subject-element"
-  class:hideSubject={!$showDefaultSubject}
->
-  subject
-</div>
 
 <slot />
 

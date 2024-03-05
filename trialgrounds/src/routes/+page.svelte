@@ -1,12 +1,11 @@
 <script lang="ts">
   import { allTrials, getTrials, type Trial } from '../lib/trials';
-  import { getContext, onDestroy, onMount, tick } from 'svelte';
+  import { onDestroy, onMount, tick } from 'svelte';
   import { page } from '$app/stores';
   import OriginMarker from '../components/OriginMarker.svelte';
   import { animateTrial, animateTrialReturn } from '$lib/animateTrial';
   import anime from 'animejs';
   import { showDefaultSubject } from '$lib/showDefaultSubject';
-  import type { Writable } from 'svelte/store';
 
   export let data;
 
@@ -21,7 +20,8 @@
   let currentTrial: Trial | undefined = undefined;
   $: trialSubject = currentTrial?.trialComponent?.getSubjectElement();
   $: updateShowDefaultSubject(!trialSubject);
-  const defaultSubject = getContext<Writable<HTMLElement | undefined>>('default-subject');
+
+  let defaultSubject: HTMLElement;
 
   onMount(async () => {
     await tick();
@@ -70,7 +70,7 @@
     if (currentTrial) unselectTrial(currentTrial);
 
     currentTrial = trial;
-    animateTrial(trial, $defaultSubject!, data.toTargetOrigin, data.skipAnimation, data.log);
+    animateTrial(trial, defaultSubject, data.toTargetOrigin, data.skipAnimation, data.log);
   }
 
   function unselectTrial(trial: Trial): void {
@@ -81,6 +81,14 @@
     $showDefaultSubject = showDefault;
   }
 </script>
+
+<div
+  bind:this={defaultSubject}
+  class="subject-element default-subject-element"
+  class:hideSubject={!$showDefaultSubject}
+>
+  subject
+</div>
 
 <div class="all-trials-container">
   {#each trials as trial}
