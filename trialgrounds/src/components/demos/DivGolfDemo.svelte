@@ -173,6 +173,8 @@
       ...getProjection(goal, winnerTarget, { transformType: 'matrix3d' }).toSubject,
 
       complete: () => {
+        markGoalCompleted(goal);
+
         animateFlash(winnerTarget);
         setTimeout(() => animateFlash(winnerTarget), 350);
         setTimeout(() => animateFlash(winnerTarget), 700);
@@ -190,6 +192,13 @@
       easing: 'easeOutQuad',
 
       backgroundColor: 'rgba(255, 0, 0, 0)',
+    });
+  }
+
+  function markGoalCompleted(goal: HTMLElement): void {
+    anime.set(goal, {
+      borderStyle: 'dotted',
+      borderColor: '#32cd32',
     });
   }
 
