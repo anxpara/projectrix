@@ -11,11 +11,11 @@ html,
 body {
   margin: 0;
   padding: 0;
-  width: 100vw;
-  height: 100svh;
 }
 
 body {
+  scrollbar-gutter: stable;
+
   font-family: 'Inconsolata';
   color: coral;
   background: #111521;
@@ -24,6 +24,7 @@ body {
 .target-container {
   width: 14em;
   height: 12em;
+
   color: purple;
   outline: solid 2px;
 }
@@ -32,8 +33,10 @@ body {
 .target-element {
   font-size: 2em;
   font-weight: 100;
+
   width: 5em;
   height: 4em;
+
   color: yellow;
   outline: solid 2px;
 }
@@ -46,6 +49,7 @@ body {
   position: fixed;
   top: 0;
   left: 0;
+  
   transform: translate(50px, 50px) rotate(15deg);
 
   display: flex;

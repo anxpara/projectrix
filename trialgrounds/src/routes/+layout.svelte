@@ -23,7 +23,7 @@
 <style lang="scss">
   nav {
     position: absolute;
-    width: 100vw;
+    width: 100%;
     height: 13em;
 
     display: flex;
