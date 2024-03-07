@@ -215,7 +215,7 @@
 <button
   bind:this={goal}
   class="modifier goal"
-  on:click={(e) => {
+  on:mousedown={(e) => {
     checkWin();
   }}
 >
@@ -228,7 +228,7 @@
 <button
   bind:this={rotatorModifier}
   class="modifier rotator"
-  on:click={(e) => moveCurrentTargetToModifier(e.currentTarget)}
+  on:mousedown={(e) => moveCurrentTargetToModifier(e.currentTarget)}
 >
   <div class="golf-target child-target" />
 </button>
@@ -236,7 +236,7 @@
 <button
   bind:this={slider1Modifier}
   class="modifier slider1"
-  on:click={(e) => moveCurrentTargetToModifier(e.currentTarget)}
+  on:mousedown={(e) => moveCurrentTargetToModifier(e.currentTarget)}
 >
   <div class="golf-target child-target" />
 </button>
@@ -244,14 +244,14 @@
 <button
   bind:this={slider2Modifier}
   class="modifier slider2"
-  on:click={(e) => moveCurrentTargetToModifier(e.currentTarget)}
+  on:mousedown={(e) => moveCurrentTargetToModifier(e.currentTarget)}
 >
   <div class="golf-target child-target" />
 </button>
 
 <div bind:this={flasher} class="golf-target flasher" />
 
-<button class="restart" on:click={() => restart()}>
+<button class="restart" on:mousedown={() => restart()}>
   <span class="material-symbols-outlined"> replay </span>
 </button>
 
