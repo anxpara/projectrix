@@ -3,6 +3,7 @@ import { DemoName } from './demoNames';
 import MatchDemo from '../../components/demos/MatchDemo.svelte';
 import AnimateDemo from '../../components/demos/AnimateDemo.svelte';
 import FlipDemo from '../../components/demos/FlipDemo.svelte';
+import DivGolfDemo from '../../components/demos/DivGolfDemo.svelte';
 
 export type DemoComponent = SvelteComponent;
 
@@ -29,6 +30,11 @@ export const allDemos: Demo[] = [
     name: DemoName.Flip,
     demoType: FlipDemo,
     summary: "animate from subject to target's origin using first-last-invert-play technique",
+  },
+  {
+    name: DemoName.DivGolf,
+    demoType: DivGolfDemo,
+    summary: "click the modifier divs to match the green div to the red goal. click the goal ftw",
   },
 ];
 export const demosByName = new Map<DemoName, Demo>(allDemos.map((demo) => [demo.name, demo]));
