@@ -47,16 +47,16 @@
   }
 </script>
 
-<button class="match-subject" on:click={(e) => subjectClickHandler(e.currentTarget)} />
-<button class="match-subject rotated" on:click={(e) => subjectClickHandler(e.currentTarget)} />
+<button class="demo-subject" on:click={(e) => subjectClickHandler(e.currentTarget)} />
+<button class="demo-subject rotated" on:click={(e) => subjectClickHandler(e.currentTarget)} />
 <button class="parent" on:click={(e) => subjectClickHandler(e.currentTarget)}>
   <button
-    class="match-subject child"
+    class="demo-subject child"
     on:click|stopPropagation={(e) => subjectClickHandler(e.currentTarget)}
   />
 </button>
 
-<div bind:this={target} class="match-target" />
+<div bind:this={target} class="demo-target" />
 
 <style lang="scss">
   // not bothering to make responsive for now, not a priority
@@ -64,13 +64,13 @@
     all: unset;
   }
 
-  .match-subject:focus-visible,
+  .demo-subject:focus-visible,
   .parent:focus-visible {
     outline: solid 2px white;
     outline-offset: 4px;
   }
 
-  .match-target {
+  .demo-target {
     position: absolute; // any positioning works with Projectrix
 
     width: 35px;
@@ -82,7 +82,7 @@
     opacity: 0;
   }
 
-  .match-subject {
+  .demo-subject {
     position: absolute;
     top: 150px;
     left: 100px;
