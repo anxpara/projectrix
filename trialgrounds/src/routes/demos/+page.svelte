@@ -23,5 +23,7 @@
     justify-content: center;
     align-items: center;
     gap: 1em;
+
+    overflow: hidden;
   }
 </style>
