@@ -133,6 +133,12 @@
     const Mcg = mat4.create();
     mat4.multiply(Mcg, Mcv, Mvg);
 
+    // check distance
+    const distancePx = Math.sqrt(Mcg[12] * Mcg[12] + Mcg[13] * Mcg[13]);
+    if (distancePx > distanceTolerancePx) {
+      return false;
+    }
+
     const rotationQuat = quat.create();
     mat4.getRotation(rotationQuat, Mcg);
 
@@ -140,12 +146,8 @@
     const rotationDeg = (quat.getAxisAngle(rotationVec3, rotationQuat) * 180) / Math.PI;
     const rotationDiff = 45 - Math.abs((rotationDeg % 90) - 45);
 
-    const distancePx = Math.sqrt(Mcg[12] * Mcg[12] + Mcg[13] * Mcg[13]);
-
+    // check rotation
     if (rotationDiff > rotationToleranceDeg) {
-      return false;
-    }
-    if (distancePx > distanceTolerancePx) {
       return false;
     }
 
