@@ -6,6 +6,7 @@ export async function load({ params, url }) {
   const forPlaywright = url.searchParams.has('forPlaywright');
   const projectOnce = url.searchParams.has('projectOnce') || forPlaywright;
   const skipAnimation = url.searchParams.has('skipAnimation') || forPlaywright;
+  const hideMenu = url.searchParams.has('hideMenu') || forPlaywright;
   const log = url.searchParams.has('log');
 
   return {
@@ -14,6 +15,7 @@ export async function load({ params, url }) {
     forPlaywright,
     skipAnimation,
     toTargetOrigin,
+    hideMenu,
     log,
   };
 }

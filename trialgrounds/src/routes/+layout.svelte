@@ -4,7 +4,7 @@
   export let data;
 </script>
 
-{#if !data.forPlaywright}
+{#if !data.hideMenu}
   <nav title="trial collections and presets">
     <h1>collections & presets</h1>
     <ul>
