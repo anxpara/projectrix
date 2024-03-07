@@ -112,16 +112,7 @@
     if (win) {
       animateWin();
     } else {
-      anime.set(goal, {
-        backgroundColor: 'rgba(255, 0, 0, 1)',
-      });
-      anime({
-        targets: goal,
-        duration: 300,
-        easing: 'easeOutQuad',
-
-        backgroundColor: 'rgba(255, 0, 0, 0)',
-      });
+      animateMiss();
     }
   }
 
@@ -184,6 +175,19 @@
         setTimeout(() => animateFlash(winnerTarget), 350);
         setTimeout(() => animateFlash(winnerTarget), 700);
       },
+    });
+  }
+
+  function animateMiss(): void {
+    anime.set(goal, {
+      backgroundColor: 'rgba(255, 0, 0, 1)',
+    });
+    anime({
+      targets: goal,
+      duration: 300,
+      easing: 'easeOutQuad',
+
+      backgroundColor: 'rgba(255, 0, 0, 0)',
     });
   }
 
