@@ -5,14 +5,14 @@
 </script>
 
 {#if !data.hideMenu}
-  <nav title="trial collections and presets">
-    <h1>collections & presets</h1>
+  <nav title="collections of trials or demos">
+    <h1>collections</h1>
     <ul>
       <li>
-        <a data-sveltekit-reload href="/"> all </a>
+        <a data-sveltekit-reload href="/">all trials</a>
       </li>
       <li>
-        <a data-sveltekit-replacestate href="/"> clear options </a>
+        <a data-sveltekit-reload href="/demos">all demos</a>
       </li>
     </ul>
   </nav>
@@ -33,7 +33,12 @@
     color: coral;
 
     ul {
+      margin-block: 0;
       padding-left: 1em;
+
+      li {
+        margin-bottom: 0.6em;
+      }
     }
   }
 
