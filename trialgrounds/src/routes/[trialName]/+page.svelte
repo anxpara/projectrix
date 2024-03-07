@@ -57,7 +57,7 @@
 <style lang="scss">
   .lone-trial-container {
     width: 100%;
-    height: 100%;
+    height: 100svh;
 
     display: grid;
     justify-content: center;
