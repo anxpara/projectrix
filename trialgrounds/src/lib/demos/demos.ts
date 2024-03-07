@@ -16,10 +16,9 @@ export type Demo = {
 
 export const allDemos: Demo[] = [
   {
-    name: DemoName.Match,
-    demoType: MatchDemo,
-    summary:
-      "on click: set target's inline styles to the projection of the subject onto the target",
+    name: DemoName.Flip,
+    demoType: FlipDemo,
+    summary: "animate from subject to target's origin using first-last-invert-play technique",
   },
   {
     name: DemoName.Animate,
@@ -27,14 +26,15 @@ export const allDemos: Demo[] = [
     summary: "on click: animate the target directly to the subject's projection",
   },
   {
-    name: DemoName.Flip,
-    demoType: FlipDemo,
-    summary: "animate from subject to target's origin using first-last-invert-play technique",
+    name: DemoName.Match,
+    demoType: MatchDemo,
+    summary:
+      "on click: set target's inline styles to the projection of the subject onto the target",
   },
   {
     name: DemoName.DivGolf,
     demoType: DivGolfDemo,
-    summary: "click the modifier divs to match the green div to the red goal. click the goal ftw",
+    summary: 'click the modifier divs to match the green div to the red goal. click the goal ftw',
   },
 ];
 export const demosByName = new Map<DemoName, Demo>(allDemos.map((demo) => [demo.name, demo]));

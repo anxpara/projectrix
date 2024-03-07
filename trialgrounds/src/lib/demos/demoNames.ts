@@ -1,7 +1,7 @@
 export const DemoName = {
-  Match: 'match',
-  Animate: 'animate',
   Flip: 'flip',
+  Animate: 'animate',
+  Match: 'match',
   DivGolf: 'divGolf',
 } as const;
 export type DemoName = (typeof DemoName)[keyof typeof DemoName];
