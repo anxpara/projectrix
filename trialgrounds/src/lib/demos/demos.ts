@@ -2,6 +2,7 @@ import type { ComponentType, SvelteComponent } from 'svelte';
 import { DemoName } from './demoNames';
 import MatchDemo from '../../components/demos/MatchDemo.svelte';
 import AnimateDemo from '../../components/demos/AnimateDemo.svelte';
+import FlipDemo from '../../components/demos/FlipDemo.svelte';
 
 export type DemoComponent = SvelteComponent;
 
@@ -23,6 +24,11 @@ export const allDemos: Demo[] = [
     name: DemoName.Animate,
     demoType: AnimateDemo,
     summary: "on click: animate the target directly to the subject's projection",
+  },
+  {
+    name: DemoName.Flip,
+    demoType: FlipDemo,
+    summary: "animate from subject to target's origin using first-last-invert-play technique",
   },
 ];
 export const demosByName = new Map<DemoName, Demo>(allDemos.map((demo) => [demo.name, demo]));
