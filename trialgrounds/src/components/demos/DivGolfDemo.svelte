@@ -43,17 +43,25 @@
       translateX: '0px',
     });
     anime.set(slider2Modifier, {
-      rotate: '45deg',
+      rotate: '225deg',
       translateX: '0px',
     });
-    anime({
-      targets: [slider1Modifier, slider2Modifier],
-      duration: 700,
+    const sliderAnimProps = {
       easing: 'linear',
       loop: true,
       direction: 'alternate',
 
       translateX: '170px',
+    };
+    anime({
+      targets: slider1Modifier,
+      duration: 1400,
+      ...sliderAnimProps,
+    });
+    anime({
+      targets: slider2Modifier,
+      duration: 700,
+      ...sliderAnimProps,
     });
   }
 
@@ -227,10 +235,10 @@
     transform: rotate(-45deg);
   }
   .slider2 {
-    top: 100px;
-    right: 125px;
+    top: 200px;
+    right: 25px;
 
-    transform: rotate(45deg);
+    transform: rotate(225deg);
   }
 
   .goal {
