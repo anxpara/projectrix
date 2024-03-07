@@ -71,7 +71,6 @@
   <svelte:component
     this={demo.demoType}
     bind:this={demo.demoComponent}
-    {demo}
     {setTargetToStartingSlot}
     {revertSlotStyleInPlace}
     {log}
