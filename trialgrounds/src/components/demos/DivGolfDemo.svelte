@@ -1,7 +1,9 @@
 <script lang="ts">
-  import anime from 'animejs';
+  import { onMount, tick } from 'svelte';
+  import { mat4, quat, vec3 } from 'gl-matrix';
+  import { getActualClientRect } from 'actual-client-rect';
   import { getProjection } from 'projectrix';
-  import { onDestroy, onMount, tick } from 'svelte';
+  import anime from 'animejs';
 
   export let log: boolean = false;
 
@@ -12,18 +14,28 @@
   let slider1Modifier: HTMLElement;
   let slider2Modifier: HTMLElement;
 
+  let goal: HTMLElement;
+  let winnerTarget: HTMLElement;
+
   let flasher: HTMLElement;
 
   onMount(async () => {
     await tick();
+    restart();
+  });
 
-    currentTarget = startingTarget;
+  function restart(): void {
+    setCurrentTarget(startingTarget);
     startModifiers();
-  });
+  }
 
-  onDestroy(() => {
-    stop();
-  });
+  function setCurrentTarget(target: HTMLElement): void {
+    if (currentTarget) {
+      currentTarget.style.opacity = '0';
+    }
+    target.style.opacity = '1';
+    currentTarget = target;
+  }
 
   function startModifiers(): void {
     anime.set(rotatorModifier, {
@@ -46,7 +58,7 @@
       rotate: '225deg',
       translateX: '0px',
     });
-    const sliderAnimProps = {
+    const sliderAnimParams = {
       easing: 'linear',
       loop: true,
       direction: 'alternate',
@@ -56,22 +68,15 @@
     anime({
       targets: slider1Modifier,
       duration: 1400,
-      ...sliderAnimProps,
+
+      ...sliderAnimParams,
     });
     anime({
       targets: slider2Modifier,
       duration: 700,
-      ...sliderAnimProps,
+
+      ...sliderAnimParams,
     });
-  }
-
-  function stop(): void {
-    anime.remove([rotatorModifier, slider1Modifier, slider2Modifier]);
-  }
-
-  function restart(): void {
-    setCurrentTarget(startingTarget);
-    startModifiers();
   }
 
   function moveCurrentTargetToModifier(modifier: HTMLElement): void {
@@ -94,15 +99,92 @@
       ...toSubject,
     });
 
-    // show next target, hide current target, and animate a flash at the current position
     setCurrentTarget(nextTarget);
     animateFlash(nextTarget);
   }
 
-  function setCurrentTarget(target: HTMLElement): void {
-    currentTarget!.style.opacity = '0';
-    target.style.opacity = '1';
-    currentTarget = target;
+  const distanceTolerancePx = 10;
+  const rotationToleranceDeg = 8;
+
+  function checkWin(): void {
+    const win = checkIfTolerancesWin();
+
+    if (win) {
+      animateWin();
+    } else {
+      anime.set(goal, {
+        backgroundColor: 'rgba(255, 0, 0, 1)',
+      });
+      anime({
+        targets: goal,
+        duration: 300,
+        easing: 'easeOutQuad',
+
+        backgroundColor: 'rgba(255, 0, 0, 0)',
+      });
+    }
+  }
+
+  function checkIfTolerancesWin(): boolean {
+    const goalAcr = getActualClientRect(goal, {
+      bakePositionIntoTransform: true,
+    });
+    const currentAcr = getActualClientRect(currentTarget!, {
+      bakePositionIntoTransform: true,
+    });
+
+    const Mvc = currentAcr.transformMat4;
+    const Mcv = mat4.create();
+    mat4.invert(Mcv, Mvc);
+
+    const Mvg = goalAcr.transformMat4;
+
+    const Mcg = mat4.create();
+    mat4.multiply(Mcg, Mcv, Mvg);
+
+    const rotationQuat = quat.create();
+    mat4.getRotation(rotationQuat, Mcg);
+
+    const rotationVec3 = vec3.create();
+    const rotationDeg = (quat.getAxisAngle(rotationVec3, rotationQuat) * 180) / Math.PI;
+    const rotationDiff = 45 - Math.abs((rotationDeg % 90) - 45);
+
+    const distancePx = Math.sqrt(Mcg[12] * Mcg[12] + Mcg[13] * Mcg[13]);
+
+    if (rotationDiff > rotationToleranceDeg) {
+      return false;
+    }
+    if (distancePx > distanceTolerancePx) {
+      return false;
+    }
+
+    return true;
+  }
+
+  function animateWin(): void {
+    // match winner target to current target
+    anime.set(winnerTarget, {
+      ...getProjection(currentTarget!, winnerTarget, {
+        transformType: 'matrix3d',
+      }).toSubject,
+    });
+
+    setCurrentTarget(winnerTarget);
+
+    // animate rest of way to goal
+    anime({
+      targets: winnerTarget,
+      duration: 300,
+      easing: 'easeOutQuad',
+
+      ...getProjection(goal, winnerTarget, { transformType: 'matrix3d' }).toSubject,
+
+      complete: () => {
+        animateFlash(winnerTarget);
+        setTimeout(() => animateFlash(winnerTarget), 350);
+        setTimeout(() => animateFlash(winnerTarget), 700);
+      },
+    });
   }
 
   function animateFlash(subject: HTMLElement): void {
@@ -126,17 +208,18 @@
   }
 </script>
 
-<div bind:this={startingTarget} class="golf-target starting-target" />
-
 <button
+  bind:this={goal}
   class="modifier goal"
   on:click={(e) => {
-    moveCurrentTargetToModifier(e.currentTarget);
-    stop();
+    checkWin();
   }}
 >
   <div class="golf-target child-target" />
 </button>
+
+<div bind:this={startingTarget} class="golf-target starting-target" />
+<div bind:this={winnerTarget} class="golf-target winner-target" />
 
 <button
   bind:this={rotatorModifier}
@@ -175,7 +258,6 @@
   }
 
   .modifier:focus-visible,
-  .parent:focus-visible,
   .restart:focus-visible {
     outline: solid 2px white;
     outline-offset: 4px;
@@ -186,7 +268,7 @@
 
     width: 35px;
     height: 35px;
-    border: solid 3px limegreen;
+    border: solid 3px #32cd32;
     outline: dotted 3px transparent;
 
     pointer-events: none;
@@ -199,6 +281,11 @@
 
   .child-target {
     opacity: 0;
+  }
+
+  .winner-target {
+    opacity: 0;
+    background-color: limegreen;
   }
 
   .flasher {
