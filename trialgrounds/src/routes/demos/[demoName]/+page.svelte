@@ -9,7 +9,7 @@
 </script>
 
 <div class="centerer">
-  <DemoContainer {demo} log={data.log} />
+  <DemoContainer {demo} href={`/demos/${demo.name}${$page.url.search}`} log={data.log} />
 </div>
 
 <style lang="scss">

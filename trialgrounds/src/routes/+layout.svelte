@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from '$app/stores';
   import '../app.scss';
 
   export let data;
@@ -9,10 +10,10 @@
     <h1>collections</h1>
     <ul>
       <li>
-        <a data-sveltekit-reload href="/">all trials</a>
+        <a data-sveltekit-reload href="/{$page.url.search}">all trials</a>
       </li>
       <li>
-        <a data-sveltekit-reload href="/demos">all demos</a>
+        <a data-sveltekit-reload href="/demos{$page.url.search}">all demos</a>
       </li>
     </ul>
   </nav>

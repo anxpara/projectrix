@@ -29,7 +29,11 @@ export function animateTrial(
   trial.originMarker!.markOrigin(trial.trialComponent!.getTargetElement());
 
   // project
-  const { toSubject, toTargetOrigin } = getProjection(subject, target, options);
+  const projectionResults = getProjection(subject, target, options);
+  const { toSubject, toTargetOrigin } = projectionResults;
+  if (log) {
+    console.log(projectionResults);
+  }
 
   if (options.transformType === 'transformMat4') {
     toSubject.matrix3d = convertMat4ToCssMatrix3dSubstring(toSubject.transformMat4 as mat4);
@@ -42,17 +46,6 @@ export function animateTrial(
   }
 
   trial.toTargetOrigin = toTargetOrigin;
-
-  if (log) {
-    console.log('subject & target');
-    console.log(subject);
-    console.log(target);
-
-    console.log('projection.toSubject');
-    console.log(toSubject);
-    console.log('projection.toTargetOrigin');
-    console.log(toTargetOrigin);
-  }
 
   // animate
   if (options.transformType === 'matrix3d') {

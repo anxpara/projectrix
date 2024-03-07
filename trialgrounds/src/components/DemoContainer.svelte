@@ -5,6 +5,7 @@
   import { getProjection } from 'projectrix';
 
   export let demo: Demo;
+  export let href: string;
   export let log: boolean = false;
 
   let targetSlots: HTMLElement[] = [];
@@ -55,7 +56,7 @@
 
 <div class="demo-container">
   <div class="corner left" />
-  <a href="/demos/{demo.name}" class="title-link">
+  <a {href} class="title-link">
     <div class="title">
       <div class="corner right" />
       <div bind:this={targetSlots[0]} class="corner right target-slot slot-1" />
