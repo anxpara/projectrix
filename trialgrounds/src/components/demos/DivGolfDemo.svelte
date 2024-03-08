@@ -250,7 +250,7 @@
 
 <button
   bind:this={goals[0]}
-  class="modifier goal goal-1"
+  class="modifier goal goal-0"
   on:mousedown={(e) => {
     checkWin(e.currentTarget);
   }}
@@ -263,7 +263,7 @@
 
 <button
   bind:this={goals[1]}
-  class="modifier goal goal-2"
+  class="modifier goal goal-1"
   on:mousedown={(e) => {
     checkWin(e.currentTarget);
   }}
@@ -276,7 +276,7 @@
 
 <button
   bind:this={goals[2]}
-  class="modifier goal goal-3"
+  class="modifier goal goal-2"
   on:mousedown={(e) => {
     checkWin(e.currentTarget);
   }}
@@ -289,7 +289,7 @@
 
 <button
   bind:this={goals[3]}
-  class="modifier goal goal-4"
+  class="modifier goal goal-3"
   on:mousedown={(e) => {
     checkWin(e.currentTarget);
   }}
@@ -302,7 +302,7 @@
 
 <button
   bind:this={goals[4]}
-  class="modifier goal goal-5"
+  class="modifier goal goal-4"
   on:mousedown={(e) => {
     checkWin(e.currentTarget);
   }}
@@ -441,27 +441,27 @@
     border-style: solid;
     border-color: red;
   }
-  .goal-1 {
+  .goal-0 {
     top: 250px;
     left: 455px;
     transform: rotate(45deg);
   }
-  .goal-2 {
+  .goal-1 {
     top: 97px;
     left: 263px;
     transform: rotate(24deg);
   }
-  .goal-3 {
+  .goal-2 {
     top: 144px;
     left: 604px;
     transform: rotate(20deg);
   }
-  .goal-4 {
+  .goal-3 {
     top: 97px;
     left: 599px;
     transform: rotate(14deg);
   }
-  .goal-5 {
+  .goal-4 {
     top: 51px;
     left: 591px;
     transform: rotate(9deg);
