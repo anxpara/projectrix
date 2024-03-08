@@ -82,12 +82,14 @@
 
   function moveCurrentTargetToModifier(modifier: HTMLElement): void {
     const nextTarget = modifier.firstElementChild as HTMLElement;
-    if (currentTarget?.isSameNode(nextTarget)) {
+    if (!currentTarget) return;
+    if (currentTarget.isSameNode(nextTarget)) {
+      animateClonedFlash(currentTarget);
       return;
     }
 
     // Anime.js v3 takes matrix3d
-    const projectionResults = getProjection(currentTarget!, nextTarget, {
+    const projectionResults = getProjection(currentTarget, nextTarget, {
       transformType: 'matrix3d',
     });
     const { toSubject } = projectionResults;
