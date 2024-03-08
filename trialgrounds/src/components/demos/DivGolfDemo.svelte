@@ -14,7 +14,7 @@
   let slider1Modifier: HTMLElement;
   let slider2Modifier: HTMLElement;
 
-  let goal: HTMLElement;
+  let goals: HTMLElement[] = [];
   let winnerTarget: HTMLElement;
 
   let flasher: HTMLElement;
@@ -106,17 +106,17 @@
   const distanceTolerancePx = 10;
   const rotationToleranceDeg = 8;
 
-  function checkWin(): void {
-    const win = checkIfTolerancesWin();
+  function checkWin(goal: HTMLElement): void {
+    const win = checkIfTolerancesWin(goal);
 
     if (win) {
-      animateWin();
+      animateWin(goal);
     } else {
-      animateMiss();
+      animateMiss(goal);
     }
   }
 
-  function checkIfTolerancesWin(): boolean {
+  function checkIfTolerancesWin(goal: HTMLElement): boolean {
     const goalAcr = getActualClientRect(goal, {
       bakePositionIntoTransform: true,
     });
@@ -154,7 +154,7 @@
     return true;
   }
 
-  function animateWin(): void {
+  function animateWin(goal: HTMLElement): void {
     // match winner target to current target
     anime.set(winnerTarget, {
       ...getProjection(currentTarget!, winnerTarget, {
@@ -182,7 +182,7 @@
     });
   }
 
-  function animateMiss(): void {
+  function animateMiss(goal: HTMLElement): void {
     anime.set(goal, {
       backgroundColor: 'rgba(255, 0, 0, 1)',
     });
@@ -224,10 +224,50 @@
 </script>
 
 <button
-  bind:this={goal}
-  class="modifier goal"
+  bind:this={goals[0]}
+  class="modifier goal goal-1"
   on:mousedown={(e) => {
-    checkWin();
+    checkWin(e.currentTarget);
+  }}
+>
+  <div class="golf-target child-target" />
+</button>
+
+<button
+  bind:this={goals[1]}
+  class="modifier goal goal-2"
+  on:mousedown={(e) => {
+    checkWin(e.currentTarget);
+  }}
+>
+  <div class="golf-target child-target" />
+</button>
+
+<button
+  bind:this={goals[2]}
+  class="modifier goal goal-3"
+  on:mousedown={(e) => {
+    checkWin(e.currentTarget);
+  }}
+>
+  <div class="golf-target child-target" />
+</button>
+
+<button
+  bind:this={goals[3]}
+  class="modifier goal goal-4"
+  on:mousedown={(e) => {
+    checkWin(e.currentTarget);
+  }}
+>
+  <div class="golf-target child-target" />
+</button>
+
+<button
+  bind:this={goals[4]}
+  class="modifier goal goal-5"
+  on:mousedown={(e) => {
+    checkWin(e.currentTarget);
   }}
 >
   <div class="golf-target child-target" />
@@ -344,19 +384,37 @@
   }
 
   .goal {
-    top: 250px;
-    left: 455px;
-
     width: 35px;
     height: 35px;
 
     border-style: solid;
     border-color: red;
-
+  }
+  .goal-1 {
+    top: 250px;
+    left: 455px;
     transform: rotate(45deg);
   }
-
-  .restart {
+  .goal-2 {
+    top: 97px;
+    left: 263px;
+    transform: rotate(24deg);
+  }
+  .goal-3 {
+    top: 144px;
+    left: 604px;
+    transform: rotate(20deg);
+  }
+  .goal-4 {
+    top: 97px;
+    left: 599px;
+    transform: rotate(14deg);
+  }
+  .goal-5 {
+    top: 51px;
+    left: 591px;
+    transform: rotate(9deg);
+  }
     position: absolute;
     top: 1em;
     right: 1em;

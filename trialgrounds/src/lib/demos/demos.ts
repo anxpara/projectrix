@@ -34,7 +34,7 @@ export const allDemos: Demo[] = [
   {
     name: DemoName.DivGolf,
     demoType: DivGolfDemo,
-    summary: 'click the modifier divs to match the green div to the red goal. click the goal ftw',
+    summary: 'click the modifier divs to match the green div to a red goal. click the goal ftw',
   },
 ];
 export const demosByName = new Map<DemoName, Demo>(allDemos.map((demo) => [demo.name, demo]));
