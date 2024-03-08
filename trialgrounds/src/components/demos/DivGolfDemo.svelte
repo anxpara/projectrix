@@ -240,6 +240,12 @@
       },
     });
   }
+
+  function isEnterKey(key: string): boolean {
+    const SpaceKey = ' '; // wut
+    if (['Enter', SpaceKey].includes(key)) return true;
+    return false;
+  }
 </script>
 
 <button
@@ -247,6 +253,9 @@
   class="modifier goal goal-1"
   on:mousedown={(e) => {
     checkWin(e.currentTarget);
+  }}
+  on:keydown={(e) => {
+    if (isEnterKey(e.key)) checkWin(e.currentTarget);
   }}
 >
   <div class="golf-target child-target" />
@@ -258,6 +267,9 @@
   on:mousedown={(e) => {
     checkWin(e.currentTarget);
   }}
+  on:keydown={(e) => {
+    if (isEnterKey(e.key)) checkWin(e.currentTarget);
+  }}
 >
   <div class="golf-target child-target" />
 </button>
@@ -267,6 +279,9 @@
   class="modifier goal goal-3"
   on:mousedown={(e) => {
     checkWin(e.currentTarget);
+  }}
+  on:keydown={(e) => {
+    if (isEnterKey(e.key)) checkWin(e.currentTarget);
   }}
 >
   <div class="golf-target child-target" />
@@ -278,6 +293,9 @@
   on:mousedown={(e) => {
     checkWin(e.currentTarget);
   }}
+  on:keydown={(e) => {
+    if (isEnterKey(e.key)) checkWin(e.currentTarget);
+  }}
 >
   <div class="golf-target child-target" />
 </button>
@@ -287,6 +305,9 @@
   class="modifier goal goal-5"
   on:mousedown={(e) => {
     checkWin(e.currentTarget);
+  }}
+  on:keydown={(e) => {
+    if (isEnterKey(e.key)) checkWin(e.currentTarget);
   }}
 >
   <div class="golf-target child-target" />
@@ -299,6 +320,9 @@
   bind:this={rotatorModifier}
   class="modifier rotator"
   on:mousedown={(e) => moveCurrentTargetToModifier(e.currentTarget)}
+  on:keydown={(e) => {
+    if (isEnterKey(e.key)) moveCurrentTargetToModifier(e.currentTarget);
+  }}
 >
   <div class="golf-target child-target" />
 </button>
@@ -307,6 +331,9 @@
   bind:this={slider1Modifier}
   class="modifier slider1"
   on:mousedown={(e) => moveCurrentTargetToModifier(e.currentTarget)}
+  on:keydown={(e) => {
+    if (isEnterKey(e.key)) moveCurrentTargetToModifier(e.currentTarget);
+  }}
 >
   <div class="golf-target child-target" />
 </button>
@@ -315,6 +342,9 @@
   bind:this={slider2Modifier}
   class="modifier slider2"
   on:mousedown={(e) => moveCurrentTargetToModifier(e.currentTarget)}
+  on:keydown={(e) => {
+    if (isEnterKey(e.key)) moveCurrentTargetToModifier(e.currentTarget);
+  }}
 >
   <div class="golf-target child-target" />
 </button>
@@ -323,7 +353,7 @@
   <div bind:this={flashTemplate} class="golf-target flash-template" />
 </div>
 
-<button class="restart" on:mousedown={() => restart()}>
+<button class="restart" on:click={() => restart()}>
   <span class="material-symbols-outlined"> replay </span>
 </button>
 
