@@ -17,7 +17,8 @@
   let goals: HTMLElement[] = [];
   let winnerTarget: HTMLElement;
 
-  let flasher: HTMLElement;
+  let flashContainer: HTMLElement;
+  let flashTemplate: HTMLElement;
 
   onMount(async () => {
     await tick();
@@ -100,7 +101,7 @@
     });
 
     setCurrentTarget(nextTarget);
-    animateFlash(nextTarget);
+    animateClonedFlash(nextTarget);
   }
 
   const distanceTolerancePx = 10;
@@ -175,9 +176,9 @@
       complete: () => {
         markGoalCompleted(goal);
 
-        animateFlash(winnerTarget);
-        setTimeout(() => animateFlash(winnerTarget), 350);
-        setTimeout(() => animateFlash(winnerTarget), 700);
+        animateClonedFlash(winnerTarget);
+        setTimeout(() => animateClonedFlash(winnerTarget), 350);
+        setTimeout(() => animateClonedFlash(winnerTarget), 700);
       },
     });
   }
@@ -202,23 +203,30 @@
     });
   }
 
-  function animateFlash(subject: HTMLElement): void {
-    const { toSubject } = getProjection(subject, flasher, {
+  function animateClonedFlash(subject: HTMLElement): void {
+    const flashClone = <HTMLElement>flashTemplate.cloneNode();
+    flashContainer.append(flashClone);
+
+    const { toSubject } = getProjection(subject, flashClone, {
       transformType: 'matrix3d',
     });
 
-    anime.set(flasher, {
+    anime.set(flashClone, {
       ...toSubject,
       outlineOffset: '0px',
       outlineColor: 'rgba(50, 205, 50, 1)',
     });
     anime({
-      targets: flasher,
+      targets: flashClone,
       duration: 300,
       easing: 'easeOutQuad',
 
       outlineOffset: '18px',
       outlineColor: 'rgba(50, 205, 50, 0)',
+
+      complete: () => {
+        flashClone.remove();
+      },
     });
   }
 </script>
@@ -300,7 +308,9 @@
   <div class="golf-target child-target" />
 </button>
 
-<div bind:this={flasher} class="golf-target flasher" />
+<div bind:this={flashContainer}>
+  <div bind:this={flashTemplate} class="golf-target flash-template" />
+</div>
 
 <button class="restart" on:mousedown={() => restart()}>
   <span class="material-symbols-outlined"> replay </span>
@@ -343,7 +353,7 @@
     background-color: limegreen;
   }
 
-  .flasher {
+  .flash-template {
     border-color: transparent;
     outline: solid 2px transparent;
   }
