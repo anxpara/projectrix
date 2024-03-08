@@ -367,6 +367,13 @@
   .restart:focus-visible {
     outline: solid 2px white;
     outline-offset: 4px;
+    cursor: pointer;
+  }
+
+  .restart {
+    position: absolute;
+    top: 1em;
+    right: 1em;
   }
 
   .golf-target {
@@ -405,8 +412,6 @@
     width: 150px;
     height: 150px;
     border: dashed 3px darkmagenta;
-
-    cursor: pointer;
   }
 
   .spinner {
@@ -465,13 +470,5 @@
     top: 51px;
     left: 591px;
     transform: rotate(9deg);
-  }
-
-  .restart {
-    position: absolute;
-    top: 1em;
-    right: 1em;
-
-    cursor: pointer;
   }
 </style>
