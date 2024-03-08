@@ -16,6 +16,7 @@
 
   let goals: HTMLElement[] = [];
   let winnerTarget: HTMLElement;
+  let winAnim: anime.AnimeInstance | undefined;
 
   let flashContainer: HTMLElement;
   let flashTemplate: HTMLElement;
@@ -81,6 +82,8 @@
   }
 
   function moveCurrentTargetToModifier(modifier: HTMLElement): void {
+    if (winAnim) return;
+
     const nextTarget = modifier.firstElementChild as HTMLElement;
     if (!currentTarget) return;
     if (currentTarget.isSameNode(nextTarget)) {
@@ -168,7 +171,7 @@
     setCurrentTarget(winnerTarget);
 
     // animate rest of way to goal
-    anime({
+    winAnim = anime({
       targets: winnerTarget,
       duration: 300,
       easing: 'easeOutQuad',
@@ -181,6 +184,8 @@
         animateClonedFlash(winnerTarget);
         setTimeout(() => animateClonedFlash(winnerTarget), 350);
         setTimeout(() => animateClonedFlash(winnerTarget), 700);
+
+        winAnim = undefined;
       },
     });
   }
