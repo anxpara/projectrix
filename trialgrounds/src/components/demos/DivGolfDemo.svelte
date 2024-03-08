@@ -88,6 +88,7 @@
     if (!currentTarget) return;
     if (currentTarget.isSameNode(nextTarget)) {
       animateClonedFlash(currentTarget);
+      goals.forEach((goal) => checkWin(goal, false));
       return;
     }
 
@@ -112,12 +113,15 @@
   const distanceTolerancePx = 10;
   const rotationToleranceDeg = 8;
 
-  function checkWin(goal: HTMLElement): void {
+  function checkWin(goal: HTMLElement, goalClicked = true): void {
     const win = checkIfTolerancesWin(goal);
 
     if (win) {
       animateWin(goal);
-    } else {
+      return;
+    }
+
+    if (goalClicked) {
       animateMiss(goal);
     }
   }
