@@ -10,7 +10,7 @@
   let startingTarget: HTMLElement;
   let currentTarget: HTMLElement | undefined;
 
-  let rotatorModifier: HTMLElement;
+  let spinnerModifier: HTMLElement;
   let slider1Modifier: HTMLElement;
   let slider2Modifier: HTMLElement;
 
@@ -40,11 +40,11 @@
   }
 
   function startModifiers(): void {
-    anime.set(rotatorModifier, {
+    anime.set(spinnerModifier, {
       rotate: '0deg',
     });
     anime({
-      targets: rotatorModifier,
+      targets: spinnerModifier,
       duration: 3000,
       easing: 'linear',
       loop: true,
@@ -317,8 +317,8 @@
 <div bind:this={winnerTarget} class="golf-target winner-target" />
 
 <button
-  bind:this={rotatorModifier}
-  class="modifier rotator"
+  bind:this={spinnerModifier}
+  class="modifier spinner"
   on:mousedown={(e) => moveCurrentTargetToModifier(e.currentTarget)}
   on:keydown={(e) => {
     if (isEnterKey(e.key)) moveCurrentTargetToModifier(e.currentTarget);
@@ -409,7 +409,7 @@
     cursor: pointer;
   }
 
-  .rotator {
+  .spinner {
     top: 110px;
     left: 100px;
   }
