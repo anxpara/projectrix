@@ -415,6 +415,8 @@
     left: 591px;
     transform: rotate(9deg);
   }
+
+  .restart {
     position: absolute;
     top: 1em;
     right: 1em;
