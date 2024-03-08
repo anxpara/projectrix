@@ -18,8 +18,8 @@
   let winnerTarget: HTMLElement;
   let winAnim: anime.AnimeInstance | undefined;
 
-  let flashContainer: HTMLElement;
-  let flashTemplate: HTMLElement;
+  let pulseContainer: HTMLElement;
+  let pulseTemplate: HTMLElement;
 
   onMount(async () => {
     await tick();
@@ -87,7 +87,7 @@
     const nextTarget = modifier.firstElementChild as HTMLElement;
     if (!currentTarget) return;
     if (currentTarget.isSameNode(nextTarget)) {
-      animateClonedFlash(currentTarget);
+      animateClonedpulse(currentTarget);
       goals.forEach((goal) => checkWin(goal, false));
       return;
     }
@@ -107,7 +107,7 @@
     });
 
     setCurrentTarget(nextTarget);
-    animateClonedFlash(nextTarget);
+    animateClonedpulse(nextTarget);
   }
 
   const distanceTolerancePx = 10;
@@ -185,9 +185,9 @@
       complete: () => {
         markGoalCompleted(goal);
 
-        animateClonedFlash(winnerTarget);
-        setTimeout(() => animateClonedFlash(winnerTarget), 350);
-        setTimeout(() => animateClonedFlash(winnerTarget), 700);
+        animateClonedpulse(winnerTarget);
+        setTimeout(() => animateClonedpulse(winnerTarget), 350);
+        setTimeout(() => animateClonedpulse(winnerTarget), 700);
 
         winAnim = undefined;
       },
@@ -214,21 +214,21 @@
     });
   }
 
-  function animateClonedFlash(subject: HTMLElement): void {
-    const flashClone = <HTMLElement>flashTemplate.cloneNode();
-    flashContainer.append(flashClone);
+  function animateClonedpulse(subject: HTMLElement): void {
+    const pulseClone = <HTMLElement>pulseTemplate.cloneNode();
+    pulseContainer.append(pulseClone);
 
-    const { toSubject } = getProjection(subject, flashClone, {
+    const { toSubject } = getProjection(subject, pulseClone, {
       transformType: 'matrix3d',
     });
 
-    anime.set(flashClone, {
+    anime.set(pulseClone, {
       ...toSubject,
       outlineOffset: '0px',
       outlineColor: 'rgba(50, 205, 50, 1)',
     });
     anime({
-      targets: flashClone,
+      targets: pulseClone,
       duration: 300,
       easing: 'easeOutQuad',
 
@@ -236,7 +236,7 @@
       outlineColor: 'rgba(50, 205, 50, 0)',
 
       complete: () => {
-        flashClone.remove();
+        pulseClone.remove();
       },
     });
   }
@@ -349,8 +349,8 @@
   <div class="golf-target child-target" />
 </button>
 
-<div bind:this={flashContainer}>
-  <div bind:this={flashTemplate} class="golf-target flash-template" />
+<div bind:this={pulseContainer} class="pulse-container">
+  <div bind:this={pulseTemplate} class="golf-target pulse-template" />
 </div>
 
 <button class="restart" on:click={() => restart()}>
@@ -394,7 +394,7 @@
     background-color: limegreen;
   }
 
-  .flash-template {
+  .pulse-template {
     border-color: transparent;
     outline: solid 2px transparent;
   }
