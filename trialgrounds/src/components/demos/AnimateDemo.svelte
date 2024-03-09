@@ -1,5 +1,5 @@
 <script lang="ts">
-  import anime from 'animejs';
+  import { animate, type AnimationControls } from 'motion';
   import { getProjection } from 'projectrix';
   import { onMount, tick } from 'svelte';
 
@@ -11,6 +11,8 @@
   let target: HTMLElement;
   let inSlot = false;
 
+  let currentAnim: AnimationControls | undefined;
+
   onMount(async () => {
     await tick();
 
@@ -21,44 +23,36 @@
     }, 50);
   });
 
-  function animate(subject: HTMLElement, target: HTMLElement): void {
+  function animateDirect(subject: HTMLElement, target: HTMLElement): void {
     if (inSlot) {
       revertSlotStyleInPlace(target);
       inSlot = false;
     }
 
-    // Anime.js v3 takes a matrix3d value
-    const projectionResults = getProjection(subject, target, {
-      transformType: 'matrix3d',
-    });
-    const { toSubject, toTargetOrigin } = projectionResults;
+    // stop current animation; motion one will update target's inline styles to mid-animation values
+    if (currentAnim?.currentTime && currentAnim.currentTime < 1) {
+      currentAnim.stop();
+    }
+
+    const projectionResults = getProjection(subject, target);
+    const { toSubject } = projectionResults;
 
     if (log) {
       console.log(projectionResults);
     }
 
-    // toSubject and toTargetOrigin use the same format/shorthand for each value,
-    // so setting the target to its own origin can prevent hiccups if the animation
-    // engine doesn't animate properly between different shorthands
-    anime.set(target, {
-      ...toTargetOrigin,
-    });
-
-    anime({
-      targets: target,
-      duration: 400,
-      easing: 'easeOutQuad',
-
-      ...toSubject,
-
-      // unfortunately, the browser may collapse '3px 3px 3px 3px' back to just '3px',
-      // so override until Anime.js v4 is released
-      borderWidth: '3px',
-    });
+    currentAnim = animate(
+      target,
+      { ...toSubject, borderStyle: 'solid' },
+      {
+        duration: 0.4,
+        easing: 'ease-out',
+      },
+    );
   }
 
   function subjectClickHandler(subject: HTMLElement): void {
-    animate(subject, target);
+    animateDirect(subject, target);
   }
 </script>
 

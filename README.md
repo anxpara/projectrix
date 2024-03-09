@@ -36,32 +36,37 @@ Projectrix provides a pure function that returns the styles needed to align a ta
   targetElement.style.transform = toSubject.transform;
 ```
 
-## Animating target to subject using Anime.js v3
+## Animating target directly to subject using Motion One
 
 ```ts
-  import { getProjection } from 'projectrix';
-  import anime from 'animejs';
+import { getProjection } from 'projectrix';
+import { animate, type AnimationControls } from 'motion';
 
-  // Anime.js v3 takes a matrix3d value
-  const { toSubject, toTargetOrigin } = getProjection(subject, target, { transformType: 'matrix3d'});
+let currentAnim: AnimationControls | undefined;
 
-  // toSubject and toTargetOrigin use the same format/shorthand for each value,
-  // so setting the target to its own origin can prevent hiccups if the animation
-  // engine doesn't animate properly between different shorthands
-  anime.set(target, {
-    ...toTargetOrigin,
-  });
-  
-  anime({
-    targets: target,
-    duration: 1000,
-    easing: 'easeOutQuad',
-  
-    ...toSubject,
-  });
+function animateDirect(subject: HTMLElement, target: HTMLElement): void {
+  // stop current animation; motion one will update target's inline styles to mid-animation values
+  if (currentAnim?.currentTime && currentAnim.currentTime < 1) {
+    currentAnim.stop();
+  }
+
+  currentAnim = animate(
+    target,
+    {
+      // preserve all of target's border properties
+      ...getProjection(subject, target, { useBorder: 'target' }).toSubject,
+
+      // could preserve just the border style like so
+      // borderStyle: 'solid'
+    },
+    {
+      duration: 0.4,
+      easing: 'ease-out',
+    },
+  );
+}
 ```
-
-###### (Shoutout [Anime.js v4 beta early access](https://github.com/sponsors/juliangarnier))
+###### (This usage was originally written with Anime.js v3, but v3 has bugs when animating between different shorthands. Will update to Anime.js v4 when it's released, shoutout to the [early access beta](https://github.com/sponsors/juliangarnier))
 
 ## Animating from subject to target with FLIP technique using Motion One
 
