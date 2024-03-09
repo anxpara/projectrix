@@ -10,12 +10,12 @@ npm run link
 ```bash
 npm run test
 
-#or
-npx playwright test -g "testName"
+#or (see playwright.config.ts for project names, or omit)
+npx playwright test -g "testName" --project "projectName"
 ```
 
 - Missing golden screenshots indicate that the test case is not supported by projectrix yet
-- Tests will occasionally fail due to a transient connection refused error
+- Tests will occasionally fail due to a transient connection refused error, especially firefox
 
 ## Updating golden screenshots
 
@@ -23,7 +23,7 @@ npx playwright test -g "testName"
 npm run updateTestScreenshots
 
 #or
-npx playwright test -g "testName" --update-snapshots
+npx playwright test -g "testName" --project "projectName" --update-snapshots
 ```
 
 # Developing
