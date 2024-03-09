@@ -15,7 +15,7 @@
 
   export function getProjectionOptions(): ProjectionOptions | undefined {
     return {
-      transformType: 'transform',
+      transformType: 'matrix3d',
     };
   }
 </script>

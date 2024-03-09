@@ -27,7 +27,7 @@ import SubjectOrigin0Bigger from '../components/trials/SubjectOrigin0Bigger.svel
 import TargetOrigin0Bigger from '../components/trials/TargetOrigin0Bigger.svelte';
 import TargetInOrigin0Bigger from '../components/trials/TargetInOrigin0Bigger.svelte';
 import TargetInRotatedBigger from '../components/trials/TargetInRotatedBigger.svelte';
-import UseTransformType from '../components/trials/UseTransformType.svelte';
+import UseMatrix3dType from '../components/trials/UseMatrix3dType.svelte';
 import UseMat4Type from '../components/trials/UseMat4Type.svelte';
 import type { AnimationControls } from 'motion';
 
@@ -74,7 +74,7 @@ export const allTrials: Trial[] = [
   { name: TrialName.TargetOrigin0Bigger, trialType: TargetOrigin0Bigger },
   { name: TrialName.TargetInOrigin0, trialType: TargetInOrigin0 },
   { name: TrialName.TargetInOrigin0Bigger, trialType: TargetInOrigin0Bigger },
-  { name: TrialName.UseTransformType, trialType: UseTransformType },
+  { name: TrialName.UseMatrix3dType, trialType: UseMatrix3dType },
   { name: TrialName.UseMat4Type, trialType: UseMat4Type },
 ];
 export const trialsByName = new Map<TrialName, Trial>(

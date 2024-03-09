@@ -24,7 +24,7 @@ export const TrialName = {
   TargetOrigin0Bigger: 'target-origin-0-bigger',
   TargetInOrigin0: 'target-in-origin-0',
   TargetInOrigin0Bigger: 'target-in-origin-0-bigger',
-  UseTransformType: 'use-transform-type',
+  UseMatrix3dType: 'use-matrix3d-type',
   UseMat4Type: 'use-mat4-type',
 } as const;
 export type TrialName = (typeof TrialName)[keyof typeof TrialName];
