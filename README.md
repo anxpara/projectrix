@@ -20,20 +20,34 @@ Projectrix provides a pure function that returns the styles needed to align a ta
 
 # Usage
 
-## Matching target to subject by directly setting inline styles
+## Animating from subject to target with FLIP technique using Motion One
 
 ```ts
-  import { getProjection } from 'projectrix';
+import { getProjection } from 'projectrix';
+import { animate } from 'motion';
 
-  const { toSubject } = getProjection(subjectElement, targetElement);
+const { toSubject, toTargetOrigin } = getProjection(subject, target);
 
-  targetElement.style.width = toSubject.width;
-  targetElement.style.height = toSubject.height;
-  targetElement.style.borderStyle = toSubject.borderStyle;
-  targetElement.style.borderWidth = toSubject.borderWidth;
-  targetElement.style.borderRadius = toSubject.borderRadius;
-  targetElement.style.transformOrigin = toSubject.transformOrigin;
-  targetElement.style.transform = toSubject.transform;
+// set to subject
+animate(target, { ...toSubject }, { duration: 0 });
+
+// FLIP back to origin
+const flipAnimation = animate(
+  target,
+  {
+    ...toTargetOrigin,
+  },
+  {
+    duration: 1,
+    easing: 'ease-out',
+  },
+);
+
+// clear inline styles when FLIP is done, if you care to
+flipAnimation.finished.then(() => {
+  target.style.transform = '';
+  // etc...
+});
 ```
 
 ## Animating target directly to subject using Motion One
@@ -68,34 +82,20 @@ function animateDirect(subject: HTMLElement, target: HTMLElement): void {
 ```
 ###### (This usage was originally written with Anime.js v3, but v3 has bugs when animating between different shorthands. Will update to Anime.js v4 when it's released, shoutout to the [early access beta](https://github.com/sponsors/juliangarnier))
 
-## Animating from subject to target with FLIP technique using Motion One
+## Matching target to subject by directly setting inline styles
 
 ```ts
-import { getProjection } from 'projectrix';
-import { animate } from 'motion';
+  import { getProjection } from 'projectrix';
 
-const { toSubject, toTargetOrigin } = getProjection(subject, target);
+  const { toSubject } = getProjection(subjectElement, targetElement);
 
-// set to subject
-animate(target, { ...toSubject }, { duration: 0 });
-
-// FLIP back to origin
-const flipAnimation = animate(
-  target,
-  {
-    ...toTargetOrigin,
-  },
-  {
-    duration: 1,
-    easing: 'ease-out',
-  },
-);
-
-// clear inline styles when FLIP is done, if you care to
-flipAnimation.finished.then(() => {
-  target.style.transform = '';
-  // etc...
-});
+  targetElement.style.width = toSubject.width;
+  targetElement.style.height = toSubject.height;
+  targetElement.style.borderStyle = toSubject.borderStyle;
+  targetElement.style.borderWidth = toSubject.borderWidth;
+  targetElement.style.borderRadius = toSubject.borderRadius;
+  targetElement.style.transformOrigin = toSubject.transformOrigin;
+  targetElement.style.transform = toSubject.transform;
 ```
 
 # Types & Documentation
