@@ -33,6 +33,10 @@
 
   onDestroy(() => {
     clearInterval(animateInterval);
+    if (trial.animation?.currentTime && trial.animation.currentTime < 1) {
+      trial.animation.stop();
+      trial.animation = undefined;
+    }
     const target = trial.trialComponent?.getTargetElement();
     if (!target) return;
     anime.remove(target);

@@ -19,7 +19,7 @@ export function animateTrial(
 
   // reset target
   anime.remove(target);
-  if (trial.animation) {
+  if (trial.animation?.currentTime && trial.animation.currentTime < 1) {
     trial.animation.stop();
     trial.animation = undefined;
   }
@@ -182,7 +182,7 @@ export function animateTrialReturn(
       },
     });
   } else if (options.transformType === 'transform') {
-    if (trial.animation) {
+    if (trial.animation?.currentTime && trial.animation.currentTime < 1) {
       trial.animation.stop();
       trial.animation = undefined;
     }
