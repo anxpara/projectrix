@@ -1,6 +1,6 @@
 import anime from 'animejs';
 import type { Trial } from './trials';
-import { getProjection, type ProjectionOptions } from 'projectrix';
+import { getProjection, type Projection, type ProjectionOptions } from 'projectrix';
 import { animate } from 'motion';
 import { mat4 } from 'gl-matrix';
 
@@ -15,7 +15,7 @@ export function animateTrial(
   const target = trial.trialComponent!.getTargetElement();
   const subject = trial.trialComponent!.getSubjectElement() ?? defaultSubject;
   const options: ProjectionOptions = trial.trialComponent!.getProjectionOptions() ?? {};
-  options.transformType = options.transformType ?? 'matrix3d';
+  options.transformType = skipAnimation ? 'transform' : options.transformType ?? 'matrix3d';
 
   // reset target
   anime.remove(target);
@@ -26,13 +26,20 @@ export function animateTrial(
   clearInlineStyles(target);
 
   // mark target origin
-  trial.originMarker!.markOrigin(trial.trialComponent!.getTargetElement());
+  if (!toOrigin) {
+    trial.originMarker!.markOrigin(trial.trialComponent!.getTargetElement());
+  }
 
   // project
   const projectionResults = getProjection(subject, target, options);
   const { toSubject, toTargetOrigin } = projectionResults;
   if (log) {
     console.log(projectionResults);
+  }
+
+  if (skipAnimation) {
+    setInlineStyles(target, toOrigin ? toTargetOrigin : toSubject);
+    return;
   }
 
   if (options.transformType === 'transformMat4') {
@@ -210,14 +217,24 @@ export function animateTrialReturn(
   }
 }
 
+function setInlineStyles(target: HTMLElement, projection: Projection): void {
+  target.style.width = projection.width;
+  target.style.height = projection.height;
+  target.style.borderStyle = projection.borderStyle;
+  target.style.borderWidth = projection.borderWidth;
+  target.style.borderRadius = projection.borderRadius;
+  target.style.transformOrigin = projection.transformOrigin;
+  target.style.transform = projection.transform;
+}
+
 function clearInlineStyles(target: HTMLElement): void {
-  target.style.transform = '';
   target.style.width = '';
   target.style.height = '';
   target.style.borderStyle = '';
   target.style.borderWidth = '';
   target.style.borderRadius = '';
   target.style.transformOrigin = '';
+  target.style.transform = '';
 }
 
 function convertMat4ToCssMatrix3dSubstring(mat: mat4): string {
