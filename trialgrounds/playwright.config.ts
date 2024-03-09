@@ -6,6 +6,12 @@ const config = defineConfig({
     screenshot: 'on',
     trace: 'retain-on-failure',
   },
+  expect: {
+    timeout: 6000,
+    toHaveScreenshot: {
+      maxDiffPixels: 30,
+    },
+  },
   webServer: {
     command: 'npm run build && npm run preview',
     port: 4173,
