@@ -15,7 +15,7 @@ export function animateTrial(
   const target = trial.trialComponent!.getTargetElement();
   const subject = trial.trialComponent!.getSubjectElement() ?? defaultSubject;
   const options: ProjectionOptions = trial.trialComponent!.getProjectionOptions() ?? {};
-  options.transformType = skipAnimation ? 'transform' : options.transformType ?? 'matrix3d';
+  options.transformType = skipAnimation ? 'transform' : options.transformType ?? 'transform';
 
   // reset target
   anime.remove(target);
@@ -162,7 +162,7 @@ export function animateTrialReturn(
 
   const target = trial.trialComponent!.getTargetElement();
   const options: ProjectionOptions = trial.trialComponent!.getProjectionOptions() ?? {};
-  options.transformType = options.transformType ?? 'matrix3d';
+  options.transformType = options.transformType ?? 'transform';
 
   if (options.transformType === 'transformMat4') {
     // trial.toTargetOrigin converted to matrix3d earlier
