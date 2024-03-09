@@ -1,13 +1,14 @@
-// source of truth for TDSource, TDSequenceName, client fetch interval, log level, etc.
+import { SharedOptionName, TrialOptionName } from '$lib/optionNames.js';
+
 /** @type {import('./$types').LayoutLoad} */
 export async function load({ params, url }) {
   const trialNames = url.searchParams.get('trialNames')?.split(',') ?? [];
-  const toTargetOrigin = url.searchParams.has('toTargetOrigin');
+  const toTargetOrigin = url.searchParams.has(TrialOptionName.ToTargetOrigin);
   const forPlaywright = url.searchParams.has('forPlaywright');
-  const projectOnce = url.searchParams.has('projectOnce') || forPlaywright;
-  const skipAnimation = url.searchParams.has('skipAnimation') || forPlaywright;
-  const hideMenu = url.searchParams.has('hideMenu') || forPlaywright;
-  const log = url.searchParams.has('log');
+  const projectOnce = url.searchParams.has(TrialOptionName.ProjectOnce) || forPlaywright;
+  const skipAnimation = url.searchParams.has(TrialOptionName.SkipAnimation) || forPlaywright;
+  const hideMenu = url.searchParams.has(SharedOptionName.HideMenu) || forPlaywright;
+  const log = url.searchParams.has(SharedOptionName.Log);
 
   return {
     trialNames,
