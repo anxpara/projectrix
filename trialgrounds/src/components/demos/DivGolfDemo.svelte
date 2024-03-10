@@ -361,13 +361,13 @@
   // not bothering to make responsive for now, not a priority
   button {
     all: unset;
+    cursor: pointer;
   }
 
   .modifier:focus-visible,
   .restart:focus-visible {
     outline: solid 2px white;
     outline-offset: 4px;
-    cursor: pointer;
   }
 
   .restart {
