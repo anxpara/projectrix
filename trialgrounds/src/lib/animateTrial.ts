@@ -27,7 +27,7 @@ export function animateTrial(
 
   // mark target origin
   if (!toOrigin) {
-    trial.originMarker!.markOrigin(trial.trialComponent!.getTargetElement());
+    trial.originMarker?.markOrigin(trial.trialComponent!.getTargetElement());
   }
 
   // project
@@ -71,7 +71,7 @@ export function animateTrial(
         ...toTargetOrigin,
 
         complete: () => {
-          trial.originMarker!.unmark();
+          trial.originMarker?.unmark();
           anime.set(target, {
             pointerEvents: 'all',
           });
@@ -118,7 +118,7 @@ export function animateTrial(
       );
 
       trial.animation.finished.then(() => {
-        trial.originMarker!.unmark();
+        trial.originMarker?.unmark();
         anime.set(target, {
           pointerEvents: 'all',
         });
@@ -185,7 +185,7 @@ export function animateTrialReturn(
 
         clearInlineStyles(target);
 
-        trial.originMarker!.unmark();
+        trial.originMarker?.unmark();
       },
     });
   } else if (options.transformType === 'transform') {
@@ -212,7 +212,7 @@ export function animateTrialReturn(
 
       clearInlineStyles(target);
 
-      trial.originMarker!.unmark();
+      trial.originMarker?.unmark();
     });
   }
 }

@@ -34,6 +34,8 @@
   });
 
   onDestroy(() => {
+    currentTarget = undefined;
+
     currentAnim?.stop();
     currentAnim = undefined;
 
@@ -54,7 +56,9 @@
     dir: number,
     nextFlip: () => void,
   ): void {
-    const projectionResults = getProjection(currentTarget!, nextTarget);
+    if (!currentTarget) return;
+
+    const projectionResults = getProjection(currentTarget, nextTarget);
     const { toSubject, toTargetOrigin } = projectionResults;
     if (log) {
       console.log(projectionResults);
@@ -62,7 +66,7 @@
 
     // set next target to current target's projection
     animate(nextTarget, { ...toSubject, opacity: '1' }, { duration: 0 });
-    currentTarget!.style.opacity = '0';
+    currentTarget.style.opacity = '0';
     currentTarget = nextTarget;
 
     // FLIP next target back to its origin
@@ -78,7 +82,7 @@
     );
 
     // play parent animation
-    currentAnim!.finished.then(() => {
+    currentAnim.finished.then(() => {
       currentAnim = animate(
         nextParent,
         {
