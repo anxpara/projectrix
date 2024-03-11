@@ -84,9 +84,9 @@
   }
 
   .menus-container {
-    position: absolute;
+    position: relative;
     width: 100%;
-    height: 13em;
+    z-index: 1;
 
     display: flex;
     flex-direction: row;
