@@ -6,6 +6,10 @@
   export let data;
 </script>
 
+<svelte:head>
+  <title>Projectrix Trialgrounds | demos</title>
+</svelte:head>
+
 <div class="all-demos-container">
   {#each allDemos as demo}
     <DemoContainer {demo} href={`/demos/${demo.name}${$page.url.search}`} log={data.log} />

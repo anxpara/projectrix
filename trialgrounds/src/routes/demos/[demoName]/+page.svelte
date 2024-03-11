@@ -8,6 +8,10 @@
   $: demo = demosByName.get($page.params.demoName as DemoName)!;
 </script>
 
+<svelte:head>
+  <title>Projectrix Trialgrounds | {demo.name} demo</title>
+</svelte:head>
+
 <div class="centerer">
   <DemoContainer {demo} href={`/demos/${demo.name}${$page.url.search}`} log={data.log} />
 </div>

@@ -51,6 +51,10 @@
   }
 </script>
 
+<svelte:head>
+  <title>Projectrix Trialgrounds | {trial.name} trial</title>
+</svelte:head>
+
 <div class="lone-trial-container">
   {#if trial}
     <OriginMarker bind:this={trial.originMarker} />

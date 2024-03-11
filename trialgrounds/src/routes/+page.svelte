@@ -82,6 +82,10 @@
   }
 </script>
 
+<svelte:head>
+  <title>Projectrix Trialgrounds | trials</title>
+</svelte:head>
+
 <div
   bind:this={defaultSubject}
   class="subject-element default-subject-element"
