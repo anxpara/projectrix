@@ -3,7 +3,7 @@
   import type { ProjectionOptions } from 'projectrix';
 
   export let trial: Trial;
-  export let hideSubject: boolean | undefined;
+  export let hideSubject: boolean | undefined = undefined;
 
   let subjectElement: HTMLElement;
 
