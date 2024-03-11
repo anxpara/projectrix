@@ -27,8 +27,10 @@ export function animateTrial(
   clearInlineStyles(target);
 
   // mark target origin
-  if (!trialOptions.toTargetOrigin) {
+  if (!trialOptions.toTargetOrigin || !trialOptions.skipAnimation) {
     trial.originMarker?.markOrigin(trial.trialComponent!.getTargetElement());
+  } else {
+    trial.originMarker?.unmark();
   }
 
   // project
