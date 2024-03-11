@@ -102,7 +102,6 @@
   {#each trials as trial}
     <OriginMarker bind:this={trial.originMarker} />
     <a
-      data-sveltekit-reload
       href="/{trial.name}{$page.url.search}"
       on:mouseenter={() => hoverTrial(trial)}
       on:focus={() => hoverTrial(trial)}
