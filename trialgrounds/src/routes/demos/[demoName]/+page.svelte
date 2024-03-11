@@ -17,6 +17,9 @@
 
 <style lang="scss">
   .centerer {
+    position: absolute;
+    top: 0;
+    
     width: 100vw;
     height: 100svh;
 

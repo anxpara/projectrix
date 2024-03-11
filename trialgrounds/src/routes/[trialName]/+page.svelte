@@ -65,6 +65,9 @@
 
 <style lang="scss">
   .lone-trial-container {
+    position: absolute;
+    top: 0;
+
     width: 100%;
     height: 100svh;
 
