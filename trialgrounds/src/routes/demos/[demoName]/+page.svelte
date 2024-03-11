@@ -4,7 +4,6 @@
   import { demosByName } from '$lib/demos/demos';
   import DemoContainer from '../../../components/DemoContainer.svelte';
 
-  export let data;
   $: demo = demosByName.get($page.params.demoName as DemoName)!;
 </script>
 
@@ -13,7 +12,7 @@
 </svelte:head>
 
 <div class="centerer">
-  <DemoContainer {demo} href={`/demos/${demo.name}${$page.url.search}`} log={data.log} />
+  <DemoContainer {demo} href={`/demos/${demo.name}${$page.url.search}`} />
 </div>
 
 <style lang="scss">

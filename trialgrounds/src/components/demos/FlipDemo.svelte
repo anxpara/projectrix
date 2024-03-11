@@ -2,11 +2,13 @@
   import { onDestroy, onMount, tick } from 'svelte';
   import { getProjection } from 'projectrix';
   import { animate, type AnimationControls } from 'motion';
+  import type { Writable } from 'svelte/store';
+  import type { Options } from '$lib/options';
 
   // starting slot is part of demos infrastructure, not specific to this demo
   export let setTargetToStartingSlot: (target: HTMLElement) => void;
   export let revertSlotStyleInPlace: (target: HTMLElement) => void;
-  export let log: boolean = false;
+  export let options: Writable<Options>;
 
   let startingTarget: HTMLElement;
   let leftChildTarget: HTMLElement;
@@ -60,7 +62,7 @@
 
     const projectionResults = getProjection(currentTarget, nextTarget);
     const { toSubject, toTargetOrigin } = projectionResults;
-    if (log) {
+    if ($options.log) {
       console.log(projectionResults);
     }
 

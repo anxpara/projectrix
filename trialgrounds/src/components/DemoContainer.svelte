@@ -1,12 +1,16 @@
 <script lang="ts">
   import type { Demo } from '$lib/demos/demos';
+  import type { Options } from '$lib/options';
   import anime from 'animejs';
   import { mat4 } from 'gl-matrix';
   import { getProjection } from 'projectrix';
+  import { getContext } from 'svelte';
+  import type { Writable } from 'svelte/store';
 
   export let demo: Demo;
   export let href: string;
-  export let log: boolean = false;
+
+  const options = getContext<Writable<Options>>('options');
 
   let targetSlots: HTMLElement[] = [];
 
@@ -73,7 +77,7 @@
     bind:this={demo.demoComponent}
     {setTargetToStartingSlot}
     {revertSlotStyleInPlace}
-    {log}
+    {options}
   />
 </div>
 

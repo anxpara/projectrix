@@ -4,8 +4,10 @@
   import { getActualClientRect } from 'actual-client-rect';
   import { getProjection } from 'projectrix';
   import anime from 'animejs';
+  import type { Writable } from 'svelte/store';
+  import type { Options } from '$lib/options';
 
-  export let log: boolean = false;
+  export let options: Writable<Options>;
 
   let startingTarget: HTMLElement;
   let currentTarget: HTMLElement | undefined;
@@ -97,7 +99,7 @@
       transformType: 'matrix3d',
     });
     const { toSubject } = projectionResults;
-    if (log) {
+    if ($options.log) {
       console.log(projectionResults);
     }
 

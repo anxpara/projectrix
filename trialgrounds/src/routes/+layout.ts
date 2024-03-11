@@ -1,22 +1,25 @@
-import { SharedOptionName, TrialOptionName } from '$lib/optionNames.js';
+import { allOptionNames, forPlaywrightOptionNames } from '$lib/optionNames.js';
+import type { Options } from '$lib/options';
 
 /** @type {import('./$types').LayoutLoad} */
 export async function load({ params, url }) {
   const trialNames = url.searchParams.get('trialNames')?.split(',') ?? [];
-  const toTargetOrigin = url.searchParams.has(TrialOptionName.ToTargetOrigin);
   const forPlaywright = url.searchParams.has('forPlaywright');
-  const projectOnce = url.searchParams.has(TrialOptionName.ProjectOnce) || forPlaywright;
-  const skipAnimation = url.searchParams.has(TrialOptionName.SkipAnimation) || forPlaywright;
-  const hideMenu = url.searchParams.has(SharedOptionName.HideMenu) || forPlaywright;
-  const log = url.searchParams.has(SharedOptionName.Log);
+
+  const options: Options = {};
+  allOptionNames.forEach((name) => {
+    options[name] = url.searchParams.has(name);
+  });
+
+  if (forPlaywright) {
+    forPlaywrightOptionNames.forEach((name) => {
+      options[name] = true;
+    });
+  }
 
   return {
     trialNames,
-    projectOnce,
     forPlaywright,
-    skipAnimation,
-    toTargetOrigin,
-    hideMenu,
-    log,
+    options,
   };
 }

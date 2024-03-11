@@ -8,11 +8,12 @@
   import anime from 'animejs';
   import type { Writable } from 'svelte/store';
   import { showDefaultSubject } from '$lib/showDefaultSubject';
+  import type { Options } from '$lib/options';
 
-  export let data;
+  let options = getContext<Writable<Options>>('options');
 
   $: trial = trialsByName.get($page.params.trialName as TrialName)!;
-  $: trialSubject = trial.trialComponent?.getSubjectElement();
+  $: trialSubject = trial.trialComponent?.getSubjectElement?.call(undefined);
   $: updateShowDefaultSubject(!trialSubject);
   const defaultSubject = getContext<Writable<HTMLElement | undefined>>('default-subject');
 
@@ -26,7 +27,7 @@
     }
 
     animate();
-    if (data.projectOnce) return;
+    if ($options.projectOnce) return;
 
     animateInterval = setInterval(animate, 2000);
   });
@@ -43,7 +44,7 @@
   });
 
   function animate(): void {
-    animateTrial(trial, $defaultSubject!, data.toTargetOrigin, data.skipAnimation, data.log);
+    animateTrial(trial, $defaultSubject!, $options);
   }
 
   function updateShowDefaultSubject(showDefault: boolean): void {

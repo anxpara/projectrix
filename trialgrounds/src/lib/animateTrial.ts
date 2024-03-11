@@ -3,19 +3,20 @@ import type { Trial } from './trials';
 import { getProjection, type Projection, type ProjectionOptions } from 'projectrix';
 import { animate } from 'motion';
 import { mat4 } from 'gl-matrix';
+import type { Options } from './options';
 
 export function animateTrial(
   trial: Trial,
   defaultSubject: HTMLElement,
-  toOrigin = false,
-  skipAnimation = false,
-  log = false,
+  trialOptions: Options,
   duration = 1000,
 ): void {
   const target = trial.trialComponent!.getTargetElement();
   const subject = trial.trialComponent!.getSubjectElement() ?? defaultSubject;
   const options: ProjectionOptions = trial.trialComponent!.getProjectionOptions() ?? {};
-  options.transformType = skipAnimation ? 'transform' : options.transformType ?? 'transform';
+  options.transformType = trialOptions.skipAnimation
+    ? 'transform'
+    : options.transformType ?? 'transform';
 
   // reset target
   anime.remove(target);
@@ -26,19 +27,19 @@ export function animateTrial(
   clearInlineStyles(target);
 
   // mark target origin
-  if (!toOrigin) {
+  if (!trialOptions.toTargetOrigin) {
     trial.originMarker?.markOrigin(trial.trialComponent!.getTargetElement());
   }
 
   // project
   const projectionResults = getProjection(subject, target, options);
   const { toSubject, toTargetOrigin } = projectionResults;
-  if (log) {
+  if (trialOptions.log) {
     console.log(projectionResults);
   }
 
-  if (skipAnimation) {
-    setInlineStyles(target, toOrigin ? toTargetOrigin : toSubject);
+  if (trialOptions.skipAnimation) {
+    setInlineStyles(target, trialOptions.toTargetOrigin ? toTargetOrigin : toSubject);
     return;
   }
 
@@ -56,7 +57,7 @@ export function animateTrial(
 
   // animate
   if (options.transformType === 'matrix3d') {
-    if (toOrigin) {
+    if (trialOptions.toTargetOrigin) {
       anime.set(target, {
         ...toSubject,
 
@@ -65,7 +66,7 @@ export function animateTrial(
 
       anime({
         targets: target,
-        duration: skipAnimation ? 0 : duration,
+        duration: trialOptions.skipAnimation ? 0 : duration,
         easing: 'easeInOutQuad',
 
         ...toTargetOrigin,
@@ -87,14 +88,14 @@ export function animateTrial(
 
       anime({
         targets: target,
-        duration: skipAnimation ? 0 : duration,
+        duration: trialOptions.skipAnimation ? 0 : duration,
         easing: 'easeInOutQuad',
 
         ...toSubject,
       });
     }
   } else if (options.transformType === 'transform') {
-    if (toOrigin) {
+    if (trialOptions.toTargetOrigin) {
       animate(
         target,
         {
@@ -112,7 +113,7 @@ export function animateTrial(
           ...toTargetOrigin,
         },
         {
-          duration: skipAnimation ? 0 : duration / 1000,
+          duration: trialOptions.skipAnimation ? 0 : duration / 1000,
           easing: 'ease-in-out',
         },
       );
@@ -143,7 +144,7 @@ export function animateTrial(
           ...toSubject,
         },
         {
-          duration: skipAnimation ? 0 : duration / 1000,
+          duration: trialOptions.skipAnimation ? 0 : duration / 1000,
           easing: 'ease-in-out',
         },
       );
@@ -151,14 +152,8 @@ export function animateTrial(
   }
 }
 
-export function animateTrialReturn(
-  trial: Trial,
-  toOrigin = false,
-  skipAnimation = false,
-  _log = false,
-  duration = 500,
-): void {
-  if (toOrigin || !trial.toTargetOrigin) return;
+export function animateTrialReturn(trial: Trial, trialOptions: Options, duration = 500): void {
+  if (trialOptions.toTargetOrigin || !trial.toTargetOrigin) return;
 
   const target = trial.trialComponent!.getTargetElement();
   const options: ProjectionOptions = trial.trialComponent!.getProjectionOptions() ?? {};
@@ -173,7 +168,7 @@ export function animateTrialReturn(
     anime.remove(target);
     anime({
       targets: target,
-      duration: skipAnimation ? 0 : duration,
+      duration: trialOptions.skipAnimation ? 0 : duration,
       easing: 'easeInOutQuad',
 
       ...trial.toTargetOrigin,
@@ -200,7 +195,7 @@ export function animateTrialReturn(
         ...trial.toTargetOrigin,
       },
       {
-        duration: skipAnimation ? 0 : duration / 1000,
+        duration: trialOptions.skipAnimation ? 0 : duration / 1000,
         easing: 'ease-in-out',
       },
     );

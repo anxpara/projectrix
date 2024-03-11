@@ -2,8 +2,6 @@
   import { page } from '$app/stores';
   import { allDemos } from '$lib/demos/demos';
   import DemoContainer from '../../components/DemoContainer.svelte';
-
-  export let data;
 </script>
 
 <svelte:head>
@@ -12,7 +10,7 @@
 
 <div class="all-demos-container">
   {#each allDemos as demo}
-    <DemoContainer {demo} href={`/demos/${demo.name}${$page.url.search}`} log={data.log} />
+    <DemoContainer {demo} href={`/demos/${demo.name}${$page.url.search}`} />
   {/each}
 </div>
 

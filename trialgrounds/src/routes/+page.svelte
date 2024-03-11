@@ -1,13 +1,17 @@
 <script lang="ts">
   import { allTrials, getTrials, type Trial } from '../lib/trials';
-  import { onDestroy, onMount, tick } from 'svelte';
+  import { getContext, onDestroy, onMount, tick } from 'svelte';
   import { page } from '$app/stores';
   import OriginMarker from '../components/OriginMarker.svelte';
   import { animateTrial, animateTrialReturn } from '$lib/animateTrial';
   import anime from 'animejs';
   import { showDefaultSubject } from '$lib/showDefaultSubject';
+  import type { Writable } from 'svelte/store';
+  import type { Options } from '$lib/options';
 
   export let data;
+
+  let options = getContext<Writable<Options>>('options');
 
   const trials = getCurrentTrials(data.trialNames);
   function getCurrentTrials(trialNames: string[]): Trial[] {
@@ -29,7 +33,7 @@
 
     setTimeout(autoSelectNextTrial, 500);
 
-    if (data.projectOnce) {
+    if ($options.projectOnce) {
       return;
     }
 
@@ -70,11 +74,11 @@
     if (currentTrial) unselectTrial(currentTrial);
 
     currentTrial = trial;
-    animateTrial(trial, defaultSubject, data.toTargetOrigin, data.skipAnimation, data.log);
+    animateTrial(trial, defaultSubject, $options);
   }
 
   function unselectTrial(trial: Trial): void {
-    animateTrialReturn(trial, data.toTargetOrigin, data.skipAnimation);
+    animateTrialReturn(trial, $options);
   }
 
   function updateShowDefaultSubject(showDefault: boolean): void {

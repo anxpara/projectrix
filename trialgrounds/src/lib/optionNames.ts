@@ -1,14 +1,21 @@
-export const SharedOptionName = {
+export const OptionName = {
   Log: 'log',
   HideMenu: 'hideMenu',
-};
-export type SharedOptionName = (typeof SharedOptionName)[keyof typeof SharedOptionName];
-export const sharedOptionNames: string[] = Object.values(SharedOptionName);
-
-export const TrialOptionName = {
   ToTargetOrigin: 'toTargetOrigin',
-  ProjectOnce: 'projectOnce',
   SkipAnimation: 'skipAnimation',
+  ProjectOnce: 'projectOnce',
 };
-export type TrialOptionName = (typeof TrialOptionName)[keyof typeof TrialOptionName];
-export const trialOptionNames: string[] = Object.values(TrialOptionName);
+export type OptionName = (typeof OptionName)[keyof typeof OptionName];
+export const allOptionNames: string[] = Object.values(OptionName);
+
+export const sharedOptionNames = [OptionName.Log, OptionName.HideMenu];
+export const trialOptionNames = [
+  OptionName.ToTargetOrigin,
+  OptionName.SkipAnimation,
+  OptionName.ProjectOnce,
+];
+export const forPlaywrightOptionNames = [
+  OptionName.HideMenu,
+  OptionName.SkipAnimation,
+  OptionName.ProjectOnce,
+];

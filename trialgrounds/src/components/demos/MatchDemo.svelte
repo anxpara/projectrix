@@ -1,11 +1,13 @@
 <script lang="ts">
+  import type { Options } from '$lib/options';
   import { getProjection } from 'projectrix';
   import { onMount, tick } from 'svelte';
+  import type { Writable } from 'svelte/store';
 
   // starting slot is part of demos infrastructure, not specific to this demo
   export let setTargetToStartingSlot: (target: HTMLElement) => void;
   export let revertSlotStyleInPlace: (target: HTMLElement) => void;
-  export let log: boolean = false;
+  export let options: Writable<Options>;
 
   let target: HTMLElement;
   let inSlot = false;
@@ -29,7 +31,7 @@
     const projectionResults = getProjection(subject, target);
     const { toSubject } = projectionResults;
 
-    if (log) {
+    if ($options.log) {
       console.log(projectionResults);
     }
 

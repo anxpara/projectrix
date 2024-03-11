@@ -1,11 +1,18 @@
 <script lang="ts">
   import { page } from '$app/stores';
+  import { allOptionNames, sharedOptionNames, trialOptionNames } from '$lib/optionNames';
+  import { writable } from 'svelte/store';
   import '../app.scss';
+  import type { Options } from '$lib/options';
+  import { setContext } from 'svelte';
 
   export let data;
+
+  const options = writable<Options>(data.options);
+  setContext('options', options);
 </script>
 
-{#if !data.hideMenu}
+{#if !$options.hideMenu}
   <nav title="collections of trials or demos">
     <h1>collections</h1>
     <ul>
