@@ -42,6 +42,7 @@
 </script>
 
 {#if !$options.hideMenu}
+  <h1 class="title">Projectrix Trialgrounds</h1>
   <div class="menus-container">
     <nav title="collections of trials or demos">
       <h1>collections</h1>
@@ -75,6 +76,13 @@
 <slot />
 
 <style lang="scss">
+  .title {
+    margin-bottom: 0;
+
+    font-family: 'rubik';
+    text-align: center;
+  }
+
   .menus-container {
     position: absolute;
     width: 100%;
