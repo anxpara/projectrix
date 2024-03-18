@@ -41,7 +41,7 @@
   }
 </script>
 
-{#if !$options.hideMenu}
+{#if !$options.hideUI}
   <div class="centerer">
     <h1 class="title">Projectrix Trialgrounds</h1>
     <div class="menus-container">
