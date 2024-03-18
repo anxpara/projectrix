@@ -42,32 +42,34 @@
 </script>
 
 {#if !$options.hideMenu}
-  <h1 class="title">Projectrix Trialgrounds</h1>
-  <div class="menus-container">
-    <nav aria-labelledby="navTitle">
-      <p id="navTitle">directory</p>
-      <ul>
-        <li>
-          <a href="/{$page.url.search}">all trials</a>
-        </li>
-        <li>
-          <a href="/demos{$page.url.search}">all demos</a>
-        </li>
-      </ul>
-    </nav>
-    <div role="menu" aria-labelledby="menuTitle">
-      <p id="menuTitle">options</p>
-      <div class="option-groups">
-        <fieldset aria-label="common options">
-          {#each sharedOptionNames as name}
-            <OptionCheckbox {name}></OptionCheckbox>
-          {/each}
-        </fieldset>
-        <fieldset aria-label="trial options">
-          {#each trialOptionNames as name}
-            <OptionCheckbox {name} irrelevant={!viewingTrials}></OptionCheckbox>
-          {/each}
-        </fieldset>
+  <div class="centerer">
+    <h1 class="title">Projectrix Trialgrounds</h1>
+    <div class="menus-container">
+      <nav aria-labelledby="navTitle">
+        <p id="navTitle">directory</p>
+        <ul>
+          <li>
+            <a href="/{$page.url.search}">all trials</a>
+          </li>
+          <li>
+            <a href="/demos{$page.url.search}">all demos</a>
+          </li>
+        </ul>
+      </nav>
+      <div role="menu" aria-labelledby="menuTitle">
+        <p id="menuTitle">options</p>
+        <div class="option-groups">
+          <fieldset aria-label="common options">
+            {#each sharedOptionNames as name}
+              <OptionCheckbox {name}></OptionCheckbox>
+            {/each}
+          </fieldset>
+          <fieldset aria-label="trial options">
+            {#each trialOptionNames as name}
+              <OptionCheckbox {name} irrelevant={!viewingTrials}></OptionCheckbox>
+            {/each}
+          </fieldset>
+        </div>
       </div>
     </div>
   </div>
@@ -76,24 +78,46 @@
 <slot />
 
 <style lang="scss">
-  .title {
-    margin-bottom: 0;
-
-    font-family: 'rubik';
-    text-align: center;
-  }
-
-  .menus-container {
+  .centerer {
     position: relative;
     width: 100%;
     z-index: 1;
 
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
-    gap: 2em;
+    align-items: center;
+
+    pointer-events: none;
+    * > * {
+      pointer-events: all;
+    }
+  }
+
+  .title {
+    margin-bottom: 0;
+
+    font-family: 'rubik';
+    text-align: center;
+
+    background: hsla(225, 32%, 10%, 0.8);
+  }
+
+  .menus-container {
+    position: relative;
+    width: fit-content;
+    z-index: 1;
+
+    padding-inline: 0.3em;
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0 2em;
 
     color: coral;
+    background: hsla(225, 32%, 10%, 0.8);
   }
 
   nav {
