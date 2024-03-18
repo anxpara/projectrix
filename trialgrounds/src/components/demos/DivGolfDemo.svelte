@@ -364,6 +364,7 @@
   button {
     all: unset;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .modifier:focus-visible,

@@ -64,6 +64,7 @@
   // not bothering to make responsive for now, not a priority
   button {
     all: unset;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .demo-subject:focus-visible,
