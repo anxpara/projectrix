@@ -87,7 +87,7 @@
 </script>
 
 <svelte:head>
-  <title>Projectrix Trialgrounds | trials</title>
+  <title>Projectrix Trialgrounds | all trials</title>
 </svelte:head>
 
 <div
