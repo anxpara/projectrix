@@ -44,8 +44,8 @@
 {#if !$options.hideMenu}
   <h1 class="title">Projectrix Trialgrounds</h1>
   <div class="menus-container">
-    <nav title="collections of trials or demos">
-      <h1>collections</h1>
+    <nav aria-labelledby="navTitle">
+      <p id="navTitle">directory</p>
       <ul>
         <li>
           <a href="/{$page.url.search}">all trials</a>
@@ -55,19 +55,19 @@
         </li>
       </ul>
     </nav>
-    <div class="options-menu">
-      <h1>options</h1>
+    <div role="menu" aria-labelledby="menuTitle">
+      <p id="menuTitle">options</p>
       <div class="option-groups">
-        <div class="option-group">
+        <fieldset aria-label="common options">
           {#each sharedOptionNames as name}
             <OptionCheckbox {name}></OptionCheckbox>
           {/each}
-        </div>
-        <div class="option-group">
+        </fieldset>
+        <fieldset aria-label="trial options">
           {#each trialOptionNames as name}
             <OptionCheckbox {name} irrelevant={!viewingTrials}></OptionCheckbox>
           {/each}
-        </div>
+        </fieldset>
       </div>
     </div>
   </div>
@@ -111,27 +111,28 @@
     }
   }
 
-  .options-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2em;
-  }
-
   .option-groups {
     display: flex;
     gap: 1.2em;
     padding-left: 1.2em;
+
+    fieldset {
+      all: unset;
+
+      display: flex;
+      flex-direction: column;
+      gap: 0.4em;
+    }
   }
 
-  .option-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4em;
-  }
-
+  p,
   h1 {
     font-size: 1.5em;
     margin-block: 0.67em;
+  }
+
+  p {
+    font-weight: 600;
   }
 
   a {
