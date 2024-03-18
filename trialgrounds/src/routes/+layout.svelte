@@ -36,7 +36,7 @@
     const nextUrl = getUrlForOptions(options, currentParams);
 
     setTimeout(() => {
-      goto(nextUrl, { replaceState: true });
+      goto(nextUrl, { replaceState: true, keepFocus: true });
     }, 1);
   }
 </script>
