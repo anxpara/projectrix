@@ -35,6 +35,12 @@
 </div>
 
 <style lang="scss">
+  .check-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+  }
+
   .check-button {
     width: 1.4em;
     height: 1.4em;

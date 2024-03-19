@@ -169,7 +169,7 @@
 
       display: flex;
       flex-direction: column;
-      gap: 0.4em;
+      gap: 0.5em;
     }
   }
 
