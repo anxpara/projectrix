@@ -107,6 +107,7 @@
     line-height: 1.1em;
     border: none;
     border-radius: 0.15em;
+    padding: 0;
 
     display: flex;
     justify-content: center;

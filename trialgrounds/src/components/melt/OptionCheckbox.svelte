@@ -39,6 +39,7 @@
     width: 1.4em;
     height: 1.4em;
     border: solid 3px coral;
+    padding: 0;
 
     background-color: #111521;
     cursor: pointer;
