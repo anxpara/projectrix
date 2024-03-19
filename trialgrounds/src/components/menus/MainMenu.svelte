@@ -126,13 +126,14 @@
   }
 
   .menus-container {
-    position: relative;
-    width: fit-content;
+    position: absolute;
+    top: 100%;
     z-index: 1;
 
+    width: fit-content;
     border-radius: 0.3em;
-    padding-inline: 0.3em;
-    padding-bottom: 0.4em;
+    padding-inline: 0.5em;
+    padding-bottom: 0.7em;
 
     display: flex;
     flex-direction: row;
@@ -141,6 +142,8 @@
     gap: 0 2em;
 
     color: coral;
+    background: hsla(225, 32%, 10%, 0.9);
+    border: solid 2px;
 
     will-change: transform;
   }
