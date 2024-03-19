@@ -4,6 +4,7 @@
   import { sharedOptionNames, trialOptionNames } from '$lib/optionNames';
   import type { Readable } from 'svelte/store';
   import { getContext } from 'svelte';
+  import { afterNavigate } from '$app/navigation';
 
   const pageUrl = getContext<Readable<URL>>('pageUrl');
 
@@ -13,6 +14,15 @@
     elements: { root, content, trigger },
     states: { open },
   } = createCollapsible();
+
+  afterNavigate((navigation) => {
+    if (navigation.from?.route.id === navigation.to?.route.id) return;
+    closeMenu();
+  });
+
+  function closeMenu(): void {
+    $open = false;
+  }
 </script>
 
 <div use:melt={$root} class="centerer">
