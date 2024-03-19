@@ -141,7 +141,8 @@
     gap: 0 2em;
 
     color: coral;
-    background: hsla(225, 32%, 10%, 0.8);
+
+    will-change: transform;
   }
 
   nav {
