@@ -5,6 +5,7 @@
   import type { Readable } from 'svelte/store';
   import { getContext } from 'svelte';
   import { afterNavigate } from '$app/navigation';
+  import { fade } from 'svelte/transition';
 
   const pageUrl = getContext<Readable<URL>>('pageUrl');
 
@@ -40,7 +41,7 @@
     </button>
   </div>
   {#if $open}
-    <div use:melt={$content} class="menus-container">
+    <div use:melt={$content} transition:fade={{ duration: 100 }} class="menus-container">
       <nav aria-labelledby="navTitle">
         <p id="navTitle">directory</p>
         <ul>
