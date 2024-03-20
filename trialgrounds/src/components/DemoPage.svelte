@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { Demo } from '$lib/demos/demos';
+  import TabbedCode from './TabbedCode.svelte';
   import DemoContainer from './DemoContainer.svelte';
 
   export let demo: Demo;
@@ -8,6 +9,7 @@
 
 <div class="centerer">
   <DemoContainer {demo} {href}></DemoContainer>
+  <TabbedCode {demo}></TabbedCode>
 </div>
 
 <style lang="scss">
