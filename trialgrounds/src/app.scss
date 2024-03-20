@@ -9,13 +9,13 @@
 
 html,
 body {
+  scrollbar-gutter: stable;
+
   margin: 0;
   padding: 0;
 }
 
 body {
-  scrollbar-gutter: stable;
-
   font-family: 'Inconsolata';
   color: coral;
   background: #111521;
