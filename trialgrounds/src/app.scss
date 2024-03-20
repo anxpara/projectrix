@@ -21,6 +21,13 @@ body {
   background: #111521;
 }
 
+pre {
+  font-size: 1.15em;
+  padding: 1em;
+  scrollbar-gutter: stable;
+  overflow-x: auto;
+}
+
 .target-container {
   width: 14em;
   height: 12em;
@@ -49,7 +56,7 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  
+
   transform: translate(50px, 50px) rotate(15deg);
 
   display: flex;

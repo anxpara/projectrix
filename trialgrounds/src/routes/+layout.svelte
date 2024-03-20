@@ -3,10 +3,12 @@
   import { page } from '$app/stores';
   import { derived, writable } from 'svelte/store';
   import { getUrlForOptions, type Options } from '$lib/options';
-  import { setContext } from 'svelte';
+  import { onMount, setContext } from 'svelte';
   import { goto } from '$app/navigation';
   import { browser } from '$app/environment';
   import MainMenu from '../components/menus/MainMenu.svelte';
+  import type { Highlighter } from 'shiki/bundle/web';
+  import { getShikiHighlighter } from '$lib/highlightCode';
 
   export let data;
 
@@ -18,10 +20,17 @@
   });
   setContext('pageUrl', pageUrl);
 
+  const highlighter = writable<Highlighter | undefined>(undefined);
+  setContext('highlighter', highlighter);
+
   if (browser) {
     window.addEventListener('popstate', handlePopstate);
     options.subscribe(handleOptionsChanged);
   }
+
+  onMount(async () => {
+    $highlighter = await getShikiHighlighter();
+  });
 
   function handlePopstate(): void {
     setUrlToOptions($options);
