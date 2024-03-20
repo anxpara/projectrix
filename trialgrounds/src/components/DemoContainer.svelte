@@ -62,7 +62,9 @@
   <div class="corner left" />
   <a {href} class="title-link">
     <div class="title">
-      <div class="corner right" />
+      <div class="corner-right-container">
+        <div class="corner right" />
+      </div>
       <div bind:this={targetSlots[0]} class="corner right target-slot slot-1" />
       <h1>/demos/{demo.name}</h1>
     </div>
@@ -89,7 +91,7 @@
     width: 700px;
     height: 400px;
 
-    outline: solid 1px coral;
+    border: solid 1px coral;
   }
 
   .title-link {
@@ -130,12 +132,23 @@
     }
   }
 
+  .corner-right-container {
+    position: absolute;
+    top: 0;
+    right: -2.5em;
+    z-index: -1;
+
+    width: 7em;
+    height: calc(100%);
+
+    overflow: hidden;
+  }
+
   .corner {
     position: absolute;
 
-    width: calc(3em - 6px);
-    height: calc(3.55em - 6px);
-    border: solid 3px;
+    width: 3em;
+    height: 3.55em;
 
     transform: skew(-34deg);
   }
@@ -151,12 +164,10 @@
     cursor: default;
   }
   .right {
-    top: unset;
-    bottom: 0;
+    height: calc(100% + 4px);
     left: unset;
-    right: -1.6em;
-
-    z-index: -1;
+    right: 1.2em;
+    bottom: -1px;
 
     color: coral;
     background-color: coral;
