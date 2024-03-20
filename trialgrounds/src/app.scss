@@ -59,3 +59,27 @@ body {
 .hideSubject {
   opacity: 0;
 }
+
+// scrollbars
+
+// firefox
+* {
+  scrollbar-width: thin;
+  scrollbar-color: coral #12415a;
+}
+
+// chrome, edge, and safari
+* ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+* ::-webkit-scrollbar-track {
+  background: #12415a;
+}
+
+* ::-webkit-scrollbar-thumb {
+  background-color: coral;
+  border-radius: 8px;
+  border: none;
+}
