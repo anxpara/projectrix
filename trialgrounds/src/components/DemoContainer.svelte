@@ -87,6 +87,7 @@
   .demo-container {
     position: relative;
     display: block;
+    margin-bottom: 1.5em;
 
     width: 700px;
     height: 400px;

@@ -2,7 +2,7 @@
   import { page } from '$app/stores';
   import type { DemoName } from '$lib/demos/demoNames';
   import { demosByName } from '$lib/demos/demos';
-  import DemoContainer from '../../../components/DemoContainer.svelte';
+  import DemoPage from '../../../components/DemoPage.svelte';
 
   $: demo = demosByName.get($page.params.demoName as DemoName)!;
 </script>
@@ -11,20 +11,4 @@
   <title>Projectrix Trialgrounds | {demo.name} demo</title>
 </svelte:head>
 
-<div class="centerer">
-  <DemoContainer {demo} href={`/demos/${demo.name}${$page.url.search}`} />
-</div>
-
-<style lang="scss">
-  .centerer {
-    position: absolute;
-    top: 0;
-    
-    width: 100vw;
-    height: 100svh;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-</style>
+<DemoPage {demo} href={`/demos/${demo.name}${$page.url.search}`} />
