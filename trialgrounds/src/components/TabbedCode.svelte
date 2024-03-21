@@ -193,7 +193,7 @@
     position: relative;
     font-size: 1.5em;
     height: calc(1.2em - 4px);
-    margin-right: 3em;
+    margin-right: 2.2em;
     border: solid 2px coral;
     padding: 0.4em 0.1em;
     z-index: 1;
@@ -210,10 +210,39 @@
       cursor: pointer;
     }
   }
+  .trigger-button:hover {
+    border-color: rgb(204, 100, 62);
+    border-left-color: transparent;
+    border-right-color: transparent;
+
+    .corner {
+      border-color: rgb(204, 100, 62);
+    }
+    .corner.left {
+      border-right-color: transparent;
+    }
+    .corner.right {
+      border-left-color: transparent;
+    }
+  }
   .trigger-button.selected {
     color: #161b22;
     transition: color 0.1s $coralBezier;
     cursor: default;
+  }
+  .trigger-button.selected:hover {
+    border-color: coral;
+    border-left-color: transparent;
+    border-right-color: transparent;
+    .corner {
+      border-color: coral;
+    }
+    .corner.left {
+      border-right-color: transparent;
+    }
+    .corner.right {
+      border-left-color: transparent;
+    }
   }
 
   .corner {
