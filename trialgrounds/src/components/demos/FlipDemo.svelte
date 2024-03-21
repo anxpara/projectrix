@@ -4,10 +4,10 @@
   import { animate, type AnimationControls } from 'motion';
   import type { Writable } from 'svelte/store';
   import type { Options } from '$lib/options';
+  import type DemoStartSlot from '../DemoStartSlot.svelte';
 
-  // starting slot is part of demos infrastructure, not specific to this demo
-  export let setTargetToStartingSlot: (target: HTMLElement) => void;
-  export let revertSlotStyleInPlace: (target: HTMLElement) => void;
+  // starting slot is part of demos infrastructure
+  export let startSlot: DemoStartSlot;
   export let options: Writable<Options>;
 
   let startingTarget: HTMLElement;
@@ -22,15 +22,11 @@
 
   onMount(async () => {
     await tick();
-
-    setTimeout(() => {
-      setTargetToStartingSlot(startingTarget);
-      startingTarget.style.opacity = '1';
-      currentTarget = startingTarget;
-    }, 50);
+    startSlot.show();
 
     currentTimeout = setTimeout(() => {
-      revertSlotStyleInPlace(startingTarget);
+      startSlot.hide();
+      currentTarget = startSlot.getSlotSubject();
       flipToRightTarget();
     }, 1000);
   });

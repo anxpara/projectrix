@@ -4,10 +4,10 @@
   import { getProjection } from 'projectrix';
   import { onMount, tick } from 'svelte';
   import type { Writable } from 'svelte/store';
+  import type DemoStartSlot from '../DemoStartSlot.svelte';
 
-  // starting slot is part of demos infrastructure, not specific to this demo
-  export let setTargetToStartingSlot: (target: HTMLElement) => void;
-  export let revertSlotStyleInPlace: (target: HTMLElement) => void;
+  // starting slot is part of demos infrastructure
+  export let startSlot: DemoStartSlot;
   export let options: Writable<Options>;
 
   let target: HTMLElement;
@@ -17,18 +17,25 @@
 
   onMount(async () => {
     await tick();
-
-    setTimeout(() => {
-      setTargetToStartingSlot(target);
-      target.style.opacity = '1';
-      inSlot = true;
-    }, 50);
+    startSlot.show();
+    inSlot = true;
   });
+
+  function swapSlotForTarget(target: HTMLElement): void {
+    const { toSubject } = getProjection(startSlot.getSlotSubject(), target);
+
+    target.style.transform = toSubject.transform;
+    target.style.width = toSubject.width;
+    target.style.height = toSubject.height;
+    target.style.opacity = '1';
+
+    startSlot.hide();
+    inSlot = false;
+  }
 
   function animateDirect(subject: HTMLElement, target: HTMLElement): void {
     if (inSlot) {
-      revertSlotStyleInPlace(target);
-      inSlot = false;
+      swapSlotForTarget(target);
     }
 
     // stop current animation; motion one will update target's inline styles to mid-animation values
@@ -84,6 +91,8 @@
 
   .demo-target {
     position: absolute; // any positioning works with Projectrix
+    top: 0;
+    right: 0;
 
     width: 35px;
     height: 35px;

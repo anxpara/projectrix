@@ -1,61 +1,16 @@
 <script lang="ts">
   import type { Demo } from '$lib/demos/demos';
   import type { Options } from '$lib/options';
-  import anime from 'animejs';
-  import { mat4 } from 'gl-matrix';
-  import { getProjection } from 'projectrix';
   import { getContext } from 'svelte';
   import type { Writable } from 'svelte/store';
+  import DemoStartSlot from './DemoStartSlot.svelte';
 
   export let demo: Demo;
   export let href: string;
 
   const options = getContext<Writable<Options>>('options');
 
-  let targetSlots: HTMLElement[] = [];
-
-  // maybe Projectrix should expose the transform utils
-  function convertMat4ToCssMatrix3dSubstring(mat: mat4): string {
-    let str = mat4.str(mat);
-    str = str.split('(')[1];
-    str = str.split(')')[0];
-    return str;
-  }
-
-  // get a pixel-perfect match to the slot using top and left,
-  // since offset positions and translations sometimes differ by suppixels
-  function setTargetToStartingSlot(target: HTMLElement): void {
-    const { toSubject } = getProjection(targetSlots[0], target, {
-      transformType: 'transformMat4',
-    });
-
-    const left = toSubject.transformMat4[12];
-    const top = toSubject.transformMat4[13];
-    toSubject.transformMat4[12] = 0;
-    toSubject.transformMat4[13] = 0;
-    toSubject.matrix3d = convertMat4ToCssMatrix3dSubstring(toSubject.transformMat4);
-    delete toSubject.transformMat4;
-
-    anime.set(target, {
-      ...toSubject,
-      top: `${top}px`,
-      left: `${left}px`,
-    });
-  }
-
-  // revert pixel-perfect top and left
-  function revertSlotStyleInPlace(target: HTMLElement): void {
-    target.style.left = '0px';
-    target.style.top = '0px';
-
-    const { toSubject } = getProjection(targetSlots[0], target, {
-      transformType: 'matrix3d',
-    });
-
-    anime.set(target, {
-      ...toSubject,
-    });
-  }
+  let startSlot: DemoStartSlot;
 </script>
 
 <div class="demo-container">
@@ -65,7 +20,8 @@
       <div class="corner-right-container">
         <div class="corner right" />
       </div>
-      <div bind:this={targetSlots[0]} class="corner right target-slot slot-1" />
+      <DemoStartSlot bind:this={startSlot}></DemoStartSlot>
+
       <h1>/demos/{demo.name}</h1>
     </div>
   </a>
@@ -74,13 +30,7 @@
     <p>{demo.summary}</p>
   </div>
 
-  <svelte:component
-    this={demo.demoType}
-    bind:this={demo.demoComponent}
-    {setTargetToStartingSlot}
-    {revertSlotStyleInPlace}
-    {options}
-  />
+  <svelte:component this={demo.demoType} bind:this={demo.demoComponent} {startSlot} {options} />
 </div>
 
 <style lang="scss">
@@ -172,16 +122,6 @@
 
     color: coral;
     background-color: coral;
-  }
-  .target-slot {
-    color: transparent;
-    background-color: transparent;
-    width: calc(2em - 6px);
-
-    cursor: default;
-  }
-  .slot-1 {
-    right: calc(-3.6em + 4px);
   }
 
   .summary {

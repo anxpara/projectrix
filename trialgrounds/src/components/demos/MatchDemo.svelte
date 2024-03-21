@@ -3,10 +3,10 @@
   import { getProjection } from 'projectrix';
   import { onMount, tick } from 'svelte';
   import type { Writable } from 'svelte/store';
+  import type DemoStartSlot from '../DemoStartSlot.svelte';
 
-  // starting slot is part of demos infrastructure, not specific to this demo
-  export let setTargetToStartingSlot: (target: HTMLElement) => void;
-  export let revertSlotStyleInPlace: (target: HTMLElement) => void;
+  // starting slot is part of demos infrastructure
+  export let startSlot: DemoStartSlot;
   export let options: Writable<Options>;
 
   let target: HTMLElement;
@@ -14,17 +14,14 @@
 
   onMount(async () => {
     await tick();
-
-    setTimeout(() => {
-      setTargetToStartingSlot(target);
-      target.style.opacity = '1';
-      inSlot = true;
-    }, 50);
+    startSlot.show();
+    inSlot = true;
   });
 
   function match(subject: HTMLElement, target: HTMLElement): void {
     if (inSlot) {
-      revertSlotStyleInPlace(target);
+      startSlot.hide();
+      target.style.opacity = '1';
       inSlot = false;
     }
 
