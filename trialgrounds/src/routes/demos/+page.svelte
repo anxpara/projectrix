@@ -17,7 +17,7 @@
 <style lang="scss">
   .all-demos-container {
     width: 100%;
-    padding-top: 2em;
+    padding-top: 1em;
     padding-bottom: 2em;
 
     display: flex;
