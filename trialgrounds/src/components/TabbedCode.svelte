@@ -1,11 +1,8 @@
 <script lang="ts">
   import type { Demo } from '$lib/demos/demos';
-  import { getContext, onMount, tick } from 'svelte';
-  import type { Writable } from 'svelte/store';
+  import { onMount, tick } from 'svelte';
   import { fade } from 'svelte/transition';
   import { createTabs, melt } from '@melt-ui/svelte';
-  import type { Highlighter } from 'shiki/bundle/web';
-  import { codeToHighlightedString } from '$lib/highlightCode';
   import { getProjection } from '../../../dist/es/projectrix';
   import anime from 'animejs';
 
@@ -20,12 +17,9 @@
 
   let figuresByTabId: Record<string, HTMLElement | undefined> = {};
   let figureBg: HTMLElement;
-  let bgInit = false;
-
-  const highlighter = getContext<Writable<Highlighter | undefined>>('highlighter');
   const highlightsByTabId: Record<string, string> = {
-    'tab-usage': '',
-    'tab-code': '',
+    'tab-usage': demo.usage,
+    'tab-code': demo.code,
   };
 
   const {
@@ -48,26 +42,13 @@
     }, 3);
   });
 
-  highlighter.subscribe(async (hl) => {
-    if (!hl) return;
-
-    highlightsByTabId['tab-usage'] = codeToHighlightedString(hl, demo.usage, 'typescript');
-
-    await tick(); // prep for bg
-    animateFigureBg($value, true);
-    bgInit = true;
-
-    await tick(); // separate additional expensive highlight computations
-    highlightsByTabId['tab-code'] = codeToHighlightedString(hl, demo.code, 'svelte');
-  });
-
   value.subscribe(async (value: string) => {
     await tick();
 
     if (hlInit) {
       animateTriggerHighlight(value);
     }
-    animateFigureBg(value, !bgInit);
+    animateFigureBg(value);
   });
 
   function animateTriggerHighlight(toTabId: string, skipAnimation = false): void {
@@ -278,6 +259,8 @@
     position: absolute;
     margin-bottom: 2em;
     border-left: solid 1px coral;
+    height: 0;
+    width: 100%;
     z-index: -1;
 
     background: hsla(16, 100%, 58%, 0.06);
