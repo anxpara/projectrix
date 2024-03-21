@@ -4,10 +4,10 @@ import MatchDemo from '../../components/demos/MatchDemo.svelte';
 import AnimateDemo from '../../components/demos/AnimateDemo.svelte';
 import FlipDemo from '../../components/demos/FlipDemo.svelte';
 import DivGolfDemo from '../../components/demos/DivGolfDemo.svelte';
-import { FlipCode, FlipUsage } from './usages/FlipUsage';
-import { AnimateCode, AnimateUsage } from './usages/AnimateUsage';
-import { MatchCode, MatchUsage } from './usages/MatchUsage';
-import { DivGolfCode, DivGolfUsage } from './usages/DivGolfUsage';
+import { FlipCode, FlipCodeHL, FlipUsage, FlipUsageHL } from './usages/FlipUsage';
+import { AnimateCode, AnimateCodeHL, AnimateUsage, AnimateUsageHL } from './usages/AnimateUsage';
+import { MatchCode, MatchCodeHL, MatchUsage, MatchUsageHL } from './usages/MatchUsage';
+import { DivGolfCode, DivGolfCodeHL, DivGolfUsage, DivGolfUsageHL } from './usages/DivGolfUsage';
 
 export type DemoComponent = SvelteComponent;
 
@@ -18,6 +18,8 @@ export type Demo = {
   demoComponent?: DemoComponent;
   usage: string;
   code: string;
+  usageHL: string;
+  codeHL: string;
 };
 
 export const allDemos: Demo[] = [
@@ -27,6 +29,8 @@ export const allDemos: Demo[] = [
     summary: "animate from subject to target's origin using first-last-invert-play technique",
     usage: FlipUsage,
     code: FlipCode,
+    usageHL: FlipUsageHL,
+    codeHL: FlipCodeHL,
   },
   {
     name: DemoName.Animate,
@@ -34,6 +38,8 @@ export const allDemos: Demo[] = [
     summary: "on click: animate the target directly to the subject's projection",
     usage: AnimateUsage,
     code: AnimateCode,
+    usageHL: AnimateUsageHL,
+    codeHL: AnimateCodeHL,
   },
   {
     name: DemoName.Match,
@@ -42,13 +48,18 @@ export const allDemos: Demo[] = [
       "on click: set target's inline styles to the projection of the subject onto the target",
     usage: MatchUsage,
     code: MatchCode,
+    usageHL: MatchUsageHL,
+    codeHL: MatchCodeHL,
   },
   {
     name: DemoName.DivGolf,
     demoType: DivGolfDemo,
     summary: 'click the modifier divs to match the green div to a red goal. click the goal ftw',
+
     usage: DivGolfUsage,
     code: DivGolfCode,
+    usageHL: DivGolfUsageHL,
+    codeHL: DivGolfCodeHL,
   },
 ];
 export const demosByName = new Map<DemoName, Demo>(allDemos.map((demo) => [demo.name, demo]));

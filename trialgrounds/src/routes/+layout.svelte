@@ -8,7 +8,7 @@
   import { browser } from '$app/environment';
   import MainMenu from '../components/menus/MainMenu.svelte';
   import type { Highlighter } from 'shiki/bundle/web';
-  import { getShikiHighlighter } from '$lib/highlightCode';
+  import { getShikiHighlighter, logUpToDateHighlightsToConsole } from '$lib/highlightCode';
 
   export let data;
 
@@ -50,6 +50,11 @@
       goto(nextUrl, { replaceState: true, keepFocus: true });
     }, 1);
   }
+
+  // highlighter.subscribe((hl) => {
+  //   if (!hl) return;
+  //   logUpToDateHighlightsToConsole(hl);
+  // });
 </script>
 
 {#if !$options.hideUI}

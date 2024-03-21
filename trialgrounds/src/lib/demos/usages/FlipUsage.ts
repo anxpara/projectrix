@@ -1,4 +1,216 @@
-export const FlipUsage = `<pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#C678DD">import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">getProjection</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'projectrix'</span><span style="color:#ABB2BF">;</span></span>
+export const FlipUsage = `import { getProjection } from 'projectrix';
+import { animate } from 'motion';
+
+const { toSubject, toTargetOrigin } = getProjection(subject, target);
+
+// set to subject
+animate(target, { ...toSubject }, { duration: 0 });
+
+// FLIP back to origin
+const flipAnimation = animate(
+  target,
+  {
+    ...toTargetOrigin,
+  },
+  {
+    duration: 1,
+    easing: 'ease-out',
+  },
+);
+
+// clear inline styles when FLIP is done, if you care to
+flipAnimation.finished.then(() => {
+  target.style.transform = '';
+  // etc...
+});`;
+
+export const FlipCode = `<script lang="ts">
+  import { onDestroy, onMount, tick } from 'svelte';
+  import { getProjection } from 'projectrix';
+  import { animate, type AnimationControls } from 'motion';
+  import type { Writable } from 'svelte/store';
+  import type { Options } from '$lib/options';
+  import type DemoStartSlot from '../DemoStartSlot.svelte';
+
+  // starting slot is part of demos infrastructure
+  export let startSlot: DemoStartSlot;
+  export let options: Writable<Options>;
+
+  let startingTarget: HTMLElement;
+  let leftChildTarget: HTMLElement;
+  let rightChildTarget: HTMLElement;
+  let leftParent: HTMLElement;
+  let rightParent: HTMLElement;
+
+  let currentTarget: HTMLElement | undefined;
+  let currentAnim: AnimationControls | undefined;
+  let currentTimeout: NodeJS.Timeout | undefined;
+
+  onMount(async () => {
+    await tick();
+    startSlot.show();
+
+    currentTimeout = setTimeout(() => {
+      startSlot.hide();
+      currentTarget = startSlot.getSlotSubject();
+      flipToRightTarget();
+    }, 1000);
+  });
+
+  onDestroy(() => {
+    currentTarget = undefined;
+
+    currentAnim?.stop();
+    currentAnim = undefined;
+
+    clearTimeout(currentTimeout);
+    currentTimeout = undefined;
+  });
+
+  function flipToLeftTarget(): void {
+    flipToTarget(leftParent, leftChildTarget, 1, flipToRightTarget);
+  }
+  function flipToRightTarget(): void {
+    flipToTarget(rightParent, rightChildTarget, -1, flipToLeftTarget);
+  }
+
+  function flipToTarget(
+    nextParent: HTMLElement,
+    nextTarget: HTMLElement,
+    dir: number,
+    nextFlip: () => void,
+  ): void {
+    if (!currentTarget) return;
+
+    const projectionResults = getProjection(currentTarget, nextTarget);
+    const { toSubject, toTargetOrigin } = projectionResults;
+    if ($options.log) {
+      console.log(projectionResults);
+    }
+
+    // set next target to current target's projection
+    animate(nextTarget, { ...toSubject, opacity: '1' }, { duration: 0 });
+    currentTarget.style.opacity = '0';
+    currentTarget = nextTarget;
+
+    // FLIP next target back to its origin
+    currentAnim = animate(
+      nextTarget,
+      {
+        ...toTargetOrigin,
+      },
+      {
+        duration: 1,
+        easing: 'ease-out',
+      },
+    );
+
+    // play parent animation
+    currentAnim.finished.then(() => {
+      currentAnim = animate(
+        nextParent,
+        {
+          transform: [
+            \`skew(\${15 * dir}deg)\`,
+            \`skew(\${15 * dir}deg) rotate(\${-20 * dir}deg)\`,
+            \`skew(\${15 * dir}deg) rotate(\${20 * dir}deg)\`,
+            \`skew(\${15 * dir}deg)\`,
+          ],
+        },
+        {
+          duration: 1,
+          easing: 'ease-in-out',
+        },
+      );
+
+      // schedule next flip
+      currentAnim.finished.then(() => {
+        currentTimeout = setTimeout(() => {
+          nextFlip();
+        }, 1000);
+      });
+    });
+  }
+</script>
+
+<div bind:this={leftParent} class="parent left">
+  <div bind:this={leftChildTarget} class="demo-target child-target" />
+</div>
+
+<div bind:this={rightParent} class="parent right">
+  <div bind:this={rightChildTarget} class="demo-target child-target" />
+</div>
+
+<div bind:this={startingTarget} class="demo-target" />
+
+<style lang="scss">
+  button {
+    all: unset;
+  }
+
+  .demo-subject:focus-visible,
+  .parent:focus-visible {
+    outline: solid 2px white;
+    outline-offset: 4px;
+  }
+
+  .demo-target {
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    border: solid 3px limegreen;
+
+    opacity: 0;
+  }
+  .child-target {
+    position: default;
+  }
+
+  .demo-subject {
+    position: absolute;
+    top: 150px;
+    left: 100px;
+
+    width: 100px;
+    height: 100px;
+    border: dashed 3px yellow;
+  }
+
+  .rotated {
+    left: 270px;
+    transform: rotate(45deg);
+  }
+
+  .parent {
+    position: absolute;
+    top: 125px;
+
+    width: 150px;
+    height: 150px;
+    border: dashed 3px darkmagenta;
+
+    .child {
+      width: 75px;
+      height: 75px;
+
+      top: 0px;
+      left: 0px;
+    }
+  }
+
+  .left {
+    left: 100px;
+    transform: skew(15deg);
+  }
+
+  .right {
+    left: 440px;
+    transform: skew(-15deg);
+  }
+</style>
+`;
+
+export const FlipUsageHL = `<pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#C678DD">import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">getProjection</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'projectrix'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">animate</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'motion'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#C678DD">const</span><span style="color:#ABB2BF"> { </span><span style="color:#E5C07B">toSubject</span><span style="color:#ABB2BF">, </span><span style="color:#E5C07B">toTargetOrigin</span><span style="color:#ABB2BF"> } </span><span style="color:#56B6C2">=</span><span style="color:#61AFEF"> getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">subject</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">target</span><span style="color:#ABB2BF">);</span></span>
@@ -24,16 +236,16 @@ export const FlipUsage = `<pre class="shiki one-dark-pro" style="background-colo
 <span class="line"><span style="color:#7F848E;font-style:italic">  // etc...</span></span>
 <span class="line"><span style="color:#ABB2BF">});</span></span></code></pre>`;
 
-export const FlipCode = `<pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">script</span><span style="color:#D19A66"> lang</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"ts"</span><span style="color:#ABB2BF">></span></span>
+export const FlipCodeHL = `<pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">script</span><span style="color:#D19A66"> lang</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"ts"</span><span style="color:#ABB2BF">></span></span>
 <span class="line"><span style="color:#C678DD">  import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">onDestroy</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">onMount</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">tick</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'svelte'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">getProjection</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'projectrix'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">animate</span><span style="color:#ABB2BF">, </span><span style="color:#C678DD">type</span><span style="color:#E06C75"> AnimationControls</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'motion'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  import</span><span style="color:#C678DD"> type</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">Writable</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'svelte/store'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  import</span><span style="color:#C678DD"> type</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">Options</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> '$lib/options'</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#C678DD">  import</span><span style="color:#C678DD"> type</span><span style="color:#E06C75"> DemoStartSlot</span><span style="color:#C678DD"> from</span><span style="color:#98C379"> '../DemoStartSlot.svelte'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#7F848E;font-style:italic">  // starting slot is part of demos infrastructure, not specific to this demo</span></span>
-<span class="line"><span style="color:#C678DD">  export</span><span style="color:#C678DD"> let</span><span style="color:#61AFEF"> setTargetToStartingSlot</span><span style="color:#ABB2BF">: (</span><span style="color:#E06C75;font-style:italic">target</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#E5C07B"> void</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#C678DD">  export</span><span style="color:#C678DD"> let</span><span style="color:#61AFEF"> revertSlotStyleInPlace</span><span style="color:#ABB2BF">: (</span><span style="color:#E06C75;font-style:italic">target</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#E5C07B"> void</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">  // starting slot is part of demos infrastructure</span></span>
+<span class="line"><span style="color:#C678DD">  export</span><span style="color:#C678DD"> let</span><span style="color:#E06C75"> startSlot</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">DemoStartSlot</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  export</span><span style="color:#C678DD"> let</span><span style="color:#E06C75"> options</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">Writable</span><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E5C07B">Options</span><span style="color:#ABB2BF">>;</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> startingTarget</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">;</span></span>
@@ -48,15 +260,11 @@ export const FlipCode = `<pre class="shiki one-dark-pro" style="background-color
 <span class="line"></span>
 <span class="line"><span style="color:#61AFEF">  onMount</span><span style="color:#ABB2BF">(</span><span style="color:#C678DD">async</span><span style="color:#ABB2BF"> () </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
 <span class="line"><span style="color:#C678DD">    await</span><span style="color:#61AFEF"> tick</span><span style="color:#ABB2BF">();</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#61AFEF">    setTimeout</span><span style="color:#ABB2BF">(() </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#61AFEF">      setTargetToStartingSlot</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">startingTarget</span><span style="color:#ABB2BF">);</span></span>
-<span class="line"><span style="color:#E5C07B">      startingTarget</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">opacity</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> '1'</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#E06C75">      currentTarget</span><span style="color:#56B6C2"> =</span><span style="color:#E06C75"> startingTarget</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#ABB2BF">    }, </span><span style="color:#D19A66">50</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#E5C07B">    startSlot</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">show</span><span style="color:#ABB2BF">();</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#E06C75">    currentTimeout</span><span style="color:#56B6C2"> =</span><span style="color:#61AFEF"> setTimeout</span><span style="color:#ABB2BF">(() </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#61AFEF">      revertSlotStyleInPlace</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">startingTarget</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#E5C07B">      startSlot</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">hide</span><span style="color:#ABB2BF">();</span></span>
+<span class="line"><span style="color:#E06C75">      currentTarget</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> startSlot</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">getSlotSubject</span><span style="color:#ABB2BF">();</span></span>
 <span class="line"><span style="color:#61AFEF">      flipToRightTarget</span><span style="color:#ABB2BF">();</span></span>
 <span class="line"><span style="color:#ABB2BF">    }, </span><span style="color:#D19A66">1000</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#ABB2BF">  });</span></span>
@@ -212,5 +420,4 @@ export const FlipCode = `<pre class="shiki one-dark-pro" style="background-color
 <span class="line"><span style="color:#ABB2BF">    transform: </span><span style="color:#56B6C2">skew</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">-15</span><span style="color:#E06C75">deg</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"><span style="color:#ABB2BF">&#x3C;/</span><span style="color:#E06C75">style</span><span style="color:#ABB2BF">></span></span>
-<span class="line"></span></code></pre>
-`;
+<span class="line"></span></code></pre>`;

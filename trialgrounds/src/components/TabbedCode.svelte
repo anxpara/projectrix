@@ -18,8 +18,8 @@
   let figuresByTabId: Record<string, HTMLElement | undefined> = {};
   let figureBg: HTMLElement;
   const highlightsByTabId: Record<string, string> = {
-    'tab-usage': demo.usage,
-    'tab-code': demo.code,
+    'tab-usage': demo.usageHL,
+    'tab-code': demo.codeHL,
   };
 
   const {
