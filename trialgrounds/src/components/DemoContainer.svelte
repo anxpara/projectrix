@@ -43,6 +43,8 @@
     height: 400px;
 
     border: solid 1px coral;
+
+    will-change: transform;
   }
 
   .title-link {
