@@ -1,4 +1,7 @@
-export const DivGolfUsage = `let currentTarget: HTMLElement;
+export const DivGolfUsage = `import { getProjection } from 'projectrix';
+import anime from 'animejs';
+
+let currentTarget: HTMLElement;
 
 // each modifier contains a unique green target. match the next target to
 // the current target and update their opacities to create the illusion of
@@ -504,7 +507,10 @@ export const DivGolfCode = `<script lang="ts">
 </style>
 `;
 
-export const DivGolfUsageHL = `<pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#C678DD">let</span><span style="color:#E06C75"> currentTarget</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">;</span></span>
+export const DivGolfUsageHL = `<pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#C678DD">import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">getProjection</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'projectrix'</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#C678DD">import</span><span style="color:#E06C75"> anime</span><span style="color:#C678DD"> from</span><span style="color:#98C379"> 'animejs'</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#C678DD">let</span><span style="color:#E06C75"> currentTarget</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#7F848E;font-style:italic">// each modifier contains a unique green target. match the next target to</span></span>
 <span class="line"><span style="color:#7F848E;font-style:italic">// the current target and update their opacities to create the illusion of</span></span>
