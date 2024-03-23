@@ -30,6 +30,9 @@ import TargetInRotatedBigger from '../components/trials/TargetInRotatedBigger.sv
 import UseMatrix3dType from '../components/trials/UseMatrix3dType.svelte';
 import UseMat4Type from '../components/trials/UseMat4Type.svelte';
 import type { AnimationControls } from 'motion';
+import TargetAbsoluteInTransform from '../components/trials/TargetAbsoluteInTransform.svelte';
+import TargetFixedInTransform from '../components/trials/TargetFixedInTransform.svelte';
+import TargetFixedInFilter from '../components/trials/TargetFixedInFilter.svelte';
 
 export interface TrialControls {
   getSubjectElement: () => HTMLElement | undefined;
@@ -60,8 +63,11 @@ export const allTrials: Trial[] = [
   { name: TrialName.Target2ndChild, trialType: Target2ndChild },
   { name: TrialName.TargetRelative, trialType: TargetRelative },
   { name: TrialName.TargetAbsolute, trialType: TargetAbsolute },
+  { name: TrialName.TargetAbsoluteInTransform, trialType: TargetAbsoluteInTransform },
   { name: TrialName.TargetDeepAbsolute, trialType: TargetDeepAbsolute },
   { name: TrialName.TargetFixed, trialType: TargetFixed },
+  { name: TrialName.TargetFixedInTransform, trialType: TargetFixedInTransform },
+  { name: TrialName.TargetFixedInFilter, trialType: TargetFixedInFilter },
   { name: TrialName.TargetRotated, trialType: TargetRotated },
   { name: TrialName.TargetRotatedBigger, trialType: TargetRotatedBigger },
   { name: TrialName.TargetInRotated, trialType: TargetInRotated },
