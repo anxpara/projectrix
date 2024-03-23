@@ -155,13 +155,12 @@ export type Projection = {
 - Projectrix will not attempt to match or emulate bugs in rendering engines
 - preserve3d property is probably not yet supported
 - perspective properties are not yet supported
-- fixed elements within a **non-viewport** containing block are not yet supported (i.e. a fixed element's ancestor has a transform, perspective, or filter)
 
 # Contribute
 
 All contributions are greatly appreciated!
 
-- Feedback & feature requests can be posted to the [Projectrix Discord](https://discord.gg/YxVAUFqW4e)
+- Feedback, feature requests, and help requests can be posted to the [Projectrix Discord](https://discord.gg/YxVAUFqW4e)
 - If you find a bug, please [file an issue](https://github.com/anxpara/projectrix/issues)
 - [Join my Patreon](https://www.patreon.com/anxpara)
 
