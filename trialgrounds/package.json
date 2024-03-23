@@ -39,6 +39,7 @@
   "type": "module",
   "dependencies": {
     "@types/animejs": "^3.1.8",
+    "actual-client-rect": "^0.2.1",
     "animejs": "^3.2.1",
     "motion": "^10.17.0",
     "shiki": "^1.2.0"
