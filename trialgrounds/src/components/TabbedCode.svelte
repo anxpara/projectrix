@@ -153,16 +153,18 @@
 
   .tab-list {
     font-size: min(1em, 2.9vw);
-
     padding-left: 2.35em;
+
+    display: flex;
   }
 
   .tab {
     all: unset;
 
-    position: relative;
     font-size: 1.5em;
-    height: calc(1.2em - 4px);
+    display: block;
+    
+    position: relative;
     margin-right: 2.2em;
     border: solid 2px coral;
     padding: 0.4em 0.1em;
