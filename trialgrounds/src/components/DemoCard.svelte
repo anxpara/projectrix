@@ -71,6 +71,8 @@
     text-underline-offset: 0.3em;
     text-decoration-thickness: calc(3 / $pxem * 1em);
 
+    -webkit-tap-highlight-color: transparent;
+
     .title {
       position: relative;
 
