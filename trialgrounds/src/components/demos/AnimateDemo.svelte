@@ -65,19 +65,22 @@
   }
 </script>
 
-<button class="demo-subject" on:click={(e) => subjectClickHandler(e.currentTarget)} />
-<button class="demo-subject rotated" on:click={(e) => subjectClickHandler(e.currentTarget)} />
-<button class="parent" on:click={(e) => subjectClickHandler(e.currentTarget)}>
-  <button
-    class="demo-subject child"
-    on:click|stopPropagation={(e) => subjectClickHandler(e.currentTarget)}
-  />
-</button>
+<div class="size-container">
+  <div class="subject-container">
+    <button class="demo-subject" on:click={(e) => subjectClickHandler(e.currentTarget)} />
+    <button class="demo-subject rotated" on:click={(e) => subjectClickHandler(e.currentTarget)} />
+    <button class="demo-subject parent" on:click={(e) => subjectClickHandler(e.currentTarget)}>
+      <button
+        class="demo-subject child"
+        on:click|stopPropagation={(e) => subjectClickHandler(e.currentTarget)}
+      />
+    </button>
+  </div>
+</div>
 
 <div bind:this={target} class="demo-target" />
 
 <style lang="scss">
-  // not bothering to make responsive for now, not a priority
   button {
     all: unset;
     -webkit-tap-highlight-color: transparent;
@@ -90,54 +93,63 @@
   }
 
   .demo-target {
-    position: absolute; // any positioning works with Projectrix
-    top: 0;
-    right: 0;
+    // any positioning works with Projectrix
+    position: absolute;
 
-    width: 35px;
-    height: 35px;
+    // last i checked, safari webkit can't handle non-integer borders on transformed elements,
+    // so i always recommend pixels for borders
     border: solid 3px limegreen;
 
-    pointer-events: none;
-
     opacity: 0;
+    pointer-events: none;
+  }
+
+  .size-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 1;
+    margin-top: 1.5em;
+
+    container-type: size;
+  }
+
+  .subject-container {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    gap: 10cqw;
   }
 
   .demo-subject {
-    position: absolute;
-    top: 150px;
-    left: 100px;
-
-    width: 100px;
-    height: 100px;
+    width: 14.25cqw;
+    height: 14.25cqw;
     border: dashed 3px yellow;
 
     cursor: pointer;
   }
 
   .rotated {
-    left: 270px;
     transform: rotate(45deg);
   }
 
   .parent {
-    position: absolute;
-    top: 125px;
-    left: 440px;
-
-    width: 150px;
-    height: 150px;
-    border: dashed 3px darkmagenta;
-
-    cursor: pointer;
+    width: 21cqw;
+    height: 21cqw;
+    border-color: darkmagenta;
 
     transform: skew(-15deg);
 
     .child {
-      width: 75px;
-      height: 75px;
+      position: absolute;
       top: 0px;
       left: 0px;
+
+      width: 10.75cqw;
+      height: 10.75cqw;
     }
   }
 </style>

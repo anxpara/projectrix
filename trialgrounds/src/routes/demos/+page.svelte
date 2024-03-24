@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from '$app/stores';
   import { allDemos } from '$lib/demos/demos';
-  import DemoContainer from '../../components/DemoContainer.svelte';
+  import DemoCard from '../../components/DemoCard.svelte';
 </script>
 
 <svelte:head>
@@ -10,21 +10,20 @@
 
 <div class="all-demos-container">
   {#each allDemos as demo}
-    <DemoContainer {demo} href={`/demos/${demo.name}${$page.url.search}`} />
+    <DemoCard {demo} href={`/demos/${demo.name}${$page.url.search}`} />
   {/each}
 </div>
 
 <style lang="scss">
   .all-demos-container {
-    width: 100%;
+    width: calc(100% - 2em);
     padding-top: 1em;
-    padding-bottom: 2em;
+    padding-inline: 1em;
 
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 1em;
 
     overflow: hidden;
   }

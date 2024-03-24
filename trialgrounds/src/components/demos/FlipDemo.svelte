@@ -10,11 +10,10 @@
   export let startSlot: DemoStartSlot;
   export let options: Writable<Options>;
 
-  let startingTarget: HTMLElement;
-  let leftChildTarget: HTMLElement;
-  let rightChildTarget: HTMLElement;
   let leftParent: HTMLElement;
   let rightParent: HTMLElement;
+  let leftChildTarget: HTMLElement;
+  let rightChildTarget: HTMLElement;
 
   let currentTarget: HTMLElement | undefined;
   let currentAnim: AnimationControls | undefined;
@@ -42,15 +41,16 @@
   });
 
   function flipToLeftTarget(): void {
-    flipToTarget(leftParent, leftChildTarget, 1, flipToRightTarget);
+    flipToTarget(leftChildTarget, leftParent, 1, flipToRightTarget);
   }
+
   function flipToRightTarget(): void {
-    flipToTarget(rightParent, rightChildTarget, -1, flipToLeftTarget);
+    flipToTarget(rightChildTarget, rightParent, -1, flipToLeftTarget);
   }
 
   function flipToTarget(
-    nextParent: HTMLElement,
     nextTarget: HTMLElement,
+    nextParent: HTMLElement,
     dir: number,
     nextFlip: () => void,
   ): void {
@@ -79,107 +79,107 @@
       },
     );
 
-    // play parent animation
     currentAnim.finished.then(() => {
-      currentAnim = animate(
-        nextParent,
-        {
-          transform: [
-            `skew(${15 * dir}deg)`,
-            `skew(${15 * dir}deg) rotate(${-20 * dir}deg)`,
-            `skew(${15 * dir}deg) rotate(${20 * dir}deg)`,
-            `skew(${15 * dir}deg)`,
-          ],
-        },
-        {
-          duration: 1,
-          easing: 'ease-in-out',
-        },
-      );
+      clearInlineStyles(nextTarget);
 
-      // schedule next flip
-      currentAnim.finished.then(() => {
+      playParentAnimation(nextParent, dir).finished.then(() => {
         currentTimeout = setTimeout(() => {
           nextFlip();
         }, 1000);
       });
     });
   }
+
+  function clearInlineStyles(target: HTMLElement): void {
+    target.style.width = '';
+    target.style.height = '';
+    target.style.transform = '';
+    target.style.borderWidth = '';
+    target.style.borderStyle = '';
+    target.style.borderRadius = '';
+    target.style.transformOrigin = '';
+  }
+
+  function playParentAnimation(parent: HTMLElement, dir: number): AnimationControls {
+    currentAnim = animate(
+      parent,
+      {
+        transform: [
+          `skew(${15 * dir}deg)`,
+          `skew(${15 * dir}deg) rotate(${-20 * dir}deg)`,
+          `skew(${15 * dir}deg) rotate(${20 * dir}deg)`,
+          `skew(${15 * dir}deg)`,
+        ],
+      },
+      {
+        duration: 1,
+        easing: 'ease-in-out',
+      },
+    );
+
+    return currentAnim;
+  }
 </script>
 
-<div bind:this={leftParent} class="parent left">
-  <div bind:this={leftChildTarget} class="demo-target child-target" />
-</div>
+<div class="size-container">
+  <div class="parents-container">
+    <div bind:this={leftParent} class="parent left">
+      <div bind:this={leftChildTarget} class="demo-target child" />
+    </div>
 
-<div bind:this={rightParent} class="parent right">
-  <div bind:this={rightChildTarget} class="demo-target child-target" />
+    <div bind:this={rightParent} class="parent right">
+      <div bind:this={rightChildTarget} class="demo-target child" />
+    </div>
+  </div>
 </div>
-
-<div bind:this={startingTarget} class="demo-target" />
 
 <style lang="scss">
-  // not bothering to make responsive for now, not a priority
-  button {
-    all: unset;
+  .size-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 1;
+    margin-top: 1.5em;
+
+    container-type: size;
   }
 
-  .demo-subject:focus-visible,
-  .parent:focus-visible {
-    outline: solid 2px white;
-    outline-offset: 4px;
-  }
+  .parents-container {
+    width: 100%;
+    height: 100%;
 
-  .demo-target {
-    position: absolute;
-    width: 70px;
-    height: 70px;
-    border: solid 3px limegreen;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-    opacity: 0;
-  }
-  .child-target {
-    position: default;
-  }
-
-  .demo-subject {
-    position: absolute;
-    top: 150px;
-    left: 100px;
-
-    width: 100px;
-    height: 100px;
-    border: dashed 3px yellow;
-  }
-
-  .rotated {
-    left: 270px;
-    transform: rotate(45deg);
+    gap: 25cqw;
   }
 
   .parent {
-    position: absolute;
-    top: 125px;
-
-    width: 150px;
-    height: 150px;
+    width: 21cqw;
+    height: 21cqw;
     border: dashed 3px darkmagenta;
 
-    .child {
-      width: 75px;
-      height: 75px;
+    will-change: transform;
 
+    .demo-target {
+      position: absolute;
       top: 0px;
       left: 0px;
+
+      width: 10.75cqw;
+      height: 10.75cqw;
+
+      // last i checked, safari webkit can't handle non-integer borders on transformed elements,
+      // so i always recommend pixels for borders
+      border: solid 3px limegreen;
+
+      opacity: 0;
     }
   }
-
   .left {
-    left: 100px;
     transform: skew(15deg);
   }
-
   .right {
-    left: 440px;
     transform: skew(-15deg);
   }
 </style>

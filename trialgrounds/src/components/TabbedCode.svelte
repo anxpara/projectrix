@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Demo } from '$lib/demos/demos';
-  import { onMount, tick } from 'svelte';
+  import { tick } from 'svelte';
   import { fade } from 'svelte/transition';
   import { createTabs, melt } from '@melt-ui/svelte';
   import { getProjection } from '../../../dist/es/projectrix';
@@ -11,9 +11,9 @@
   const codeTitle = `${demo.name}Demo.svelte`;
   const codeFigureTitle = `${demo.name} demo svelte component file`;
 
-  let triggersByTabId: Record<string, HTMLElement> = {};
-  let triggerHighlight: HTMLElement;
-  let hlInit = false;
+  let tabsByTabId: Record<string, HTMLElement> = {};
+  let tabBgsByTabId: Record<string, HTMLElement> = {};
+  let currentTabBg: HTMLElement | undefined = undefined;
 
   let figuresByTabId: Record<string, HTMLElement | undefined> = {};
   let figureBg: HTMLElement;
@@ -29,49 +29,39 @@
     defaultValue: 'tab-usage',
   });
 
-  const triggers = [
+  const tabs = [
     { id: 'tab-usage', title: 'Usage' },
     { id: 'tab-code', title: codeTitle },
   ];
 
-  onMount(async () => {
-    await tick();
-    setTimeout(() => {
-      animateTriggerHighlight('tab-usage', true);
-      hlInit = true;
-    }, 3);
-  });
-
   value.subscribe(async (value: string) => {
     await tick();
 
-    if (hlInit) {
-      animateTriggerHighlight(value);
-    }
+    flipTabBg(value);
     animateFigureBg(value);
+    currentTabBg = tabBgsByTabId[value];
   });
 
-  function animateTriggerHighlight(toTabId: string, skipAnimation = false): void {
-    const trigger = triggersByTabId[toTabId];
-    if (!trigger) return;
+  function flipTabBg(toTabId: string, skipAnimation = false): void {
+    const tabBg = tabBgsByTabId[toTabId];
+    if (!tabBg || !currentTabBg || skipAnimation) return;
 
-    const { toSubject } = getProjection(trigger, triggerHighlight, {
+    const { toSubject, toTargetOrigin } = getProjection(currentTabBg, tabBg, {
       transformType: 'matrix3d',
     });
     toSubject.borderWidth = ''; // avoid anime border shorthand bug
+    toTargetOrigin.borderWidth = '';
 
-    if (skipAnimation) {
-      anime.set(triggerHighlight, { ...toSubject, opacity: 1 });
-    } else {
-      anime({
-        targets: triggerHighlight,
-        duration: 200,
-        easing: 'easeOutQuad',
+    anime.set(tabBg, { ...toSubject });
+    anime({
+      targets: tabBg,
+      duration: 200,
+      easing: 'easeOutQuad',
 
-        ...toSubject,
-        opacity: 1,
-      });
-    }
+      ...toTargetOrigin,
+
+      complete: () => clearInlineStyles(tabBg),
+    });
   }
 
   function animateFigureBg(toTabId: string, skipAnimation = false): void {
@@ -84,7 +74,7 @@
     });
 
     if (skipAnimation) {
-      anime.set(figureBg, { ...toSubject });
+      anime.set(figureBg, { ...toSubject, width: '' });
     } else {
       anime({
         targets: figureBg,
@@ -92,27 +82,38 @@
         easing: 'easeInOutQuad',
 
         ...toSubject,
+        width: '',
       });
     }
+  }
+
+  function clearInlineStyles(target: HTMLElement): void {
+    target.style.width = '';
+    target.style.height = '';
+    target.style.borderWidth = '';
+    target.style.borderStyle = '';
+    target.style.borderRadius = '';
+    target.style.transformOrigin = '';
+    target.style.transform = '';
   }
 </script>
 
 <div use:melt={$root} class="tabbed-code-root">
-  <div use:melt={$list} class="trigger-list" aria-label="view usage or full code">
-    <div bind:this={triggerHighlight} class="trigger-highlight">
-      <div class="corner left" />
-      <div class="corner right" />
-    </div>
-    {#each triggers as triggerItem}
+  <div use:melt={$list} class="tab-list" aria-label="view usage or full code">
+    {#each tabs as tab}
       <button
-        bind:this={triggersByTabId[triggerItem.id]}
-        use:melt={$trigger(triggerItem.id)}
-        class="trigger-button"
-        class:selected={$value === triggerItem.id}
+        bind:this={tabsByTabId[tab.id]}
+        use:melt={$trigger(tab.id)}
+        class="tab"
+        class:selected={$value === tab.id}
       >
-        {triggerItem.title}
-        <div class="corner left" class:selected={$value === triggerItem.id} />
-        <div class="corner right" class:selected={$value === triggerItem.id} />
+        <div bind:this={tabBgsByTabId[tab.id]} class="tab-bg">
+          <div class="corner left" />
+          <div class="corner right" />
+        </div>
+        {tab.title}
+        <div class="corner left" class:selected={$value === tab.id} />
+        <div class="corner right" class:selected={$value === tab.id} />
       </button>
     {/each}
   </div>
@@ -147,28 +148,16 @@
 
   .tabbed-code-root {
     position: relative;
-    width: 700px;
+    width: min(700px, 100%);
   }
 
-  .trigger-list {
-    padding-left: 2.4em;
+  .tab-list {
+    font-size: min(1em, 2.9vw);
+
+    padding-left: 2.35em;
   }
 
-  .trigger-highlight {
-    position: absolute;
-    font-size: 1.5em;
-    border: solid 2px coral;
-    z-index: -1;
-
-    background: coral;
-    opacity: 0;
-
-    .corner {
-      background: coral;
-    }
-  }
-
-  .trigger-button {
+  .tab {
     all: unset;
 
     position: relative;
@@ -184,14 +173,43 @@
     font-weight: 800;
     font-style: italic;
     letter-spacing: 0.03em;
+
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+
     transition: color 0.1s $coralBezier;
 
     .corner {
       cursor: pointer;
     }
+
+    .tab-bg {
+      font-size: 1.5em;
+
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: -1;
+
+      width: calc(100% - 4px);
+      height: calc(100% - 4px);
+      border: solid 2px coral;
+
+      background: coral;
+      opacity: 0;
+
+      .corner {
+        background: inherit;
+      }
+      .corner.left {
+        left: -0.7em;
+      }
+      .corner.right {
+        right: -0.7em;
+      }
+    }
   }
-  .trigger-button:hover {
+  .tab:hover {
     border-color: rgb(204, 100, 62);
     border-left-color: transparent;
     border-right-color: transparent;
@@ -206,15 +224,20 @@
       border-left-color: transparent;
     }
   }
-  .trigger-button.selected {
+  .tab.selected {
     color: #161b22;
     transition: color 0.1s $coralBezier;
     cursor: default;
+
+    .tab-bg {
+      opacity: 1;
+    }
   }
-  .trigger-button.selected:hover {
+  .tab.selected:hover {
     border-color: coral;
     border-left-color: transparent;
     border-right-color: transparent;
+
     .corner {
       border-color: coral;
     }
@@ -280,17 +303,6 @@
   :global(pre.shiki) {
     margin: 0;
     background-color: transparent !important;
-  }
-
-  .target-slot {
-    width: calc(2em - 6px);
-
-    color: transparent;
-    background-color: transparent;
-    cursor: default;
-  }
-  .slot-1 {
-    right: calc(-3.6em + 4px);
   }
 
   .summary {

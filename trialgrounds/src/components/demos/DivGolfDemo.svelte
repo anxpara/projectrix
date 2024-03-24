@@ -250,106 +250,112 @@
   }
 </script>
 
-<button
-  bind:this={goals[0]}
-  class="modifier goal goal-0"
-  on:mousedown={(e) => {
-    checkWin(e.currentTarget);
-  }}
-  on:keydown={(e) => {
-    if (isEnterKey(e.key)) checkWin(e.currentTarget);
-  }}
->
-  <div class="golf-target child-target" />
-</button>
+<div class="centerer prevent-select disable-touch-zoom">
+  <div class="course-sizer portrait-size-toggle">
+    <div class="course portrait-rotate-toggle">
+      <button
+        bind:this={goals[0]}
+        class="modifier goal goal-0"
+        on:mousedown={(e) => {
+          checkWin(e.currentTarget);
+        }}
+        on:keydown={(e) => {
+          if (isEnterKey(e.key)) checkWin(e.currentTarget);
+        }}
+      >
+        <div class="golf-target child-target" />
+      </button>
 
-<button
-  bind:this={goals[1]}
-  class="modifier goal goal-1"
-  on:mousedown={(e) => {
-    checkWin(e.currentTarget);
-  }}
-  on:keydown={(e) => {
-    if (isEnterKey(e.key)) checkWin(e.currentTarget);
-  }}
->
-  <div class="golf-target child-target" />
-</button>
+      <button
+        bind:this={goals[1]}
+        class="modifier goal goal-1"
+        on:mousedown={(e) => {
+          checkWin(e.currentTarget);
+        }}
+        on:keydown={(e) => {
+          if (isEnterKey(e.key)) checkWin(e.currentTarget);
+        }}
+      >
+        <div class="golf-target child-target" />
+      </button>
 
-<button
-  bind:this={goals[2]}
-  class="modifier goal goal-2"
-  on:mousedown={(e) => {
-    checkWin(e.currentTarget);
-  }}
-  on:keydown={(e) => {
-    if (isEnterKey(e.key)) checkWin(e.currentTarget);
-  }}
->
-  <div class="golf-target child-target" />
-</button>
+      <button
+        bind:this={goals[2]}
+        class="modifier goal goal-2"
+        on:mousedown={(e) => {
+          checkWin(e.currentTarget);
+        }}
+        on:keydown={(e) => {
+          if (isEnterKey(e.key)) checkWin(e.currentTarget);
+        }}
+      >
+        <div class="golf-target child-target" />
+      </button>
 
-<button
-  bind:this={goals[3]}
-  class="modifier goal goal-3"
-  on:mousedown={(e) => {
-    checkWin(e.currentTarget);
-  }}
-  on:keydown={(e) => {
-    if (isEnterKey(e.key)) checkWin(e.currentTarget);
-  }}
->
-  <div class="golf-target child-target" />
-</button>
+      <button
+        bind:this={goals[3]}
+        class="modifier goal goal-3"
+        on:mousedown={(e) => {
+          checkWin(e.currentTarget);
+        }}
+        on:keydown={(e) => {
+          if (isEnterKey(e.key)) checkWin(e.currentTarget);
+        }}
+      >
+        <div class="golf-target child-target" />
+      </button>
 
-<button
-  bind:this={goals[4]}
-  class="modifier goal goal-4"
-  on:mousedown={(e) => {
-    checkWin(e.currentTarget);
-  }}
-  on:keydown={(e) => {
-    if (isEnterKey(e.key)) checkWin(e.currentTarget);
-  }}
->
-  <div class="golf-target child-target" />
-</button>
+      <button
+        bind:this={goals[4]}
+        class="modifier goal goal-4"
+        on:mousedown={(e) => {
+          checkWin(e.currentTarget);
+        }}
+        on:keydown={(e) => {
+          if (isEnterKey(e.key)) checkWin(e.currentTarget);
+        }}
+      >
+        <div class="golf-target child-target" />
+      </button>
 
-<div bind:this={startingTarget} class="golf-target starting-target" />
-<div bind:this={winnerTarget} class="golf-target winner-target" />
+      <div bind:this={startingTarget} class="golf-target starting-target" />
+      <div bind:this={winnerTarget} class="golf-target winner-target" />
 
-<button
-  bind:this={spinnerModifier}
-  class="modifier spinner"
-  on:mousedown={(e) => moveCurrentTargetToModifier(e.currentTarget)}
-  on:keydown={(e) => {
-    if (isEnterKey(e.key)) moveCurrentTargetToModifier(e.currentTarget);
-  }}
->
-  <div class="golf-target child-target" />
-</button>
+      <button
+        bind:this={spinnerModifier}
+        class="modifier spinner"
+        on:mousedown={(e) => moveCurrentTargetToModifier(e.currentTarget)}
+        on:keydown={(e) => {
+          if (isEnterKey(e.key)) moveCurrentTargetToModifier(e.currentTarget);
+        }}
+      >
+        <div class="golf-target child-target" />
+      </button>
 
-<button
-  bind:this={slider1Modifier}
-  class="modifier slider1"
-  on:mousedown={(e) => moveCurrentTargetToModifier(e.currentTarget)}
-  on:keydown={(e) => {
-    if (isEnterKey(e.key)) moveCurrentTargetToModifier(e.currentTarget);
-  }}
->
-  <div class="golf-target child-target" />
-</button>
+      <button
+        bind:this={slider1Modifier}
+        class="modifier slider1"
+        on:mousedown={(e) => moveCurrentTargetToModifier(e.currentTarget)}
+        on:keydown={(e) => {
+          if (isEnterKey(e.key)) moveCurrentTargetToModifier(e.currentTarget);
+        }}
+      >
+        <div class="golf-target child-target" />
+      </button>
 
-<button
-  bind:this={slider2Modifier}
-  class="modifier slider2"
-  on:mousedown={(e) => moveCurrentTargetToModifier(e.currentTarget)}
-  on:keydown={(e) => {
-    if (isEnterKey(e.key)) moveCurrentTargetToModifier(e.currentTarget);
-  }}
->
-  <div class="golf-target child-target" />
-</button>
+      <button
+        bind:this={slider2Modifier}
+        class="modifier slider2"
+        on:mousedown={(e) => moveCurrentTargetToModifier(e.currentTarget)}
+        on:keydown={(e) => {
+          if (isEnterKey(e.key)) moveCurrentTargetToModifier(e.currentTarget);
+        }}
+      >
+        <div class="golf-target child-target" />
+      </button>
+    </div>
+  </div>
+</div>
 
 <div bind:this={pulseContainer} class="pulse-container">
   <div bind:this={pulseTemplate} class="golf-target pulse-template" />
@@ -360,7 +366,8 @@
 </button>
 
 <style lang="scss">
-  // not bothering to make responsive for now, not a priority
+  $pxem: 16;
+
   button {
     all: unset;
     cursor: pointer;
@@ -373,17 +380,59 @@
     outline-offset: 4px;
   }
 
+  .prevent-select {
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  .disable-touch-zoom {
+    touch-action: manipulation;
+  }
+
   .restart {
     position: absolute;
     top: 1em;
     right: 1em;
   }
 
+  .centerer {
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+
+    container-type: inline-size;
+  }
+
+  .course-sizer {
+    position: relative;
+    width: calc(620 / $pxem * 1em);
+    height: calc(270 / $pxem * 1em);
+  }
+
+  .course {
+    width: calc(620 / $pxem * 1em);
+    height: calc(270 / $pxem * 1em);
+    transform-origin: top left;
+  }
+
+  @container (max-width: 613px) {
+    .course-sizer.portrait-size-toggle {
+      width: calc(270 / $pxem * 1em);
+      height: calc(620 / $pxem * 1em);
+    }
+
+    .course.portrait-rotate-toggle {
+      transform: translateX(calc(270 / $pxem * 1em)) rotate(90deg);
+    }
+  }
+
   .golf-target {
     position: absolute;
 
-    width: 35px;
-    height: 35px;
+    width: calc(35 / $pxem * 1em);
+    height: calc(35 / $pxem * 1em);
     border: solid 3px #32cd32;
     outline: dotted 3px transparent;
 
@@ -391,8 +440,8 @@
   }
 
   .starting-target {
-    top: 100px;
-    left: 50px;
+    top: calc(60 / $pxem * 1em);
+    left: calc(10 / $pxem * 1em);
   }
 
   .child-target {
@@ -404,74 +453,74 @@
     background-color: limegreen;
   }
 
-  .pulse-template {
-    border-color: transparent;
-    outline: solid 2px transparent;
-  }
-
   .modifier {
     position: absolute;
 
-    width: 150px;
-    height: 150px;
+    width: calc(150 / $pxem * 1em);
+    height: calc(150 / $pxem * 1em);
     border: dashed 3px darkmagenta;
   }
 
   .spinner {
-    top: 110px;
-    left: 100px;
+    top: calc(70 / $pxem * 1em);
+    left: calc(60 / $pxem * 1em);
   }
 
   .slider1,
   .slider2 {
-    height: 50px;
+    height: calc(50 / $pxem * 1em);
 
     border-color: yellow;
   }
 
   .slider1 {
-    top: 200px;
-    right: 275px;
+    top: calc(160 / $pxem * 1em);
+    left: calc(235 / $pxem * 1em);
 
     transform: rotate(-45deg);
   }
   .slider2 {
-    top: 200px;
-    right: 25px;
+    top: calc(160 / $pxem * 1em);
+    left: calc(479 / $pxem * 1em);
 
     transform: rotate(225deg);
   }
 
   .goal {
-    width: 35px;
-    height: 35px;
+    width: calc(35 / $pxem * 1em);
+    height: calc(35 / $pxem * 1em);
 
     border-style: solid;
     border-color: red;
   }
   .goal-0 {
-    top: 250px;
-    left: 455px;
+    top: calc(210 / $pxem * 1em);
+    left: calc(415 / $pxem * 1em);
     transform: rotate(45deg);
   }
   .goal-1 {
-    top: 97px;
-    left: 263px;
+    top: calc(57 / $pxem * 1em);
+    left: calc(223 / $pxem * 1em);
     transform: rotate(24deg);
   }
   .goal-2 {
-    top: 144px;
-    left: 604px;
+    top: calc(104 / $pxem * 1em);
+    left: calc(564 / $pxem * 1em);
     transform: rotate(20deg);
   }
   .goal-3 {
-    top: 97px;
-    left: 599px;
+    top: calc(57 / $pxem * 1em);
+    left: calc(559 / $pxem * 1em);
     transform: rotate(14deg);
   }
   .goal-4 {
-    top: 51px;
-    left: 591px;
+    top: calc(11 / $pxem * 1em);
+    left: calc(551 / $pxem * 1em);
     transform: rotate(9deg);
+  }
+
+  .pulse-template {
+    border-color: transparent;
+    outline: solid 2px transparent;
   }
 </style>

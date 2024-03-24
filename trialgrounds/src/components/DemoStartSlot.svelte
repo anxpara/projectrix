@@ -45,6 +45,9 @@
     cursor: default;
   }
   .slot-1 {
-    right: calc(-3.6em + 7px);
+    right: calc(-3.3em + 1px);
+
+    cursor: default;
+    pointer-events: none;
   }
 </style>
