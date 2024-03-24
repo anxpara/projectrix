@@ -281,106 +281,112 @@ export const DivGolfCode = `<script lang="ts">
   }
 </script>
 
-<button
-  bind:this={goals[0]}
-  class="modifier goal goal-0"
-  on:mousedown={(e) => {
-    checkWin(e.currentTarget);
-  }}
-  on:keydown={(e) => {
-    if (isEnterKey(e.key)) checkWin(e.currentTarget);
-  }}
->
-  <div class="golf-target child-target" />
-</button>
+<div class="centerer prevent-select disable-touch-zoom">
+  <div class="course-sizer portrait-size-toggle">
+    <div class="course portrait-rotate-toggle">
+      <button
+        bind:this={goals[0]}
+        class="modifier goal goal-0"
+        on:mousedown={(e) => {
+          checkWin(e.currentTarget);
+        }}
+        on:keydown={(e) => {
+          if (isEnterKey(e.key)) checkWin(e.currentTarget);
+        }}
+      >
+        <div class="golf-target child-target" />
+      </button>
 
-<button
-  bind:this={goals[1]}
-  class="modifier goal goal-1"
-  on:mousedown={(e) => {
-    checkWin(e.currentTarget);
-  }}
-  on:keydown={(e) => {
-    if (isEnterKey(e.key)) checkWin(e.currentTarget);
-  }}
->
-  <div class="golf-target child-target" />
-</button>
+      <button
+        bind:this={goals[1]}
+        class="modifier goal goal-1"
+        on:mousedown={(e) => {
+          checkWin(e.currentTarget);
+        }}
+        on:keydown={(e) => {
+          if (isEnterKey(e.key)) checkWin(e.currentTarget);
+        }}
+      >
+        <div class="golf-target child-target" />
+      </button>
 
-<button
-  bind:this={goals[2]}
-  class="modifier goal goal-2"
-  on:mousedown={(e) => {
-    checkWin(e.currentTarget);
-  }}
-  on:keydown={(e) => {
-    if (isEnterKey(e.key)) checkWin(e.currentTarget);
-  }}
->
-  <div class="golf-target child-target" />
-</button>
+      <button
+        bind:this={goals[2]}
+        class="modifier goal goal-2"
+        on:mousedown={(e) => {
+          checkWin(e.currentTarget);
+        }}
+        on:keydown={(e) => {
+          if (isEnterKey(e.key)) checkWin(e.currentTarget);
+        }}
+      >
+        <div class="golf-target child-target" />
+      </button>
 
-<button
-  bind:this={goals[3]}
-  class="modifier goal goal-3"
-  on:mousedown={(e) => {
-    checkWin(e.currentTarget);
-  }}
-  on:keydown={(e) => {
-    if (isEnterKey(e.key)) checkWin(e.currentTarget);
-  }}
->
-  <div class="golf-target child-target" />
-</button>
+      <button
+        bind:this={goals[3]}
+        class="modifier goal goal-3"
+        on:mousedown={(e) => {
+          checkWin(e.currentTarget);
+        }}
+        on:keydown={(e) => {
+          if (isEnterKey(e.key)) checkWin(e.currentTarget);
+        }}
+      >
+        <div class="golf-target child-target" />
+      </button>
 
-<button
-  bind:this={goals[4]}
-  class="modifier goal goal-4"
-  on:mousedown={(e) => {
-    checkWin(e.currentTarget);
-  }}
-  on:keydown={(e) => {
-    if (isEnterKey(e.key)) checkWin(e.currentTarget);
-  }}
->
-  <div class="golf-target child-target" />
-</button>
+      <button
+        bind:this={goals[4]}
+        class="modifier goal goal-4"
+        on:mousedown={(e) => {
+          checkWin(e.currentTarget);
+        }}
+        on:keydown={(e) => {
+          if (isEnterKey(e.key)) checkWin(e.currentTarget);
+        }}
+      >
+        <div class="golf-target child-target" />
+      </button>
 
-<div bind:this={startingTarget} class="golf-target starting-target" />
-<div bind:this={winnerTarget} class="golf-target winner-target" />
+      <div bind:this={startingTarget} class="golf-target starting-target" />
+      <div bind:this={winnerTarget} class="golf-target winner-target" />
 
-<button
-  bind:this={spinnerModifier}
-  class="modifier spinner"
-  on:mousedown={(e) => moveCurrentTargetToModifier(e.currentTarget)}
-  on:keydown={(e) => {
-    if (isEnterKey(e.key)) moveCurrentTargetToModifier(e.currentTarget);
-  }}
->
-  <div class="golf-target child-target" />
-</button>
+      <button
+        bind:this={spinnerModifier}
+        class="modifier spinner"
+        on:mousedown={(e) => moveCurrentTargetToModifier(e.currentTarget)}
+        on:keydown={(e) => {
+          if (isEnterKey(e.key)) moveCurrentTargetToModifier(e.currentTarget);
+        }}
+      >
+        <div class="golf-target child-target" />
+      </button>
 
-<button
-  bind:this={slider1Modifier}
-  class="modifier slider1"
-  on:mousedown={(e) => moveCurrentTargetToModifier(e.currentTarget)}
-  on:keydown={(e) => {
-    if (isEnterKey(e.key)) moveCurrentTargetToModifier(e.currentTarget);
-  }}
->
-  <div class="golf-target child-target" />
-</button>
+      <button
+        bind:this={slider1Modifier}
+        class="modifier slider1"
+        on:mousedown={(e) => moveCurrentTargetToModifier(e.currentTarget)}
+        on:keydown={(e) => {
+          if (isEnterKey(e.key)) moveCurrentTargetToModifier(e.currentTarget);
+        }}
+      >
+        <div class="golf-target child-target" />
+      </button>
 
-<button
-  bind:this={slider2Modifier}
-  class="modifier slider2"
-  on:mousedown={(e) => moveCurrentTargetToModifier(e.currentTarget)}
-  on:keydown={(e) => {
-    if (isEnterKey(e.key)) moveCurrentTargetToModifier(e.currentTarget);
-  }}
->
-  <div class="golf-target child-target" />
-</button>
+      <button
+        bind:this={slider2Modifier}
+        class="modifier slider2"
+        on:mousedown={(e) => moveCurrentTargetToModifier(e.currentTarget)}
+        on:keydown={(e) => {
+          if (isEnterKey(e.key)) moveCurrentTargetToModifier(e.currentTarget);
+        }}
+      >
+        <div class="golf-target child-target" />
+      </button>
+    </div>
+  </div>
+</div>
 
 <div bind:this={pulseContainer} class="pulse-container">
   <div bind:this={pulseTemplate} class="golf-target pulse-template" />
@@ -391,6 +397,8 @@ export const DivGolfCode = `<script lang="ts">
 </button>
 
 <style lang="scss">
+  $pxem: 16;
+
   button {
     all: unset;
     cursor: pointer;
@@ -403,17 +411,59 @@ export const DivGolfCode = `<script lang="ts">
     outline-offset: 4px;
   }
 
+  .prevent-select {
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  .disable-touch-zoom {
+    touch-action: manipulation;
+  }
+
   .restart {
     position: absolute;
     top: 1em;
     right: 1em;
   }
 
+  .centerer {
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+
+    container-type: inline-size;
+  }
+
+  .course-sizer {
+    position: relative;
+    width: calc(620 / $pxem * 1em);
+    height: calc(270 / $pxem * 1em);
+  }
+
+  .course {
+    width: calc(620 / $pxem * 1em);
+    height: calc(270 / $pxem * 1em);
+    transform-origin: top left;
+  }
+
+  @container (max-width: 613px) {
+    .course-sizer.portrait-size-toggle {
+      width: calc(270 / $pxem * 1em);
+      height: calc(620 / $pxem * 1em);
+    }
+
+    .course.portrait-rotate-toggle {
+      transform: translateX(calc(270 / $pxem * 1em)) rotate(90deg);
+    }
+  }
+
   .golf-target {
     position: absolute;
 
-    width: 35px;
-    height: 35px;
+    width: calc(35 / $pxem * 1em);
+    height: calc(35 / $pxem * 1em);
     border: solid 3px #32cd32;
     outline: dotted 3px transparent;
 
@@ -421,8 +471,8 @@ export const DivGolfCode = `<script lang="ts">
   }
 
   .starting-target {
-    top: 100px;
-    left: 50px;
+    top: calc(60 / $pxem * 1em);
+    left: calc(10 / $pxem * 1em);
   }
 
   .child-target {
@@ -434,78 +484,77 @@ export const DivGolfCode = `<script lang="ts">
     background-color: limegreen;
   }
 
-  .pulse-template {
-    border-color: transparent;
-    outline: solid 2px transparent;
-  }
-
   .modifier {
     position: absolute;
 
-    width: 150px;
-    height: 150px;
+    width: calc(150 / $pxem * 1em);
+    height: calc(150 / $pxem * 1em);
     border: dashed 3px darkmagenta;
   }
 
   .spinner {
-    top: 110px;
-    left: 100px;
+    top: calc(70 / $pxem * 1em);
+    left: calc(60 / $pxem * 1em);
   }
 
   .slider1,
   .slider2 {
-    height: 50px;
+    height: calc(50 / $pxem * 1em);
 
     border-color: yellow;
   }
 
   .slider1 {
-    top: 200px;
-    right: 275px;
+    top: calc(160 / $pxem * 1em);
+    left: calc(235 / $pxem * 1em);
 
     transform: rotate(-45deg);
   }
   .slider2 {
-    top: 200px;
-    right: 25px;
+    top: calc(160 / $pxem * 1em);
+    left: calc(479 / $pxem * 1em);
 
     transform: rotate(225deg);
   }
 
   .goal {
-    width: 35px;
-    height: 35px;
+    width: calc(35 / $pxem * 1em);
+    height: calc(35 / $pxem * 1em);
 
     border-style: solid;
     border-color: red;
   }
   .goal-0 {
-    top: 250px;
-    left: 455px;
+    top: calc(210 / $pxem * 1em);
+    left: calc(415 / $pxem * 1em);
     transform: rotate(45deg);
   }
   .goal-1 {
-    top: 97px;
-    left: 263px;
+    top: calc(57 / $pxem * 1em);
+    left: calc(223 / $pxem * 1em);
     transform: rotate(24deg);
   }
   .goal-2 {
-    top: 144px;
-    left: 604px;
+    top: calc(104 / $pxem * 1em);
+    left: calc(564 / $pxem * 1em);
     transform: rotate(20deg);
   }
   .goal-3 {
-    top: 97px;
-    left: 599px;
+    top: calc(57 / $pxem * 1em);
+    left: calc(559 / $pxem * 1em);
     transform: rotate(14deg);
   }
   .goal-4 {
-    top: 51px;
-    left: 591px;
+    top: calc(11 / $pxem * 1em);
+    left: calc(551 / $pxem * 1em);
     transform: rotate(9deg);
   }
-</style>
-`;
+
+  .pulse-template {
+    border-color: transparent;
+    outline: solid 2px transparent;
+  }
+</style>`;
 
 export const DivGolfUsageHL = `<pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#C678DD">import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">getProjection</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'projectrix'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">import</span><span style="color:#E06C75"> anime</span><span style="color:#C678DD"> from</span><span style="color:#98C379"> 'animejs'</span><span style="color:#ABB2BF">;</span></span>
@@ -790,106 +839,112 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"><span style="color:#ABB2BF">&#x3C;/</span><span style="color:#E06C75">script</span><span style="color:#ABB2BF">></span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">button</span></span>
-<span class="line"><span style="color:#C678DD">  bind</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">this</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">goals</span><span style="color:#ABB2BF">[</span><span style="color:#D19A66">0</span><span style="color:#ABB2BF">]</span><span style="color:#C678DD">}</span></span>
-<span class="line"><span style="color:#D19A66">  class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"modifier goal goal-0"</span></span>
-<span class="line"><span style="color:#C678DD">  on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">mousedown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#61AFEF">    checkWin</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">);</span></span>
-<span class="line"><span style="color:#ABB2BF">  }</span><span style="color:#C678DD">}</span></span>
-<span class="line"><span style="color:#C678DD">  on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">keydown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> (</span><span style="color:#61AFEF">isEnterKey</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">key</span><span style="color:#ABB2BF">)) </span><span style="color:#61AFEF">checkWin</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">);</span></span>
-<span class="line"><span style="color:#ABB2BF">  }</span><span style="color:#C678DD">}</span></span>
-<span class="line"><span style="color:#ABB2BF">></span></span>
-<span class="line"><span style="color:#ABB2BF">  &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"golf-target child-target"</span><span style="color:#ABB2BF"> /></span></span>
-<span class="line"><span style="color:#ABB2BF">&#x3C;/</span><span style="color:#E06C75">button</span><span style="color:#ABB2BF">></span></span>
+<span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"centerer prevent-select disable-touch-zoom"</span><span style="color:#ABB2BF">></span></span>
+<span class="line"><span style="color:#ABB2BF">  &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"course-sizer portrait-size-toggle"</span><span style="color:#ABB2BF">></span></span>
+<span class="line"><span style="color:#ABB2BF">    &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"course portrait-rotate-toggle"</span><span style="color:#ABB2BF">></span></span>
+<span class="line"><span style="color:#ABB2BF">      &#x3C;</span><span style="color:#E06C75">button</span></span>
+<span class="line"><span style="color:#C678DD">        bind</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">this</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">goals</span><span style="color:#ABB2BF">[</span><span style="color:#D19A66">0</span><span style="color:#ABB2BF">]</span><span style="color:#C678DD">}</span></span>
+<span class="line"><span style="color:#D19A66">        class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"modifier goal goal-0"</span></span>
+<span class="line"><span style="color:#C678DD">        on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">mousedown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#61AFEF">          checkWin</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">        }</span><span style="color:#C678DD">}</span></span>
+<span class="line"><span style="color:#C678DD">        on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">keydown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#C678DD">          if</span><span style="color:#ABB2BF"> (</span><span style="color:#61AFEF">isEnterKey</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">key</span><span style="color:#ABB2BF">)) </span><span style="color:#61AFEF">checkWin</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">        }</span><span style="color:#C678DD">}</span></span>
+<span class="line"><span style="color:#ABB2BF">      ></span></span>
+<span class="line"><span style="color:#ABB2BF">        &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"golf-target child-target"</span><span style="color:#ABB2BF"> /></span></span>
+<span class="line"><span style="color:#ABB2BF">      &#x3C;/</span><span style="color:#E06C75">button</span><span style="color:#ABB2BF">></span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">button</span></span>
-<span class="line"><span style="color:#C678DD">  bind</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">this</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">goals</span><span style="color:#ABB2BF">[</span><span style="color:#D19A66">1</span><span style="color:#ABB2BF">]</span><span style="color:#C678DD">}</span></span>
-<span class="line"><span style="color:#D19A66">  class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"modifier goal goal-1"</span></span>
-<span class="line"><span style="color:#C678DD">  on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">mousedown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#61AFEF">    checkWin</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">);</span></span>
-<span class="line"><span style="color:#ABB2BF">  }</span><span style="color:#C678DD">}</span></span>
-<span class="line"><span style="color:#C678DD">  on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">keydown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> (</span><span style="color:#61AFEF">isEnterKey</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">key</span><span style="color:#ABB2BF">)) </span><span style="color:#61AFEF">checkWin</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">);</span></span>
-<span class="line"><span style="color:#ABB2BF">  }</span><span style="color:#C678DD">}</span></span>
-<span class="line"><span style="color:#ABB2BF">></span></span>
-<span class="line"><span style="color:#ABB2BF">  &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"golf-target child-target"</span><span style="color:#ABB2BF"> /></span></span>
-<span class="line"><span style="color:#ABB2BF">&#x3C;/</span><span style="color:#E06C75">button</span><span style="color:#ABB2BF">></span></span>
+<span class="line"><span style="color:#ABB2BF">      &#x3C;</span><span style="color:#E06C75">button</span></span>
+<span class="line"><span style="color:#C678DD">        bind</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">this</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">goals</span><span style="color:#ABB2BF">[</span><span style="color:#D19A66">1</span><span style="color:#ABB2BF">]</span><span style="color:#C678DD">}</span></span>
+<span class="line"><span style="color:#D19A66">        class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"modifier goal goal-1"</span></span>
+<span class="line"><span style="color:#C678DD">        on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">mousedown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#61AFEF">          checkWin</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">        }</span><span style="color:#C678DD">}</span></span>
+<span class="line"><span style="color:#C678DD">        on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">keydown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#C678DD">          if</span><span style="color:#ABB2BF"> (</span><span style="color:#61AFEF">isEnterKey</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">key</span><span style="color:#ABB2BF">)) </span><span style="color:#61AFEF">checkWin</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">        }</span><span style="color:#C678DD">}</span></span>
+<span class="line"><span style="color:#ABB2BF">      ></span></span>
+<span class="line"><span style="color:#ABB2BF">        &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"golf-target child-target"</span><span style="color:#ABB2BF"> /></span></span>
+<span class="line"><span style="color:#ABB2BF">      &#x3C;/</span><span style="color:#E06C75">button</span><span style="color:#ABB2BF">></span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">button</span></span>
-<span class="line"><span style="color:#C678DD">  bind</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">this</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">goals</span><span style="color:#ABB2BF">[</span><span style="color:#D19A66">2</span><span style="color:#ABB2BF">]</span><span style="color:#C678DD">}</span></span>
-<span class="line"><span style="color:#D19A66">  class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"modifier goal goal-2"</span></span>
-<span class="line"><span style="color:#C678DD">  on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">mousedown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#61AFEF">    checkWin</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">);</span></span>
-<span class="line"><span style="color:#ABB2BF">  }</span><span style="color:#C678DD">}</span></span>
-<span class="line"><span style="color:#C678DD">  on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">keydown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> (</span><span style="color:#61AFEF">isEnterKey</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">key</span><span style="color:#ABB2BF">)) </span><span style="color:#61AFEF">checkWin</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">);</span></span>
-<span class="line"><span style="color:#ABB2BF">  }</span><span style="color:#C678DD">}</span></span>
-<span class="line"><span style="color:#ABB2BF">></span></span>
-<span class="line"><span style="color:#ABB2BF">  &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"golf-target child-target"</span><span style="color:#ABB2BF"> /></span></span>
-<span class="line"><span style="color:#ABB2BF">&#x3C;/</span><span style="color:#E06C75">button</span><span style="color:#ABB2BF">></span></span>
+<span class="line"><span style="color:#ABB2BF">      &#x3C;</span><span style="color:#E06C75">button</span></span>
+<span class="line"><span style="color:#C678DD">        bind</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">this</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">goals</span><span style="color:#ABB2BF">[</span><span style="color:#D19A66">2</span><span style="color:#ABB2BF">]</span><span style="color:#C678DD">}</span></span>
+<span class="line"><span style="color:#D19A66">        class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"modifier goal goal-2"</span></span>
+<span class="line"><span style="color:#C678DD">        on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">mousedown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#61AFEF">          checkWin</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">        }</span><span style="color:#C678DD">}</span></span>
+<span class="line"><span style="color:#C678DD">        on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">keydown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#C678DD">          if</span><span style="color:#ABB2BF"> (</span><span style="color:#61AFEF">isEnterKey</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">key</span><span style="color:#ABB2BF">)) </span><span style="color:#61AFEF">checkWin</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">        }</span><span style="color:#C678DD">}</span></span>
+<span class="line"><span style="color:#ABB2BF">      ></span></span>
+<span class="line"><span style="color:#ABB2BF">        &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"golf-target child-target"</span><span style="color:#ABB2BF"> /></span></span>
+<span class="line"><span style="color:#ABB2BF">      &#x3C;/</span><span style="color:#E06C75">button</span><span style="color:#ABB2BF">></span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">button</span></span>
-<span class="line"><span style="color:#C678DD">  bind</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">this</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">goals</span><span style="color:#ABB2BF">[</span><span style="color:#D19A66">3</span><span style="color:#ABB2BF">]</span><span style="color:#C678DD">}</span></span>
-<span class="line"><span style="color:#D19A66">  class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"modifier goal goal-3"</span></span>
-<span class="line"><span style="color:#C678DD">  on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">mousedown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#61AFEF">    checkWin</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">);</span></span>
-<span class="line"><span style="color:#ABB2BF">  }</span><span style="color:#C678DD">}</span></span>
-<span class="line"><span style="color:#C678DD">  on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">keydown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> (</span><span style="color:#61AFEF">isEnterKey</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">key</span><span style="color:#ABB2BF">)) </span><span style="color:#61AFEF">checkWin</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">);</span></span>
-<span class="line"><span style="color:#ABB2BF">  }</span><span style="color:#C678DD">}</span></span>
-<span class="line"><span style="color:#ABB2BF">></span></span>
-<span class="line"><span style="color:#ABB2BF">  &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"golf-target child-target"</span><span style="color:#ABB2BF"> /></span></span>
-<span class="line"><span style="color:#ABB2BF">&#x3C;/</span><span style="color:#E06C75">button</span><span style="color:#ABB2BF">></span></span>
+<span class="line"><span style="color:#ABB2BF">      &#x3C;</span><span style="color:#E06C75">button</span></span>
+<span class="line"><span style="color:#C678DD">        bind</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">this</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">goals</span><span style="color:#ABB2BF">[</span><span style="color:#D19A66">3</span><span style="color:#ABB2BF">]</span><span style="color:#C678DD">}</span></span>
+<span class="line"><span style="color:#D19A66">        class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"modifier goal goal-3"</span></span>
+<span class="line"><span style="color:#C678DD">        on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">mousedown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#61AFEF">          checkWin</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">        }</span><span style="color:#C678DD">}</span></span>
+<span class="line"><span style="color:#C678DD">        on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">keydown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#C678DD">          if</span><span style="color:#ABB2BF"> (</span><span style="color:#61AFEF">isEnterKey</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">key</span><span style="color:#ABB2BF">)) </span><span style="color:#61AFEF">checkWin</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">        }</span><span style="color:#C678DD">}</span></span>
+<span class="line"><span style="color:#ABB2BF">      ></span></span>
+<span class="line"><span style="color:#ABB2BF">        &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"golf-target child-target"</span><span style="color:#ABB2BF"> /></span></span>
+<span class="line"><span style="color:#ABB2BF">      &#x3C;/</span><span style="color:#E06C75">button</span><span style="color:#ABB2BF">></span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">button</span></span>
-<span class="line"><span style="color:#C678DD">  bind</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">this</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">goals</span><span style="color:#ABB2BF">[</span><span style="color:#D19A66">4</span><span style="color:#ABB2BF">]</span><span style="color:#C678DD">}</span></span>
-<span class="line"><span style="color:#D19A66">  class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"modifier goal goal-4"</span></span>
-<span class="line"><span style="color:#C678DD">  on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">mousedown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#61AFEF">    checkWin</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">);</span></span>
-<span class="line"><span style="color:#ABB2BF">  }</span><span style="color:#C678DD">}</span></span>
-<span class="line"><span style="color:#C678DD">  on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">keydown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> (</span><span style="color:#61AFEF">isEnterKey</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">key</span><span style="color:#ABB2BF">)) </span><span style="color:#61AFEF">checkWin</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">);</span></span>
-<span class="line"><span style="color:#ABB2BF">  }</span><span style="color:#C678DD">}</span></span>
-<span class="line"><span style="color:#ABB2BF">></span></span>
-<span class="line"><span style="color:#ABB2BF">  &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"golf-target child-target"</span><span style="color:#ABB2BF"> /></span></span>
-<span class="line"><span style="color:#ABB2BF">&#x3C;/</span><span style="color:#E06C75">button</span><span style="color:#ABB2BF">></span></span>
+<span class="line"><span style="color:#ABB2BF">      &#x3C;</span><span style="color:#E06C75">button</span></span>
+<span class="line"><span style="color:#C678DD">        bind</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">this</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">goals</span><span style="color:#ABB2BF">[</span><span style="color:#D19A66">4</span><span style="color:#ABB2BF">]</span><span style="color:#C678DD">}</span></span>
+<span class="line"><span style="color:#D19A66">        class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"modifier goal goal-4"</span></span>
+<span class="line"><span style="color:#C678DD">        on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">mousedown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#61AFEF">          checkWin</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">        }</span><span style="color:#C678DD">}</span></span>
+<span class="line"><span style="color:#C678DD">        on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">keydown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#C678DD">          if</span><span style="color:#ABB2BF"> (</span><span style="color:#61AFEF">isEnterKey</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">key</span><span style="color:#ABB2BF">)) </span><span style="color:#61AFEF">checkWin</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">        }</span><span style="color:#C678DD">}</span></span>
+<span class="line"><span style="color:#ABB2BF">      ></span></span>
+<span class="line"><span style="color:#ABB2BF">        &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"golf-target child-target"</span><span style="color:#ABB2BF"> /></span></span>
+<span class="line"><span style="color:#ABB2BF">      &#x3C;/</span><span style="color:#E06C75">button</span><span style="color:#ABB2BF">></span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">div</span><span style="color:#C678DD"> bind</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">this</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">startingTarget</span><span style="color:#C678DD">}</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"golf-target starting-target"</span><span style="color:#ABB2BF"> /></span></span>
-<span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">div</span><span style="color:#C678DD"> bind</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">this</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">winnerTarget</span><span style="color:#C678DD">}</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"golf-target winner-target"</span><span style="color:#ABB2BF"> /></span></span>
+<span class="line"><span style="color:#ABB2BF">      &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#C678DD"> bind</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">this</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">startingTarget</span><span style="color:#C678DD">}</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"golf-target starting-target"</span><span style="color:#ABB2BF"> /></span></span>
+<span class="line"><span style="color:#ABB2BF">      &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#C678DD"> bind</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">this</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">winnerTarget</span><span style="color:#C678DD">}</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"golf-target winner-target"</span><span style="color:#ABB2BF"> /></span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">button</span></span>
-<span class="line"><span style="color:#C678DD">  bind</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">this</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">spinnerModifier</span><span style="color:#C678DD">}</span></span>
-<span class="line"><span style="color:#D19A66">  class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"modifier spinner"</span></span>
-<span class="line"><span style="color:#C678DD">  on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">mousedown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#61AFEF"> moveCurrentTargetToModifier</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">)</span><span style="color:#C678DD">}</span></span>
-<span class="line"><span style="color:#C678DD">  on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">keydown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> (</span><span style="color:#61AFEF">isEnterKey</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">key</span><span style="color:#ABB2BF">)) </span><span style="color:#61AFEF">moveCurrentTargetToModifier</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">);</span></span>
-<span class="line"><span style="color:#ABB2BF">  }</span><span style="color:#C678DD">}</span></span>
-<span class="line"><span style="color:#ABB2BF">></span></span>
-<span class="line"><span style="color:#ABB2BF">  &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"golf-target child-target"</span><span style="color:#ABB2BF"> /></span></span>
-<span class="line"><span style="color:#ABB2BF">&#x3C;/</span><span style="color:#E06C75">button</span><span style="color:#ABB2BF">></span></span>
+<span class="line"><span style="color:#ABB2BF">      &#x3C;</span><span style="color:#E06C75">button</span></span>
+<span class="line"><span style="color:#C678DD">        bind</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">this</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">spinnerModifier</span><span style="color:#C678DD">}</span></span>
+<span class="line"><span style="color:#D19A66">        class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"modifier spinner"</span></span>
+<span class="line"><span style="color:#C678DD">        on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">mousedown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#61AFEF"> moveCurrentTargetToModifier</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">)</span><span style="color:#C678DD">}</span></span>
+<span class="line"><span style="color:#C678DD">        on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">keydown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#C678DD">          if</span><span style="color:#ABB2BF"> (</span><span style="color:#61AFEF">isEnterKey</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">key</span><span style="color:#ABB2BF">)) </span><span style="color:#61AFEF">moveCurrentTargetToModifier</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">        }</span><span style="color:#C678DD">}</span></span>
+<span class="line"><span style="color:#ABB2BF">      ></span></span>
+<span class="line"><span style="color:#ABB2BF">        &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"golf-target child-target"</span><span style="color:#ABB2BF"> /></span></span>
+<span class="line"><span style="color:#ABB2BF">      &#x3C;/</span><span style="color:#E06C75">button</span><span style="color:#ABB2BF">></span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">button</span></span>
-<span class="line"><span style="color:#C678DD">  bind</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">this</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">slider1Modifier</span><span style="color:#C678DD">}</span></span>
-<span class="line"><span style="color:#D19A66">  class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"modifier slider1"</span></span>
-<span class="line"><span style="color:#C678DD">  on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">mousedown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#61AFEF"> moveCurrentTargetToModifier</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">)</span><span style="color:#C678DD">}</span></span>
-<span class="line"><span style="color:#C678DD">  on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">keydown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> (</span><span style="color:#61AFEF">isEnterKey</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">key</span><span style="color:#ABB2BF">)) </span><span style="color:#61AFEF">moveCurrentTargetToModifier</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">);</span></span>
-<span class="line"><span style="color:#ABB2BF">  }</span><span style="color:#C678DD">}</span></span>
-<span class="line"><span style="color:#ABB2BF">></span></span>
-<span class="line"><span style="color:#ABB2BF">  &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"golf-target child-target"</span><span style="color:#ABB2BF"> /></span></span>
-<span class="line"><span style="color:#ABB2BF">&#x3C;/</span><span style="color:#E06C75">button</span><span style="color:#ABB2BF">></span></span>
+<span class="line"><span style="color:#ABB2BF">      &#x3C;</span><span style="color:#E06C75">button</span></span>
+<span class="line"><span style="color:#C678DD">        bind</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">this</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">slider1Modifier</span><span style="color:#C678DD">}</span></span>
+<span class="line"><span style="color:#D19A66">        class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"modifier slider1"</span></span>
+<span class="line"><span style="color:#C678DD">        on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">mousedown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#61AFEF"> moveCurrentTargetToModifier</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">)</span><span style="color:#C678DD">}</span></span>
+<span class="line"><span style="color:#C678DD">        on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">keydown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#C678DD">          if</span><span style="color:#ABB2BF"> (</span><span style="color:#61AFEF">isEnterKey</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">key</span><span style="color:#ABB2BF">)) </span><span style="color:#61AFEF">moveCurrentTargetToModifier</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">        }</span><span style="color:#C678DD">}</span></span>
+<span class="line"><span style="color:#ABB2BF">      ></span></span>
+<span class="line"><span style="color:#ABB2BF">        &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"golf-target child-target"</span><span style="color:#ABB2BF"> /></span></span>
+<span class="line"><span style="color:#ABB2BF">      &#x3C;/</span><span style="color:#E06C75">button</span><span style="color:#ABB2BF">></span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">button</span></span>
-<span class="line"><span style="color:#C678DD">  bind</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">this</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">slider2Modifier</span><span style="color:#C678DD">}</span></span>
-<span class="line"><span style="color:#D19A66">  class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"modifier slider2"</span></span>
-<span class="line"><span style="color:#C678DD">  on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">mousedown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#61AFEF"> moveCurrentTargetToModifier</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">)</span><span style="color:#C678DD">}</span></span>
-<span class="line"><span style="color:#C678DD">  on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">keydown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> (</span><span style="color:#61AFEF">isEnterKey</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">key</span><span style="color:#ABB2BF">)) </span><span style="color:#61AFEF">moveCurrentTargetToModifier</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">);</span></span>
-<span class="line"><span style="color:#ABB2BF">  }</span><span style="color:#C678DD">}</span></span>
-<span class="line"><span style="color:#ABB2BF">></span></span>
-<span class="line"><span style="color:#ABB2BF">  &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"golf-target child-target"</span><span style="color:#ABB2BF"> /></span></span>
-<span class="line"><span style="color:#ABB2BF">&#x3C;/</span><span style="color:#E06C75">button</span><span style="color:#ABB2BF">></span></span>
+<span class="line"><span style="color:#ABB2BF">      &#x3C;</span><span style="color:#E06C75">button</span></span>
+<span class="line"><span style="color:#C678DD">        bind</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">this</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">slider2Modifier</span><span style="color:#C678DD">}</span></span>
+<span class="line"><span style="color:#D19A66">        class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"modifier slider2"</span></span>
+<span class="line"><span style="color:#C678DD">        on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">mousedown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#61AFEF"> moveCurrentTargetToModifier</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">)</span><span style="color:#C678DD">}</span></span>
+<span class="line"><span style="color:#C678DD">        on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">keydown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#C678DD">          if</span><span style="color:#ABB2BF"> (</span><span style="color:#61AFEF">isEnterKey</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">key</span><span style="color:#ABB2BF">)) </span><span style="color:#61AFEF">moveCurrentTargetToModifier</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">        }</span><span style="color:#C678DD">}</span></span>
+<span class="line"><span style="color:#ABB2BF">      ></span></span>
+<span class="line"><span style="color:#ABB2BF">        &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"golf-target child-target"</span><span style="color:#ABB2BF"> /></span></span>
+<span class="line"><span style="color:#ABB2BF">      &#x3C;/</span><span style="color:#E06C75">button</span><span style="color:#ABB2BF">></span></span>
+<span class="line"><span style="color:#ABB2BF">    &#x3C;/</span><span style="color:#E06C75">div</span><span style="color:#ABB2BF">></span></span>
+<span class="line"><span style="color:#ABB2BF">  &#x3C;/</span><span style="color:#E06C75">div</span><span style="color:#ABB2BF">></span></span>
+<span class="line"><span style="color:#ABB2BF">&#x3C;/</span><span style="color:#E06C75">div</span><span style="color:#ABB2BF">></span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">div</span><span style="color:#C678DD"> bind</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">this</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">pulseContainer</span><span style="color:#C678DD">}</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"pulse-container"</span><span style="color:#ABB2BF">></span></span>
 <span class="line"><span style="color:#ABB2BF">  &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#C678DD"> bind</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">this</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">pulseTemplate</span><span style="color:#C678DD">}</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"golf-target pulse-template"</span><span style="color:#ABB2BF"> /></span></span>
@@ -900,6 +955,8 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#ABB2BF">&#x3C;/</span><span style="color:#E06C75">button</span><span style="color:#ABB2BF">></span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">style</span><span style="color:#D19A66"> lang</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"scss"</span><span style="color:#ABB2BF">></span></span>
+<span class="line"><span style="color:#E06C75">  $pxem</span><span style="color:#ABB2BF">: </span><span style="color:#D19A66">16</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"></span>
 <span class="line"><span style="color:#E06C75">  button</span><span style="color:#ABB2BF"> {</span></span>
 <span class="line"><span style="color:#ABB2BF">    all: </span><span style="color:#D19A66">unset</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#E06C75">    cursor</span><span style="color:#ABB2BF">: </span><span style="color:#D19A66">pointer</span><span style="color:#ABB2BF">;</span></span>
@@ -912,17 +969,59 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#ABB2BF">    outline-offset: </span><span style="color:#D19A66">4</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"></span>
+<span class="line"><span style="color:#D19A66">  .prevent-select</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#56B6C2">    -webkit-user-select</span><span style="color:#ABB2BF">: </span><span style="color:#D19A66">none</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#56B6C2">    -ms-user-select</span><span style="color:#ABB2BF">: </span><span style="color:#D19A66">none</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#ABB2BF">    user-select: </span><span style="color:#D19A66">none</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#ABB2BF">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D19A66">  .disable-touch-zoom</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#ABB2BF">    touch-action: </span><span style="color:#D19A66">manipulation</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#ABB2BF">  }</span></span>
+<span class="line"></span>
 <span class="line"><span style="color:#D19A66">  .restart</span><span style="color:#ABB2BF"> {</span></span>
 <span class="line"><span style="color:#ABB2BF">    position: </span><span style="color:#D19A66">absolute</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#ABB2BF">    top: </span><span style="color:#D19A66">1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#ABB2BF">    right: </span><span style="color:#D19A66">1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"></span>
+<span class="line"><span style="color:#D19A66">  .centerer</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#ABB2BF">    width: </span><span style="color:#D19A66">100</span><span style="color:#E06C75">%</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#ABB2BF">    display: </span><span style="color:#D19A66">flex</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#ABB2BF">    justify-content: </span><span style="color:#D19A66">center</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#ABB2BF">    container-type: inline-size;</span></span>
+<span class="line"><span style="color:#ABB2BF">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D19A66">  .course-sizer</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#ABB2BF">    position: </span><span style="color:#D19A66">relative</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#ABB2BF">    width: </span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">620</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">    height: </span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">270</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D19A66">  .course</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#ABB2BF">    width: </span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">620</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">    height: </span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">270</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">    transform-origin: </span><span style="color:#D19A66">top</span><span style="color:#D19A66"> left</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#ABB2BF">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#ABB2BF">  @container (max-width: 613px) {</span></span>
+<span class="line"><span style="color:#D19A66">    .course-sizer.portrait-size-toggle</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#ABB2BF">      width: </span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">270</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">      height: </span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">620</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D19A66">    .course.portrait-rotate-toggle</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#ABB2BF">      transform: </span><span style="color:#56B6C2">translateX</span><span style="color:#ABB2BF">(</span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">270</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">)) </span><span style="color:#56B6C2">rotate</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">90</span><span style="color:#E06C75">deg</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">    }</span></span>
+<span class="line"><span style="color:#ABB2BF">  }</span></span>
+<span class="line"></span>
 <span class="line"><span style="color:#D19A66">  .golf-target</span><span style="color:#ABB2BF"> {</span></span>
 <span class="line"><span style="color:#ABB2BF">    position: </span><span style="color:#D19A66">absolute</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#ABB2BF">    width: </span><span style="color:#D19A66">35</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#ABB2BF">    height: </span><span style="color:#D19A66">35</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#ABB2BF">    width: </span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">35</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">    height: </span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">35</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#ABB2BF">    border: </span><span style="color:#D19A66">solid</span><span style="color:#D19A66"> 3</span><span style="color:#E06C75">px</span><span style="color:#D19A66"> #32cd32</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#ABB2BF">    outline: </span><span style="color:#D19A66">dotted</span><span style="color:#D19A66"> 3</span><span style="color:#E06C75">px</span><span style="color:#D19A66"> transparent</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
@@ -930,8 +1029,8 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#D19A66">  .starting-target</span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#ABB2BF">    top: </span><span style="color:#D19A66">100</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#ABB2BF">    left: </span><span style="color:#D19A66">50</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#ABB2BF">    top: </span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">60</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">    left: </span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">10</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#D19A66">  .child-target</span><span style="color:#ABB2BF"> {</span></span>
@@ -943,75 +1042,74 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#ABB2BF">    background-color: limegreen;</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#D19A66">  .pulse-template</span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#ABB2BF">    border-color: </span><span style="color:#D19A66">transparent</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#ABB2BF">    outline: </span><span style="color:#D19A66">solid</span><span style="color:#D19A66"> 2</span><span style="color:#E06C75">px</span><span style="color:#D19A66"> transparent</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#ABB2BF">  }</span></span>
-<span class="line"></span>
 <span class="line"><span style="color:#D19A66">  .modifier</span><span style="color:#ABB2BF"> {</span></span>
 <span class="line"><span style="color:#ABB2BF">    position: </span><span style="color:#D19A66">absolute</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#ABB2BF">    width: </span><span style="color:#D19A66">150</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#ABB2BF">    height: </span><span style="color:#D19A66">150</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#ABB2BF">    width: </span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">150</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">    height: </span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">150</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#ABB2BF">    border: </span><span style="color:#D19A66">dashed</span><span style="color:#D19A66"> 3</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF"> darkmagenta;</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#D19A66">  .spinner</span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#ABB2BF">    top: </span><span style="color:#D19A66">110</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#ABB2BF">    left: </span><span style="color:#D19A66">100</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#ABB2BF">    top: </span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">70</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">    left: </span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">60</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#D19A66">  .slider1</span><span style="color:#ABB2BF">,</span></span>
 <span class="line"><span style="color:#D19A66">  .slider2</span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#ABB2BF">    height: </span><span style="color:#D19A66">50</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#ABB2BF">    height: </span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">50</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#ABB2BF">    border-color: </span><span style="color:#D19A66">yellow</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#D19A66">  .slider1</span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#ABB2BF">    top: </span><span style="color:#D19A66">200</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#ABB2BF">    right: </span><span style="color:#D19A66">275</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#ABB2BF">    top: </span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">160</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">    left: </span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">235</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#ABB2BF">    transform: </span><span style="color:#56B6C2">rotate</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">-45</span><span style="color:#E06C75">deg</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"><span style="color:#D19A66">  .slider2</span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#ABB2BF">    top: </span><span style="color:#D19A66">200</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#ABB2BF">    right: </span><span style="color:#D19A66">25</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#ABB2BF">    top: </span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">160</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">    left: </span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">479</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#ABB2BF">    transform: </span><span style="color:#56B6C2">rotate</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">225</span><span style="color:#E06C75">deg</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#D19A66">  .goal</span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#ABB2BF">    width: </span><span style="color:#D19A66">35</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#ABB2BF">    height: </span><span style="color:#D19A66">35</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#ABB2BF">    width: </span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">35</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">    height: </span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">35</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#ABB2BF">    border-style: </span><span style="color:#D19A66">solid</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#ABB2BF">    border-color: </span><span style="color:#D19A66">red</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"><span style="color:#D19A66">  .goal-0</span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#ABB2BF">    top: </span><span style="color:#D19A66">250</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#ABB2BF">    left: </span><span style="color:#D19A66">455</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#ABB2BF">    top: </span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">210</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">    left: </span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">415</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#ABB2BF">    transform: </span><span style="color:#56B6C2">rotate</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">45</span><span style="color:#E06C75">deg</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"><span style="color:#D19A66">  .goal-1</span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#ABB2BF">    top: </span><span style="color:#D19A66">97</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#ABB2BF">    left: </span><span style="color:#D19A66">263</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#ABB2BF">    top: </span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">57</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">    left: </span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">223</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#ABB2BF">    transform: </span><span style="color:#56B6C2">rotate</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">24</span><span style="color:#E06C75">deg</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"><span style="color:#D19A66">  .goal-2</span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#ABB2BF">    top: </span><span style="color:#D19A66">144</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#ABB2BF">    left: </span><span style="color:#D19A66">604</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#ABB2BF">    top: </span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">104</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">    left: </span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">564</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#ABB2BF">    transform: </span><span style="color:#56B6C2">rotate</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">20</span><span style="color:#E06C75">deg</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"><span style="color:#D19A66">  .goal-3</span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#ABB2BF">    top: </span><span style="color:#D19A66">97</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#ABB2BF">    left: </span><span style="color:#D19A66">599</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#ABB2BF">    top: </span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">57</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">    left: </span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">559</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#ABB2BF">    transform: </span><span style="color:#56B6C2">rotate</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">14</span><span style="color:#E06C75">deg</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"><span style="color:#D19A66">  .goal-4</span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#ABB2BF">    top: </span><span style="color:#D19A66">51</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#ABB2BF">    left: </span><span style="color:#D19A66">591</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#ABB2BF">    top: </span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">11</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">    left: </span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">551</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#ABB2BF">    transform: </span><span style="color:#56B6C2">rotate</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">9</span><span style="color:#E06C75">deg</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
-<span class="line"><span style="color:#ABB2BF">&#x3C;/</span><span style="color:#E06C75">style</span><span style="color:#ABB2BF">></span></span>
-<span class="line"></span></code></pre>`;
+<span class="line"></span>
+<span class="line"><span style="color:#D19A66">  .pulse-template</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#ABB2BF">    border-color: </span><span style="color:#D19A66">transparent</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#ABB2BF">    outline: </span><span style="color:#D19A66">solid</span><span style="color:#D19A66"> 2</span><span style="color:#E06C75">px</span><span style="color:#D19A66"> transparent</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#ABB2BF">  }</span></span>
+<span class="line"><span style="color:#ABB2BF">&#x3C;/</span><span style="color:#E06C75">style</span><span style="color:#ABB2BF">></span></span></code></pre>`;
