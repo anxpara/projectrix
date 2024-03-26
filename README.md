@@ -20,59 +20,56 @@ Projectrix provides a pure function that returns the styles needed to align a ta
 
 # Usage
 
-## Animating from subject to target with FLIP technique using Motion One
+## FLIP from subject back to target's origin using Motion One
 
 ```ts
-import { getProjection } from 'projectrix';
+import { getProjection, setInlineStyles, clearInlineStyles } from 'projectrix';
 import { animate } from 'motion';
 
-const { toSubject, toTargetOrigin } = getProjection(subject, target);
-
-// set to subject
-animate(target, { ...toSubject }, { duration: 0 });
-
-// FLIP back to origin
-const flipAnimation = animate(
-  target,
-  {
-    ...toTargetOrigin,
-  },
-  {
-    duration: 1,
-    easing: 'ease-out',
-  },
-);
-
-// clear inline styles when FLIP is done, if you care to
-flipAnimation.finished.then(() => {
-  target.style.transform = '';
-  // etc...
-});
+function flip(subject: HTMLElement, target: HTMLElement): void {
+  const { toSubject, toTargetOrigin } = getProjection(subject, target);
+  
+  // set target to subject's projection
+  setInlineStyles(target, toSubject);
+  
+  // FLIP back to origin
+  const flipAnimation = animate(
+    target,
+    {
+      ...toTargetOrigin,
+    },
+    {
+      duration: 1,
+      easing: 'ease-out',
+    },
+  );
+    
+  // clear inline styles once they're redundant
+  flipAnimation.finished.then(() => clearInlineStyles(target, toTargetOrigin));
+}
 ```
 
-## Animating target directly to subject using Motion One
+## Animate target directly to subject using Motion One
 
 ```ts
-import { getProjection } from 'projectrix';
+import { getProjection, type PartialProjection } from 'projectrix';
 import { animate, type AnimationControls } from 'motion';
 
 let currentAnim: AnimationControls | undefined;
 
 function animateDirect(subject: HTMLElement, target: HTMLElement): void {
-  // stop current animation; motion one will update target's inline styles to mid-animation values
+  // stop current animation; motion one will update target's inline
+  // styles to mid-animation values
   if (currentAnim?.currentTime && currentAnim.currentTime < 1) {
     currentAnim.stop();
   }
 
+  const toSubject = getProjection(subject, target).toSubject as PartialProjection;
+  delete toSubject.borderStyle; // preserve target border style
+
   currentAnim = animate(
     target,
-    {
-      // preserve all of target's border properties
-      ...getProjection(subject, target, { useBorder: 'target' }).toSubject,
-
-      // could preserve just the border style like so
-      // borderStyle: 'solid'
-    },
+    { ...toSubject },
     {
       duration: 0.4,
       easing: 'ease-out',
@@ -82,24 +79,40 @@ function animateDirect(subject: HTMLElement, target: HTMLElement): void {
 ```
 ###### (This usage was originally written with Anime.js v3, but v3 has bugs when animating between different shorthands. Will update to Anime.js v4 when it's released, shoutout to the [early access beta](https://github.com/sponsors/juliangarnier))
 
-## Matching target to subject by directly setting inline styles
+## Match target to subject
 
 ```ts
-  import { getProjection } from 'projectrix';
+import { getProjection, setInlineStyles, type PartialProjectionResults } from 'projectrix';
 
-  const { toSubject } = getProjection(subjectElement, targetElement);
-
-  targetElement.style.width = toSubject.width;
-  targetElement.style.height = toSubject.height;
-  targetElement.style.borderStyle = toSubject.borderStyle;
-  targetElement.style.borderWidth = toSubject.borderWidth;
-  targetElement.style.borderRadius = toSubject.borderRadius;
-  targetElement.style.transformOrigin = toSubject.transformOrigin;
-  targetElement.style.transform = toSubject.transform;
+function match(subject: HTMLElement, target: HTMLElement): void {
+  const { toSubject } = getProjection(subject, target) as PartialProjectionResults;
+  delete toSubject.borderStyle; // preserve target border style
+  
+  setInlineStyles(target, toSubject);
+}
 ```
 
 # Types & Documentation
 
+```ts
+export type Projection = {
+  width: string; // 'Wpx'
+  height: string; // 'Hpx'
+  borderStyle: string; // '' | 'none' | 'solid' | 'dashed' | etc.
+  borderWidth: string; // 'Tpx Rpx Bpx Lpx'
+  borderRadius: string; // 'TLpx TRpx BRpx BLpx'
+  transformOrigin: string; // 'X% Y% Zpx'
+
+  /**
+   * contains exactly one of the following members, depending on the given transformType option:
+   * @member transform: string; // `matrix3d(${matrix3d})`
+   * @member matrix3d: string;
+   * @member transformMat4: mat4; // row-major array from gl-matrix
+   */
+  [TransformType: string]: string | mat4 | any; // any is only necessary to allow spreading into anime.js, motion one, etc.
+};
+export type PartialProjection = Partial<Projection>;
+```
 ```ts
 export function getProjection(
   subject: HTMLElement, // the element that you plan to align the target to
@@ -131,23 +144,27 @@ export type ProjectionResults = {
   subject: HTMLElement;
   target: HTMLElement;
 };
-
-export type Projection = {
-  width: string; // 'Wpx'
-  height: string; // 'Hpx'
-  borderStyle: string; // '' | 'none' | 'solid' | 'dashed' | etc.
-  borderWidth: string; // 'Tpx Rpx Bpx Lpx'
-  borderRadius: string; // 'TLpx TRpx BRpx BLpx'
-  transformOrigin: string; // 'X% Y% Zpx'
-
-  [TransformType: string]: string | mat4 | any; // any is only necessary to allow spreading into anime.js, motion one, etc.
-  /**
-   * contains exactly one of the following members, depending on the given transformType option:
-   * @member transform: string; // `matrix3d(${matrix3d})`
-   * @member matrix3d: string;
-   * @member transformMat4: mat4; // row-major array from gl-matrix
-   */
+export type PartialProjectionResults = {
+  toSubject: PartialProjection;
+  toTargetOrigin: PartialProjection;
+  transformType: TransformType;
+  subject: HTMLElement;
+  target: HTMLElement;
 };
+```
+```ts
+/**
+ * sets the inline style on the target for each style in the given partial projection.
+ * converts any matrix3d or transformMat4 value to a transform style
+ */
+export function setInlineStyles(target: HTMLElement, partialProjection: PartialProjection): void;
+
+/**
+ * clears the inline style on the target for each style in the given partial projection.
+ * if no partial projection is given, assumes target's inline styles were set to a full projection.
+ * if the projection contains matrix3d or transformMat4, then the transform style is cleared
+ */
+export function clearInlineStyles(target: HTMLElement, partialProjection?: PartialProjection): void;
 ```
 
 ## Limitations
@@ -155,6 +172,7 @@ export type Projection = {
 - Projectrix will not attempt to match or emulate bugs in rendering engines
 - preserve3d property is probably not yet supported
 - perspective properties are not yet supported
+- SVGs are not yet officially supported, but might happen to work in certain scenarios
 
 # Contribute
 
