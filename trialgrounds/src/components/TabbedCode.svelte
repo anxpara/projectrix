@@ -107,13 +107,9 @@
         class="tab"
         class:selected={$value === tab.id}
       >
-        <div bind:this={tabBgsByTabId[tab.id]} class="tab-bg">
-          <div class="corner left" />
-          <div class="corner right" />
-        </div>
+        <div class="tab-decor tab-border" class:selected={$value === tab.id}></div>
+        <div bind:this={tabBgsByTabId[tab.id]} class="tab-decor tab-bg"></div>
         {tab.title}
-        <div class="corner left" class:selected={$value === tab.id} />
-        <div class="corner right" class:selected={$value === tab.id} />
       </button>
     {/each}
   </div>
@@ -153,7 +149,12 @@
 
   .tab-list {
     font-size: min(1em, 2.9vw);
-    padding-left: 2.35em;
+
+    position: relative;
+    left: 1.04em;
+    top: 0.03em;
+
+    width: calc(100% - 1.04em);
 
     display: flex;
   }
@@ -165,13 +166,11 @@
     display: block;
 
     position: relative;
-    margin-right: 2.2em;
-    border: solid 2px coral;
-    padding: 0.4em 0.1em;
     z-index: 1;
 
-    border-left-color: transparent;
-    border-right-color: transparent;
+    margin-right: 0.3em;
+    padding: 0.5em 1.4em 0.5em 1.3em;
+
     font-weight: 800;
     font-style: italic;
     letter-spacing: 0.03em;
@@ -181,49 +180,23 @@
 
     transition: color 0.1s $coralBezier;
 
-    .corner {
-      cursor: pointer;
-    }
-
-    .tab-bg {
-      font-size: 1.5em;
-
+    .tab-decor {
       position: absolute;
       top: 0;
       left: 0;
-      z-index: -1;
 
       width: calc(100% - 4px);
       height: calc(100% - 4px);
       border: solid 2px coral;
 
+      transform: skew(-34deg);
+    }
+
+    .tab-bg {
+      z-index: -1;
+
       background: coral;
       opacity: 0;
-
-      .corner {
-        background: inherit;
-      }
-      .corner.left {
-        left: -0.7em;
-      }
-      .corner.right {
-        right: -0.7em;
-      }
-    }
-  }
-  .tab:hover {
-    border-color: rgb(204, 100, 62);
-    border-left-color: transparent;
-    border-right-color: transparent;
-
-    .corner {
-      border-color: rgb(204, 100, 62);
-    }
-    .corner.left {
-      border-right-color: transparent;
-    }
-    .corner.right {
-      border-left-color: transparent;
     }
   }
   .tab.selected {
@@ -235,58 +208,25 @@
       opacity: 1;
     }
   }
+  .tab:hover {
+    .tab-border {
+      border-color: rgb(204, 100, 62);
+    }
+  }
   .tab.selected:hover {
-    border-color: coral;
-    border-left-color: transparent;
-    border-right-color: transparent;
-
-    .corner {
+    .tab-border {
       border-color: coral;
     }
-    .corner.left {
-      border-right-color: transparent;
-    }
-    .corner.right {
-      border-left-color: transparent;
-    }
-  }
-
-  .corner {
-    position: absolute;
-    top: -2px;
-
-    width: calc(3em - 6px);
-    height: calc(100% - 0px);
-    border: solid 2px coral;
-
-    transform: skew(-34deg);
-  }
-  .left {
-    left: -1em;
-    z-index: 3;
-
-    border-right-color: transparent;
-    cursor: default;
-  }
-  .right {
-    left: unset;
-    right: -1em;
-    bottom: 0;
-    z-index: -1;
-
-    border-left-color: transparent;
-  }
-  .corner.selected {
-    cursor: default;
   }
 
   .figure-bg {
     position: absolute;
     margin-bottom: 2em;
-    border-left: solid 1px coral;
+    z-index: -1;
+
     height: 0;
     width: 100%;
-    z-index: -1;
+    border-left: solid 1px coral;
 
     background: hsla(16, 100%, 58%, 0.06);
   }
@@ -295,6 +235,7 @@
     position: absolute;
     margin: 0;
     margin-bottom: 2em;
+
     width: 100%;
 
     pre {
