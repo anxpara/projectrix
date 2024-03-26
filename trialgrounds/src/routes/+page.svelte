@@ -22,7 +22,7 @@
   let autoSelectIndex: number = -1;
   let autoSelectInterval: NodeJS.Timeout | undefined = undefined;
   let currentTrial: Trial | undefined = undefined;
-  $: trialSubject = currentTrial?.trialComponent?.getSubjectElement();
+  $: trialSubject = currentTrial?.trialComponent?.getTrialControls().getSubjectElement?.call(null);
   $: updateShowDefaultSubject(!trialSubject);
 
   let defaultSubject: HTMLElement;
@@ -43,7 +43,7 @@
   onDestroy(() => {
     clearInterval(autoSelectInterval);
     allTrials.forEach((trial) => {
-      const target = trial.trialComponent?.getTargetElement();
+      const target = trial.trialComponent?.getTrialControls().getTargetElement();
       if (target) {
         anime.remove(target);
       }
@@ -53,8 +53,12 @@
   function autoSelectNextTrial(): void {
     autoSelectIndex++;
     autoSelectIndex %= trials.length;
+    const nextTrial = trials[autoSelectIndex];
 
-    selectTrial(trials[autoSelectIndex]);
+    // trial component was probably garbage collected
+    if (!nextTrial?.trialComponent) return;
+
+    selectTrial(nextTrial);
   }
 
   function hoverTrial(trial: Trial): void {

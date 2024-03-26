@@ -13,7 +13,7 @@
   let options = getContext<Writable<Options>>('options');
 
   $: trial = trialsByName.get($page.params.trialName as TrialName)!;
-  $: trialSubject = trial.trialComponent?.getSubjectElement?.call(undefined);
+  $: trialSubject = trial.trialComponent?.getTrialControls?.call(null).getSubjectElement?.call(null);
   $: updateShowDefaultSubject(!trialSubject);
   const defaultSubject = getContext<Writable<HTMLElement | undefined>>('default-subject');
 
@@ -38,7 +38,7 @@
       trial.animation.stop();
       trial.animation = undefined;
     }
-    const target = trial.trialComponent?.getTargetElement();
+    const target = trial.trialComponent?.getTrialControls().getTargetElement();
     if (!target) return;
     anime.remove(target);
   });

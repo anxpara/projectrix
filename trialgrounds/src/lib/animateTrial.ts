@@ -11,9 +11,11 @@ export function animateTrial(
   trialOptions: Options,
   duration = 1000,
 ): void {
-  const target = trial.trialComponent!.getTargetElement();
-  const subject = trial.trialComponent!.getSubjectElement() ?? defaultSubject;
-  const options: ProjectionOptions = trial.trialComponent!.getProjectionOptions() ?? {};
+  const target = trial.trialComponent!.getTrialControls().getTargetElement();
+  const subject =
+    trial.trialComponent!.getTrialControls().getSubjectElement?.call(null) ?? defaultSubject;
+  const options: ProjectionOptions =
+    trial.trialComponent!.getTrialControls().getProjectionOptions?.call(null) ?? {};
   options.transformType = trialOptions.skipAnimation
     ? 'transform'
     : options.transformType ?? 'transform';
@@ -28,7 +30,7 @@ export function animateTrial(
 
   // mark target origin
   if (!trialOptions.toTargetOrigin || !trialOptions.skipAnimation) {
-    trial.originMarker?.markOrigin(trial.trialComponent!.getTargetElement());
+    trial.originMarker?.markOrigin(trial.trialComponent!.getTrialControls().getTargetElement());
   } else {
     trial.originMarker?.unmark();
   }
@@ -157,8 +159,9 @@ export function animateTrial(
 export function animateTrialReturn(trial: Trial, trialOptions: Options, duration = 500): void {
   if (trialOptions.toTargetOrigin || !trial.toTargetOrigin) return;
 
-  const target = trial.trialComponent!.getTargetElement();
-  const options: ProjectionOptions = trial.trialComponent!.getProjectionOptions() ?? {};
+  const target = trial.trialComponent!.getTrialControls().getTargetElement();
+  const options: ProjectionOptions =
+    trial.trialComponent!.getTrialControls().getProjectionOptions?.call(null) ?? {};
   options.transformType = options.transformType ?? 'transform';
 
   if (options.transformType === 'transformMat4') {

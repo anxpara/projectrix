@@ -35,12 +35,16 @@ import TargetFixedInTransform from '../components/trials/TargetFixedInTransform.
 import TargetFixedInFilter from '../components/trials/TargetFixedInFilter.svelte';
 
 export interface TrialControls {
-  getSubjectElement: () => HTMLElement | undefined;
   getTargetElement: () => HTMLElement;
-  getProjectionOptions: () => ProjectionOptions | undefined;
+  getSubjectElement?: () => HTMLElement;
+  getProjectionOptions?: () => ProjectionOptions;
 }
 
-export type TrialComponent = SvelteComponent & TrialControls;
+export interface GetTrialControls {
+  getTrialControls: () => TrialControls;
+}
+
+export type TrialComponent = SvelteComponent & GetTrialControls;
 
 export type Trial = {
   name: TrialName;

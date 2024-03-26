@@ -1,24 +1,31 @@
 <script lang="ts">
-  import type { Trial } from '$lib/trials';
+  import type { Trial, TrialControls } from '$lib/trials';
   import type { ProjectionOptions } from 'projectrix';
 
   export let trial: Trial;
   export let hideSubject: boolean | undefined = undefined;
 
   let subjectElement: HTMLElement;
-
-  export function getSubjectElement(): HTMLElement | undefined {
+  function getSubjectElement(): HTMLElement {
     return subjectElement;
   }
 
   let targetElement: HTMLElement;
-  export function getTargetElement(): HTMLElement {
+  function getTargetElement(): HTMLElement {
     return targetElement;
   }
 
-  export function getProjectionOptions(): ProjectionOptions | undefined {
+  function getProjectionOptions(): ProjectionOptions {
     return {
       useBorder: 'subject',
+    };
+  }
+
+  export function getTrialControls(): TrialControls {
+    return {
+      getTargetElement,
+      getSubjectElement,
+      getProjectionOptions,
     };
   }
 </script>

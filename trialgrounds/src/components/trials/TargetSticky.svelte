@@ -1,29 +1,31 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import type { Trial } from '$lib/trials';
-  import type { ProjectionOptions } from 'projectrix';
+  import type { Trial, TrialControls } from '$lib/trials';
 
   export let trial: Trial;
   export let hideSubject: boolean | undefined = undefined;
 
   let container: HTMLElement;
-  let subjectElement: HTMLElement;
 
   onMount(() => {
     container.scrollTop = 400;
   });
 
-  export function getSubjectElement(): HTMLElement | undefined {
+  let subjectElement: HTMLElement;
+  function getSubjectElement(): HTMLElement {
     return subjectElement;
   }
 
   let targetElement: HTMLElement;
-  export function getTargetElement(): HTMLElement {
+  function getTargetElement(): HTMLElement {
     return targetElement;
   }
 
-  export function getProjectionOptions(): ProjectionOptions | undefined {
-    return undefined;
+  export function getTrialControls(): TrialControls {
+    return {
+      getTargetElement,
+      getSubjectElement,
+    };
   }
 </script>
 
