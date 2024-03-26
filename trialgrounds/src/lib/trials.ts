@@ -1,5 +1,7 @@
 import type { ComponentType, SvelteComponent } from 'svelte';
 import type { ProjectionOptions, Projection } from 'projectrix';
+import type { AnimationControls } from 'motion';
+import type { Options } from './options';
 import { TrialName as TrialName } from './trialNames';
 import type OriginMarker from '../components/OriginMarker.svelte';
 import Control from '../components/trials/Control.svelte';
@@ -29,10 +31,13 @@ import TargetInOrigin0Bigger from '../components/trials/TargetInOrigin0Bigger.sv
 import TargetInRotatedBigger from '../components/trials/TargetInRotatedBigger.svelte';
 import UseMatrix3dType from '../components/trials/UseMatrix3dType.svelte';
 import UseMat4Type from '../components/trials/UseMat4Type.svelte';
-import type { AnimationControls } from 'motion';
 import TargetAbsoluteInTransform from '../components/trials/TargetAbsoluteInTransform.svelte';
 import TargetFixedInTransform from '../components/trials/TargetFixedInTransform.svelte';
 import TargetFixedInFilter from '../components/trials/TargetFixedInFilter.svelte';
+import SetWithMatrix3 from '../components/trials/SetWithMatrix3.svelte';
+import SetWithMat4 from '../components/trials/SetWithMat4.svelte';
+import ClearWithMat4 from '../components/trials/ClearWithMat4.svelte';
+import ClearWithMatrix3d from '../components/trials/ClearWithMatrix3d.svelte';
 
 export interface TrialControls {
   getTargetElement: () => HTMLElement;
@@ -87,6 +92,10 @@ export const allTrials: Trial[] = [
   { name: TrialName.TargetInOrigin0Bigger, trialType: TargetInOrigin0Bigger },
   { name: TrialName.UseMatrix3dType, trialType: UseMatrix3dType },
   { name: TrialName.UseMat4Type, trialType: UseMat4Type },
+  { name: TrialName.SetWithMatrix3d, trialType: SetWithMatrix3 },
+  { name: TrialName.SetWithMat4, trialType: SetWithMat4 },
+  { name: TrialName.ClearWithMatrix3d, trialType: ClearWithMatrix3d },
+  { name: TrialName.ClearWithMat4, trialType: ClearWithMat4 },
 ];
 export const trialsByName = new Map<TrialName, Trial>(
   allTrials.map((trial) => [trial.name, trial]),
