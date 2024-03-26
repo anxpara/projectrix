@@ -162,6 +162,56 @@ export function getProjection(
   };
 }
 
+/**
+ * sets the inline style on the target for each style in the given partial projection.
+ * converts any matrix3d or transformMat4 value to a transform style
+ */
+export function setInlineStyles(target: HTMLElement, partialProjection: PartialProjection): void {
+  for (const key in partialProjection) {
+    if (key === 'matrix3d') {
+      target.style.transform = `matrix3d(${partialProjection.matrix3d})`;
+      continue;
+    }
+    if (key === 'transformMat4') {
+      const transform = getTransformAsRequestedType(partialProjection.transformMat4).transform;
+      target.style.transform = <string>transform;
+      continue;
+    }
+
+    const propName = propKeyToPropName(key);
+    target.style.setProperty(propName, partialProjection[key]);
+  }
+}
+
+/**
+ * clears the inline style on the target for each style in the given partial projection.
+ * if no partial projection is given, assumes target's inline styles were set to a full projection.
+ * if the projection contains matrix3d or transformMat4, then the transform style is cleared
+ */
+export function clearInlineStyles(target: HTMLElement, partialProjection?: PartialProjection): void {
+  if (!partialProjection) {
+    partialProjection = {
+      width: '',
+      height: '',
+      borderWidth: '',
+      borderStyle: '',
+      borderRadius: '',
+      transformOrigin: '',
+      transform: '',
+    };
+  }
+
+  for (const key in partialProjection) {
+    if (['matrix3d', 'transformMat4'].includes(key)) {
+      target.style.transform = '';
+      continue;
+    }
+
+    const propName = propKeyToPropName(key);
+    target.style.setProperty(propName, '');
+  }
+}
+
 function getProjectionToSubject(
   subject: HTMLElement,
   target: HTMLElement,
@@ -303,4 +353,10 @@ function getTransformAsRequestedType(transformMat4: mat4, options?: ProjectionOp
         transformMat4,
       };
   }
+}
+
+function propKeyToPropName(key: string): string {
+  const frags = key.match(/[A-Z]*[a-z]+/g);
+  if (!frags) return key;
+  return frags?.join('-');
 }
