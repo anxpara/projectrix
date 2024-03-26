@@ -37,6 +37,13 @@ export type ProjectionResults = {
   subject: HTMLElement;
   target: HTMLElement;
 };
+export type PartialProjectionResults = {
+  toSubject: PartialProjection;
+  toTargetOrigin: PartialProjection;
+  transformType: TransformType;
+  subject: HTMLElement;
+  target: HTMLElement;
+};
 
 /**
  * a Projection contains the set of styles that--when applied to a target element--will make the target
@@ -63,6 +70,7 @@ export type Projection = {
   transformOrigin: string;
   [TransformType: string]: string | mat4 | any; // any is only necessary to allow spreading into anime.js, motion one, etc.
 };
+export type PartialProjection = Partial<Projection>;
 
 export type TransformType = 'transform' | 'matrix3d' | 'transformMat4';
 export type BorderSource = 'subject' | 'target' | 'zero';
