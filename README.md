@@ -35,9 +35,7 @@ function flip(subject: HTMLElement, target: HTMLElement): void {
   // FLIP back to origin
   const flipAnimation = animate(
     target,
-    {
-      ...toTargetOrigin,
-    },
+    { ...toTargetOrigin },
     {
       duration: 1,
       easing: 'ease-out',

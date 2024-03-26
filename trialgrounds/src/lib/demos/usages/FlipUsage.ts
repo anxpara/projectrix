@@ -10,9 +10,7 @@ function flip(subject: HTMLElement, target: HTMLElement): void {
   // FLIP back to origin
   const flipAnimation = animate(
     target,
-    {
-      ...toTargetOrigin,
-    },
+    { ...toTargetOrigin },
     {
       duration: 1,
       easing: 'ease-out',
@@ -212,9 +210,7 @@ export const FlipUsageHL = `<pre class="shiki one-dark-pro" style="background-co
 <span class="line"><span style="color:#7F848E;font-style:italic">  // FLIP back to origin</span></span>
 <span class="line"><span style="color:#C678DD">  const</span><span style="color:#E5C07B"> flipAnimation</span><span style="color:#56B6C2"> =</span><span style="color:#61AFEF"> animate</span><span style="color:#ABB2BF">(</span></span>
 <span class="line"><span style="color:#E06C75">    target</span><span style="color:#ABB2BF">,</span></span>
-<span class="line"><span style="color:#ABB2BF">    {</span></span>
-<span class="line"><span style="color:#ABB2BF">      ...</span><span style="color:#E06C75">toTargetOrigin</span><span style="color:#ABB2BF">,</span></span>
-<span class="line"><span style="color:#ABB2BF">    },</span></span>
+<span class="line"><span style="color:#ABB2BF">    {</span><span style="color:#ABB2BF"> ...</span><span style="color:#E06C75">toTargetOrigin</span><span class="line"><span style="color:#ABB2BF"> },</span></span></span>
 <span class="line"><span style="color:#ABB2BF">    {</span></span>
 <span class="line"><span style="color:#E06C75">      duration</span><span style="color:#ABB2BF">: </span><span style="color:#D19A66">1</span><span style="color:#ABB2BF">,</span></span>
 <span class="line"><span style="color:#E06C75">      easing</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'ease-out'</span><span style="color:#ABB2BF">,</span></span>
