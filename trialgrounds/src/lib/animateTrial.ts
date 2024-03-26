@@ -11,6 +11,13 @@ export function animateTrial(
   trialOptions: Options,
   duration = 1000,
 ): void {
+  // allow trial to override the animation
+  const playCustomAnimation = trial.trialComponent!.getTrialControls().playCustomAnimation;
+  if (playCustomAnimation) {
+    playCustomAnimation(defaultSubject, trialOptions);
+    return;
+  }
+
   const target = trial.trialComponent!.getTrialControls().getTargetElement();
   const subject =
     trial.trialComponent!.getTrialControls().getSubjectElement?.call(null) ?? defaultSubject;

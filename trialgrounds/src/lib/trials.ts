@@ -38,6 +38,7 @@ export interface TrialControls {
   getTargetElement: () => HTMLElement;
   getSubjectElement?: () => HTMLElement;
   getProjectionOptions?: () => ProjectionOptions;
+  playCustomAnimation?: (defaultSubject: HTMLElement, trialOptions: Options) => void;
 }
 
 export interface GetTrialControls {
