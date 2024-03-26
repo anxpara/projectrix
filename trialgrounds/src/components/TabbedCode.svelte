@@ -13,7 +13,7 @@
 
   export let demo: Demo;
   const usageFigureTitle = `${demo.name} demo usage`;
-  const codeTitle = `${demo.name}Demo.svelte`;
+  const codeTitle = `${cap(demo.name)}Demo.svelte`;
   const codeFigureTitle = `${demo.name} demo svelte component file`;
 
   let tabsByTabId: Record<string, HTMLElement> = {};
@@ -90,6 +90,11 @@
         ...toSubject,
       });
     }
+  }
+
+  function cap(word: string): string {
+    const newWord = word[0].toUpperCase() + word.substring(1);
+    return newWord;
   }
 </script>
 
