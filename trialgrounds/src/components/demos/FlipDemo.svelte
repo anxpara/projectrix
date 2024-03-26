@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onDestroy, onMount, tick } from 'svelte';
-  import { getProjection } from 'projectrix';
+  import { getProjection, clearInlineStyles, setInlineStyles } from 'projectrix';
   import { animate, type AnimationControls } from 'motion';
   import type { Writable } from 'svelte/store';
   import type { Options } from '$lib/options';
@@ -63,7 +63,8 @@
     }
 
     // set next target to current target's projection
-    animate(nextTarget, { ...toSubject, opacity: '1' }, { duration: 0 });
+    setInlineStyles(nextTarget, toSubject);
+    nextTarget.style.opacity = '1';
     currentTarget.style.opacity = '0';
     currentTarget = nextTarget;
 
@@ -88,16 +89,6 @@
         }, 1000);
       });
     });
-  }
-
-  function clearInlineStyles(target: HTMLElement): void {
-    target.style.width = '';
-    target.style.height = '';
-    target.style.transform = '';
-    target.style.borderWidth = '';
-    target.style.borderStyle = '';
-    target.style.borderRadius = '';
-    target.style.transformOrigin = '';
   }
 
   function playParentAnimation(parent: HTMLElement, dir: number): AnimationControls {

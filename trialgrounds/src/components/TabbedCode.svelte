@@ -3,7 +3,12 @@
   import { tick } from 'svelte';
   import { fade } from 'svelte/transition';
   import { createTabs, melt } from '@melt-ui/svelte';
-  import { getProjection } from '../../../dist/es/projectrix';
+  import {
+    getProjection,
+    setInlineStyles,
+    clearInlineStyles,
+    type PartialProjectionResults,
+  } from 'projectrix';
   import anime from 'animejs';
 
   export let demo: Demo;
@@ -48,11 +53,11 @@
 
     const { toSubject, toTargetOrigin } = getProjection(currentTabBg, tabBg, {
       transformType: 'matrix3d',
-    });
-    toSubject.borderWidth = ''; // avoid anime border shorthand bug
-    toTargetOrigin.borderWidth = '';
+    }) as PartialProjectionResults;
+    delete toSubject.borderWidth; // avoid anime border shorthand bug
+    delete toTargetOrigin.borderWidth;
 
-    anime.set(tabBg, { ...toSubject });
+    setInlineStyles(tabBg, toSubject);
     anime({
       targets: tabBg,
       duration: 200,
@@ -60,7 +65,7 @@
 
       ...toTargetOrigin,
 
-      complete: () => clearInlineStyles(tabBg),
+      complete: () => clearInlineStyles(tabBg, toTargetOrigin),
     });
   }
 
@@ -71,10 +76,11 @@
     const { toSubject } = getProjection(figure, figureBg, {
       transformType: 'matrix3d',
       useBorder: 'target', // keep figureBg's stylized left border
-    });
+    }) as PartialProjectionResults;
+    delete toSubject.width; // keep figureBg's 100% width
 
     if (skipAnimation) {
-      anime.set(figureBg, { ...toSubject, width: '' });
+      setInlineStyles(figureBg, toSubject);
     } else {
       anime({
         targets: figureBg,
@@ -82,19 +88,8 @@
         easing: 'easeInOutQuad',
 
         ...toSubject,
-        width: '',
       });
     }
-  }
-
-  function clearInlineStyles(target: HTMLElement): void {
-    target.style.width = '';
-    target.style.height = '';
-    target.style.borderWidth = '';
-    target.style.borderStyle = '';
-    target.style.borderRadius = '';
-    target.style.transformOrigin = '';
-    target.style.transform = '';
   }
 </script>
 
@@ -163,7 +158,7 @@
 
     font-size: 1.5em;
     display: block;
-    
+
     position: relative;
     margin-right: 2.2em;
     border: solid 2px coral;

@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Options } from '$lib/options';
   import { animate, type AnimationControls } from 'motion';
-  import { getProjection } from 'projectrix';
+  import { getProjection, setInlineStyles, type PartialProjectionResults } from 'projectrix';
   import { onMount, tick } from 'svelte';
   import type { Writable } from 'svelte/store';
   import type DemoStartSlot from '../DemoStartSlot.svelte';
@@ -24,9 +24,7 @@
   function swapSlotForTarget(target: HTMLElement): void {
     const { toSubject } = getProjection(startSlot.getSlotSubject(), target);
 
-    target.style.transform = toSubject.transform;
-    target.style.width = toSubject.width;
-    target.style.height = toSubject.height;
+    setInlineStyles(target, toSubject);
     target.style.opacity = '1';
 
     startSlot.hide();
@@ -43,8 +41,9 @@
       currentAnim.stop();
     }
 
-    const projectionResults = getProjection(subject, target);
+    const projectionResults = getProjection(subject, target) as PartialProjectionResults;
     const { toSubject } = projectionResults;
+    delete toSubject.borderStyle; // preserve target border style
 
     if ($options.log) {
       console.log(projectionResults);
@@ -52,7 +51,7 @@
 
     currentAnim = animate(
       target,
-      { ...toSubject, borderStyle: 'solid' },
+      { ...toSubject },
       {
         duration: 0.4,
         easing: 'ease-out',

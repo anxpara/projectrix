@@ -1,6 +1,11 @@
 import anime from 'animejs';
 import type { Trial } from './trials';
-import { getProjection, type Projection, type ProjectionOptions } from 'projectrix';
+import {
+  clearInlineStyles,
+  getProjection,
+  setInlineStyles,
+  type ProjectionOptions,
+} from 'projectrix';
 import { animate } from 'motion';
 import { mat4 } from 'gl-matrix';
 import type { Options } from './options';
@@ -222,26 +227,6 @@ export function animateTrialReturn(trial: Trial, trialOptions: Options, duration
       trial.originMarker?.unmark();
     });
   }
-}
-
-function setInlineStyles(target: HTMLElement, projection: Projection): void {
-  target.style.width = projection.width;
-  target.style.height = projection.height;
-  target.style.borderStyle = projection.borderStyle;
-  target.style.borderWidth = projection.borderWidth;
-  target.style.borderRadius = projection.borderRadius;
-  target.style.transformOrigin = projection.transformOrigin;
-  target.style.transform = projection.transform;
-}
-
-function clearInlineStyles(target: HTMLElement): void {
-  target.style.width = '';
-  target.style.height = '';
-  target.style.borderStyle = '';
-  target.style.borderWidth = '';
-  target.style.borderRadius = '';
-  target.style.transformOrigin = '';
-  target.style.transform = '';
 }
 
 function convertMat4ToCssMatrix3dSubstring(mat: mat4): string {

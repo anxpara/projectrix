@@ -2,7 +2,7 @@
   import { onMount, tick } from 'svelte';
   import { mat4, quat, vec3 } from 'gl-matrix';
   import { getActualClientRect } from 'actual-client-rect';
-  import { getProjection } from 'projectrix';
+  import { getProjection, setInlineStyles } from 'projectrix';
   import anime from 'animejs';
   import type { Writable } from 'svelte/store';
   import type { Options } from '$lib/options';
@@ -94,21 +94,17 @@
       return;
     }
 
-    // Anime.js v3 takes matrix3d
-    const projectionResults = getProjection(currentTarget, nextTarget, {
-      transformType: 'matrix3d',
-    });
+    const projectionResults = getProjection(currentTarget, nextTarget);
     const { toSubject } = projectionResults;
+
     if ($options.log) {
       console.log(projectionResults);
     }
 
     // match next target to current target's projection
-    anime.set(nextTarget, {
-      ...toSubject,
-    });
-
+    setInlineStyles(nextTarget, toSubject);
     setCurrentTarget(nextTarget);
+
     animateClonedpulse(nextTarget);
   }
 
@@ -168,12 +164,8 @@
 
   function animateWin(goal: HTMLElement): void {
     // match winner target to current target
-    anime.set(winnerTarget, {
-      ...getProjection(currentTarget!, winnerTarget, {
-        transformType: 'matrix3d',
-      }).toSubject,
-    });
-
+    const { toSubject } = getProjection(currentTarget!, winnerTarget);
+    setInlineStyles(winnerTarget, toSubject);
     setCurrentTarget(winnerTarget);
 
     // animate rest of way to goal
@@ -182,6 +174,7 @@
       duration: 300,
       easing: 'easeOutQuad',
 
+      // anime.js takes matrix3d
       ...getProjection(goal, winnerTarget, { transformType: 'matrix3d' }).toSubject,
 
       complete: () => {
@@ -197,9 +190,7 @@
   }
 
   function animateMiss(goal: HTMLElement): void {
-    anime.set(goal, {
-      backgroundColor: 'rgba(255, 0, 0, 1)',
-    });
+    goal.style.backgroundColor = 'rgba(255, 0, 0, 1)';
     anime({
       targets: goal,
       duration: 300,
@@ -210,25 +201,18 @@
   }
 
   function markGoalCompleted(goal: HTMLElement): void {
-    anime.set(goal, {
-      borderStyle: 'dotted',
-      borderColor: '#32cd32',
-    });
+    goal.style.borderStyle = 'dotted';
+    goal.style.borderColor = '#32cd32';
   }
 
   function animateClonedpulse(subject: HTMLElement): void {
-    const pulseClone = <HTMLElement>pulseTemplate.cloneNode();
+    const pulseClone = pulseTemplate.cloneNode() as HTMLElement;
     pulseContainer.append(pulseClone);
 
-    const { toSubject } = getProjection(subject, pulseClone, {
-      transformType: 'matrix3d',
-    });
+    const { toSubject } = getProjection(subject, pulseClone);
+    setInlineStyles(pulseClone, toSubject);
+    pulseClone.style.opacity = '1';
 
-    anime.set(pulseClone, {
-      ...toSubject,
-      outlineOffset: '0px',
-      outlineColor: 'rgba(50, 205, 50, 1)',
-    });
     anime({
       targets: pulseClone,
       duration: 300,
@@ -522,5 +506,8 @@
   .pulse-template {
     border-color: transparent;
     outline: solid 2px transparent;
+    outline-offset: 0px;
+    outline-color: rgba(50, 205, 50, 1);
+    opacity: 0;
   }
 </style>

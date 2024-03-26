@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Options } from '$lib/options';
-  import { getProjection } from 'projectrix';
+  import { getProjection, setInlineStyles, type PartialProjectionResults } from 'projectrix';
   import { onMount, tick } from 'svelte';
   import type { Writable } from 'svelte/store';
   import type DemoStartSlot from '../DemoStartSlot.svelte';
@@ -25,20 +25,15 @@
       inSlot = false;
     }
 
-    const projectionResults = getProjection(subject, target);
+    const projectionResults = getProjection(subject, target) as PartialProjectionResults;
     const { toSubject } = projectionResults;
+    delete toSubject.borderStyle; // preserve target border style
 
     if ($options.log) {
       console.log(projectionResults);
     }
 
-    target.style.width = toSubject.width;
-    target.style.height = toSubject.height;
-    // target.style.borderStyle = toSubject.borderStyle; // keep solid border
-    target.style.borderWidth = toSubject.borderWidth;
-    target.style.borderRadius = toSubject.borderRadius;
-    target.style.transformOrigin = toSubject.transformOrigin;
-    target.style.transform = toSubject.transform;
+    setInlineStyles(target, toSubject);
   }
 
   function subjectClickHandler(subject: HTMLElement): void {
