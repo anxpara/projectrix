@@ -1,32 +1,31 @@
-export const FlipUsage = `import { getProjection } from 'projectrix';
+export const FlipUsage = `import { getProjection, setInlineStyles, clearInlineStyles } from 'projectrix';
 import { animate } from 'motion';
 
-const { toSubject, toTargetOrigin } = getProjection(subject, target);
-
-// set to subject
-animate(target, { ...toSubject }, { duration: 0 });
-
-// FLIP back to origin
-const flipAnimation = animate(
-  target,
-  {
-    ...toTargetOrigin,
-  },
-  {
-    duration: 1,
-    easing: 'ease-out',
-  },
-);
-
-// clear inline styles when FLIP is done, if you care to
-flipAnimation.finished.then(() => {
-  target.style.transform = '';
-  // etc...
-});`;
+function flip(subject: HTMLElement, target: HTMLElement): void {
+  const { toSubject, toTargetOrigin } = getProjection(subject, target);
+  
+  // set target to subject's projection
+  setInlineStyles(target, toSubject);
+  
+  // FLIP back to origin
+  const flipAnimation = animate(
+    target,
+    {
+      ...toTargetOrigin,
+    },
+    {
+      duration: 1,
+      easing: 'ease-out',
+    },
+  );
+    
+  // clear inline styles once they're redundant
+  flipAnimation.finished.then(() => clearInlineStyles(target, toTargetOrigin));
+}`;
 
 export const FlipCode = `<script lang="ts">
   import { onDestroy, onMount, tick } from 'svelte';
-  import { getProjection } from 'projectrix';
+  import { getProjection, clearInlineStyles, setInlineStyles } from 'projectrix';
   import { animate, type AnimationControls } from 'motion';
   import type { Writable } from 'svelte/store';
   import type { Options } from '$lib/options';
@@ -89,7 +88,8 @@ export const FlipCode = `<script lang="ts">
     }
 
     // set next target to current target's projection
-    animate(nextTarget, { ...toSubject, opacity: '1' }, { duration: 0 });
+    setInlineStyles(nextTarget, toSubject);
+    nextTarget.style.opacity = '1';
     currentTarget.style.opacity = '0';
     currentTarget = nextTarget;
 
@@ -114,16 +114,6 @@ export const FlipCode = `<script lang="ts">
         }, 1000);
       });
     });
-  }
-
-  function clearInlineStyles(target: HTMLElement): void {
-    target.style.width = '';
-    target.style.height = '';
-    target.style.transform = '';
-    target.style.borderWidth = '';
-    target.style.borderStyle = '';
-    target.style.borderRadius = '';
-    target.style.transformOrigin = '';
   }
 
   function playParentAnimation(parent: HTMLElement, dir: number): AnimationControls {
@@ -210,35 +200,34 @@ export const FlipCode = `<script lang="ts">
   }
 </style>`;
 
-export const FlipUsageHL = `<pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#C678DD">import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">getProjection</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'projectrix'</span><span style="color:#ABB2BF">;</span></span>
+export const FlipUsageHL = `<pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#C678DD">import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">getProjection</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">setInlineStyles</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">clearInlineStyles</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'projectrix'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">animate</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'motion'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#C678DD">const</span><span style="color:#ABB2BF"> { </span><span style="color:#E5C07B">toSubject</span><span style="color:#ABB2BF">, </span><span style="color:#E5C07B">toTargetOrigin</span><span style="color:#ABB2BF"> } </span><span style="color:#56B6C2">=</span><span style="color:#61AFEF"> getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">subject</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">target</span><span style="color:#ABB2BF">);</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#7F848E;font-style:italic">// set to subject</span></span>
-<span class="line"><span style="color:#61AFEF">animate</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">target</span><span style="color:#ABB2BF">, { ...</span><span style="color:#E06C75">toSubject</span><span style="color:#ABB2BF"> }, { </span><span style="color:#E06C75">duration</span><span style="color:#ABB2BF">: </span><span style="color:#D19A66">0</span><span style="color:#ABB2BF"> });</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#7F848E;font-style:italic">// FLIP back to origin</span></span>
-<span class="line"><span style="color:#C678DD">const</span><span style="color:#E5C07B"> flipAnimation</span><span style="color:#56B6C2"> =</span><span style="color:#61AFEF"> animate</span><span style="color:#ABB2BF">(</span></span>
-<span class="line"><span style="color:#E06C75">  target</span><span style="color:#ABB2BF">,</span></span>
-<span class="line"><span style="color:#ABB2BF">  {</span></span>
-<span class="line"><span style="color:#ABB2BF">    ...</span><span style="color:#E06C75">toTargetOrigin</span><span style="color:#ABB2BF">,</span></span>
-<span class="line"><span style="color:#ABB2BF">  },</span></span>
-<span class="line"><span style="color:#ABB2BF">  {</span></span>
-<span class="line"><span style="color:#E06C75">    duration</span><span style="color:#ABB2BF">: </span><span style="color:#D19A66">1</span><span style="color:#ABB2BF">,</span></span>
-<span class="line"><span style="color:#E06C75">    easing</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'ease-out'</span><span style="color:#ABB2BF">,</span></span>
-<span class="line"><span style="color:#ABB2BF">  },</span></span>
-<span class="line"><span style="color:#ABB2BF">);</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#7F848E;font-style:italic">// clear inline styles when FLIP is done, if you care to</span></span>
-<span class="line"><span style="color:#E5C07B">flipAnimation</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">finished</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">then</span><span style="color:#ABB2BF">(() </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#E5C07B">  target</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">transform</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> ''</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#7F848E;font-style:italic">  // etc...</span></span>
-<span class="line"><span style="color:#ABB2BF">});</span></span></code></pre>`;
+<span class="line"><span style="color:#C678DD">function</span><span style="color:#61AFEF"> flip</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">subject</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75;font-style:italic">target</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#C678DD">  const</span><span style="color:#ABB2BF"> { </span><span style="color:#E5C07B">toSubject</span><span style="color:#ABB2BF">, </span><span style="color:#E5C07B">toTargetOrigin</span><span style="color:#ABB2BF"> } </span><span style="color:#56B6C2">=</span><span style="color:#61AFEF"> getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">subject</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">target</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">  </span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">  // set target to subject's projection</span></span>
+<span class="line"><span style="color:#61AFEF">  setInlineStyles</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">target</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">toSubject</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">  </span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">  // FLIP back to origin</span></span>
+<span class="line"><span style="color:#C678DD">  const</span><span style="color:#E5C07B"> flipAnimation</span><span style="color:#56B6C2"> =</span><span style="color:#61AFEF"> animate</span><span style="color:#ABB2BF">(</span></span>
+<span class="line"><span style="color:#E06C75">    target</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#ABB2BF">    {</span></span>
+<span class="line"><span style="color:#ABB2BF">      ...</span><span style="color:#E06C75">toTargetOrigin</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#ABB2BF">    },</span></span>
+<span class="line"><span style="color:#ABB2BF">    {</span></span>
+<span class="line"><span style="color:#E06C75">      duration</span><span style="color:#ABB2BF">: </span><span style="color:#D19A66">1</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#E06C75">      easing</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'ease-out'</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#ABB2BF">    },</span></span>
+<span class="line"><span style="color:#ABB2BF">  );</span></span>
+<span class="line"><span style="color:#ABB2BF">    </span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">  // clear inline styles once they're redundant</span></span>
+<span class="line"><span style="color:#E5C07B">  flipAnimation</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">finished</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">then</span><span style="color:#ABB2BF">(() </span><span style="color:#C678DD">=></span><span style="color:#61AFEF"> clearInlineStyles</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">target</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">toTargetOrigin</span><span style="color:#ABB2BF">));</span></span>
+<span class="line"><span style="color:#ABB2BF">}</span></span></code></pre>`;
 
 export const FlipCodeHL = `<pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">script</span><span style="color:#D19A66"> lang</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"ts"</span><span style="color:#ABB2BF">></span></span>
 <span class="line"><span style="color:#C678DD">  import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">onDestroy</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">onMount</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">tick</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'svelte'</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#C678DD">  import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">getProjection</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'projectrix'</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#C678DD">  import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">getProjection</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">clearInlineStyles</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">setInlineStyles</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'projectrix'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">animate</span><span style="color:#ABB2BF">, </span><span style="color:#C678DD">type</span><span style="color:#E06C75"> AnimationControls</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'motion'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  import</span><span style="color:#C678DD"> type</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">Writable</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'svelte/store'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  import</span><span style="color:#C678DD"> type</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">Options</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> '$lib/options'</span><span style="color:#ABB2BF">;</span></span>
@@ -301,7 +290,8 @@ export const FlipCodeHL = `<pre class="shiki one-dark-pro" style="background-col
 <span class="line"><span style="color:#ABB2BF">    }</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#7F848E;font-style:italic">    // set next target to current target's projection</span></span>
-<span class="line"><span style="color:#61AFEF">    animate</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">nextTarget</span><span style="color:#ABB2BF">, { ...</span><span style="color:#E06C75">toSubject</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">opacity</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'1'</span><span style="color:#ABB2BF"> }, { </span><span style="color:#E06C75">duration</span><span style="color:#ABB2BF">: </span><span style="color:#D19A66">0</span><span style="color:#ABB2BF"> });</span></span>
+<span class="line"><span style="color:#61AFEF">    setInlineStyles</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">nextTarget</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">toSubject</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#E5C07B">    nextTarget</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">opacity</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> '1'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#E5C07B">    currentTarget</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">opacity</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> '0'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#E06C75">    currentTarget</span><span style="color:#56B6C2"> =</span><span style="color:#E06C75"> nextTarget</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
@@ -326,16 +316,6 @@ export const FlipCodeHL = `<pre class="shiki one-dark-pro" style="background-col
 <span class="line"><span style="color:#ABB2BF">        }, </span><span style="color:#D19A66">1000</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#ABB2BF">      });</span></span>
 <span class="line"><span style="color:#ABB2BF">    });</span></span>
-<span class="line"><span style="color:#ABB2BF">  }</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> clearInlineStyles</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">target</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#E5C07B">    target</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">width</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> ''</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#E5C07B">    target</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">height</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> ''</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#E5C07B">    target</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">transform</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> ''</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#E5C07B">    target</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">borderWidth</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> ''</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#E5C07B">    target</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">borderStyle</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> ''</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#E5C07B">    target</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">borderRadius</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> ''</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#E5C07B">    target</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">transformOrigin</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> ''</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> playParentAnimation</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">parent</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75;font-style:italic">dir</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">number</span><span style="color:#ABB2BF">): </span><span style="color:#E5C07B">AnimationControls</span><span style="color:#ABB2BF"> {</span></span>

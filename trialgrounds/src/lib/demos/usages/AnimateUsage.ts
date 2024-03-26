@@ -1,4 +1,4 @@
-export const AnimateUsage = `import { getProjection } from 'projectrix';
+export const AnimateUsage = `import { getProjection, type PartialProjection } from 'projectrix';
 import { animate, type AnimationControls } from 'motion';
 
 let currentAnim: AnimationControls | undefined;
@@ -10,12 +10,12 @@ function animateDirect(subject: HTMLElement, target: HTMLElement): void {
     currentAnim.stop();
   }
 
+  const toSubject = getProjection(subject, target).toSubject as PartialProjection;
+  delete toSubject.borderStyle; // preserve target border style
+
   currentAnim = animate(
     target,
-    {
-      // keep all of target's border properties
-      ...getProjection(subject, target, { useBorder: 'target' }).toSubject,
-    },
+    { ...toSubject },
     {
       duration: 0.4,
       easing: 'ease-out',
@@ -26,7 +26,7 @@ function animateDirect(subject: HTMLElement, target: HTMLElement): void {
 export const AnimateCode = `<script lang="ts">
   import type { Options } from '$lib/options';
   import { animate, type AnimationControls } from 'motion';
-  import { getProjection } from 'projectrix';
+  import { getProjection, setInlineStyles, type PartialProjectionResults } from 'projectrix';
   import { onMount, tick } from 'svelte';
   import type { Writable } from 'svelte/store';
   import type DemoStartSlot from '../DemoStartSlot.svelte';
@@ -49,9 +49,7 @@ export const AnimateCode = `<script lang="ts">
   function swapSlotForTarget(target: HTMLElement): void {
     const { toSubject } = getProjection(startSlot.getSlotSubject(), target);
 
-    target.style.transform = toSubject.transform;
-    target.style.width = toSubject.width;
-    target.style.height = toSubject.height;
+    setInlineStyles(target, toSubject);
     target.style.opacity = '1';
 
     startSlot.hide();
@@ -68,8 +66,9 @@ export const AnimateCode = `<script lang="ts">
       currentAnim.stop();
     }
 
-    const projectionResults = getProjection(subject, target);
+    const projectionResults = getProjection(subject, target) as PartialProjectionResults;
     const { toSubject } = projectionResults;
+    delete toSubject.borderStyle; // preserve target border style
 
     if ($options.log) {
       console.log(projectionResults);
@@ -77,7 +76,7 @@ export const AnimateCode = `<script lang="ts">
 
     currentAnim = animate(
       target,
-      { ...toSubject, borderStyle: 'solid' },
+      { ...toSubject },
       {
         duration: 0.4,
         easing: 'ease-out',
@@ -179,7 +178,7 @@ export const AnimateCode = `<script lang="ts">
   }
 </style>`;
 
-export const AnimateUsageHL = `<pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#C678DD">import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">getProjection</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'projectrix'</span><span style="color:#ABB2BF">;</span></span>
+export const AnimateUsageHL = `<pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#C678DD">import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">getProjection</span><span style="color:#ABB2BF">, </span><span style="color:#C678DD">type</span><span style="color:#E06C75"> PartialProjection</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'projectrix'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">animate</span><span style="color:#ABB2BF">, </span><span style="color:#C678DD">type</span><span style="color:#E06C75"> AnimationControls</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'motion'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#C678DD">let</span><span style="color:#E06C75"> currentAnim</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">AnimationControls</span><span style="color:#ABB2BF"> | </span><span style="color:#E5C07B">undefined</span><span style="color:#ABB2BF">;</span></span>
@@ -191,15 +190,12 @@ export const AnimateUsageHL = `<pre class="shiki one-dark-pro" style="background
 <span class="line"><span style="color:#E5C07B">    currentAnim</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">stop</span><span style="color:#ABB2BF">();</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"></span>
+<span class="line"><span style="color:#C678DD">  const</span><span style="color:#E5C07B"> toSubject</span><span style="color:#56B6C2"> =</span><span style="color:#61AFEF"> getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">subject</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">target</span><span style="color:#ABB2BF">).</span><span style="color:#E06C75">toSubject</span><span style="color:#C678DD"> as</span><span style="color:#E5C07B"> PartialProjection</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#C678DD">  delete</span><span style="color:#E5C07B"> toSubject</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">borderStyle</span><span style="color:#ABB2BF">; </span><span style="color:#7F848E;font-style:italic">// preserve target border style</span></span>
+<span class="line"></span>
 <span class="line"><span style="color:#E06C75">  currentAnim</span><span style="color:#56B6C2"> =</span><span style="color:#61AFEF"> animate</span><span style="color:#ABB2BF">(</span></span>
 <span class="line"><span style="color:#E06C75">    target</span><span style="color:#ABB2BF">,</span></span>
-<span class="line"><span style="color:#ABB2BF">    {</span></span>
-<span class="line"><span style="color:#7F848E;font-style:italic">      // preserve all of target's border properties</span></span>
-<span class="line"><span style="color:#ABB2BF">      ...</span><span style="color:#61AFEF">getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">subject</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">target</span><span style="color:#ABB2BF">, { </span><span style="color:#E06C75">useBorder</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'target'</span><span style="color:#ABB2BF"> }).</span><span style="color:#E06C75">toSubject</span><span style="color:#ABB2BF">,</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#7F848E;font-style:italic">      // could preserve just the border style like so</span></span>
-<span class="line"><span style="color:#7F848E;font-style:italic">      // borderStyle: 'solid'</span></span>
-<span class="line"><span style="color:#ABB2BF">    },</span></span>
+<span class="line"><span style="color:#ABB2BF">    { ...</span><span style="color:#E06C75">toSubject</span><span style="color:#ABB2BF"> },</span></span>
 <span class="line"><span style="color:#ABB2BF">    {</span></span>
 <span class="line"><span style="color:#E06C75">      duration</span><span style="color:#ABB2BF">: </span><span style="color:#D19A66">0.4</span><span style="color:#ABB2BF">,</span></span>
 <span class="line"><span style="color:#E06C75">      easing</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'ease-out'</span><span style="color:#ABB2BF">,</span></span>
@@ -210,7 +206,7 @@ export const AnimateUsageHL = `<pre class="shiki one-dark-pro" style="background
 export const AnimateCodeHL = `<pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">script</span><span style="color:#D19A66"> lang</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"ts"</span><span style="color:#ABB2BF">></span></span>
 <span class="line"><span style="color:#C678DD">  import</span><span style="color:#C678DD"> type</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">Options</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> '$lib/options'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">animate</span><span style="color:#ABB2BF">, </span><span style="color:#C678DD">type</span><span style="color:#E06C75"> AnimationControls</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'motion'</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#C678DD">  import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">getProjection</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'projectrix'</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#C678DD">  import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">getProjection</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">setInlineStyles</span><span style="color:#ABB2BF">, </span><span style="color:#C678DD">type</span><span style="color:#E06C75"> PartialProjectionResults</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'projectrix'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">onMount</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">tick</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'svelte'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  import</span><span style="color:#C678DD"> type</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">Writable</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'svelte/store'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  import</span><span style="color:#C678DD"> type</span><span style="color:#E06C75"> DemoStartSlot</span><span style="color:#C678DD"> from</span><span style="color:#98C379"> '../DemoStartSlot.svelte'</span><span style="color:#ABB2BF">;</span></span>
@@ -233,9 +229,7 @@ export const AnimateCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> swapSlotForTarget</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">target</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
 <span class="line"><span style="color:#C678DD">    const</span><span style="color:#ABB2BF"> { </span><span style="color:#E5C07B">toSubject</span><span style="color:#ABB2BF"> } </span><span style="color:#56B6C2">=</span><span style="color:#61AFEF"> getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">startSlot</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">getSlotSubject</span><span style="color:#ABB2BF">(), </span><span style="color:#E06C75">target</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#E5C07B">    target</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">transform</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> toSubject</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">transform</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#E5C07B">    target</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">width</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> toSubject</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">width</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#E5C07B">    target</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">height</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> toSubject</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">height</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#61AFEF">    setInlineStyles</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">target</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">toSubject</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#E5C07B">    target</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">opacity</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> '1'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#E5C07B">    startSlot</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">hide</span><span style="color:#ABB2BF">();</span></span>
@@ -252,8 +246,9 @@ export const AnimateCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#E5C07B">      currentAnim</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">stop</span><span style="color:#ABB2BF">();</span></span>
 <span class="line"><span style="color:#ABB2BF">    }</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#C678DD">    const</span><span style="color:#E5C07B"> projectionResults</span><span style="color:#56B6C2"> =</span><span style="color:#61AFEF"> getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">subject</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">target</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#C678DD">    const</span><span style="color:#E5C07B"> projectionResults</span><span style="color:#56B6C2"> =</span><span style="color:#61AFEF"> getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">subject</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">target</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">as</span><span style="color:#E5C07B"> PartialProjectionResults</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">    const</span><span style="color:#ABB2BF"> { </span><span style="color:#E5C07B">toSubject</span><span style="color:#ABB2BF"> } </span><span style="color:#56B6C2">=</span><span style="color:#E06C75"> projectionResults</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#C678DD">    delete</span><span style="color:#E5C07B"> toSubject</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">borderStyle</span><span style="color:#ABB2BF">; </span><span style="color:#7F848E;font-style:italic">// preserve target border style</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> ($</span><span style="color:#E5C07B">options</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">log</span><span style="color:#ABB2BF">) {</span></span>
 <span class="line"><span style="color:#E5C07B">      console</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">log</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">projectionResults</span><span style="color:#ABB2BF">);</span></span>
@@ -261,7 +256,7 @@ export const AnimateCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"></span>
 <span class="line"><span style="color:#E06C75">    currentAnim</span><span style="color:#56B6C2"> =</span><span style="color:#61AFEF"> animate</span><span style="color:#ABB2BF">(</span></span>
 <span class="line"><span style="color:#E06C75">      target</span><span style="color:#ABB2BF">,</span></span>
-<span class="line"><span style="color:#ABB2BF">      { ...</span><span style="color:#E06C75">toSubject</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">borderStyle</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'solid'</span><span style="color:#ABB2BF"> },</span></span>
+<span class="line"><span style="color:#ABB2BF">      { ...</span><span style="color:#E06C75">toSubject</span><span style="color:#ABB2BF"> },</span></span>
 <span class="line"><span style="color:#ABB2BF">      {</span></span>
 <span class="line"><span style="color:#E06C75">        duration</span><span style="color:#ABB2BF">: </span><span style="color:#D19A66">0.4</span><span style="color:#ABB2BF">,</span></span>
 <span class="line"><span style="color:#E06C75">        easing</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'ease-out'</span><span style="color:#ABB2BF">,</span></span>

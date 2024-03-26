@@ -1,29 +1,20 @@
-export const DivGolfUsage = `import { getProjection } from 'projectrix';
+export const DivGolfUsage = `import { getProjection, setInlineStyles } from 'projectrix';
 import anime from 'animejs';
 
 let currentTarget: HTMLElement;
 
 // each modifier contains a unique green target. match the next target to
-// the current target and update their opacities to create the illusion of
+// the current target and swap their opacities to create the illusion of
 // a single green target being passed between the modifiers
 function moveCurrentTargetToModifier(modifier: HTMLElement): void {
   const nextTarget = modifier.firstElementChild as HTMLElement;
   if (currentTarget.isSameNode(nextTarget)) return;
 
-  // Anime.js v3 takes matrix3d
-  const { toSubject } = getProjection(currentTarget, nextTarget, {
-    transformType: 'matrix3d',
-  });
-
   // match next target to current target's projection
-  anime.set(nextTarget, {
-    ...toSubject,
-  });
+  const { toSubject } = getProjection(currentTarget, nextTarget);
+  setInlineStyles(nextTarget, toSubject);
 
-  setCurrentTarget(nextTarget);
-}
-
-function setCurrentTarget(target: HTMLElement): void {
+  // swap targets
   currentTarget.style.opacity = '0';
   target.style.opacity = '1';
   currentTarget = target;
@@ -33,7 +24,7 @@ export const DivGolfCode = `<script lang="ts">
   import { onMount, tick } from 'svelte';
   import { mat4, quat, vec3 } from 'gl-matrix';
   import { getActualClientRect } from 'actual-client-rect';
-  import { getProjection } from 'projectrix';
+  import { getProjection, setInlineStyles } from 'projectrix';
   import anime from 'animejs';
   import type { Writable } from 'svelte/store';
   import type { Options } from '$lib/options';
@@ -125,21 +116,17 @@ export const DivGolfCode = `<script lang="ts">
       return;
     }
 
-    // Anime.js v3 takes matrix3d
-    const projectionResults = getProjection(currentTarget, nextTarget, {
-      transformType: 'matrix3d',
-    });
+    const projectionResults = getProjection(currentTarget, nextTarget);
     const { toSubject } = projectionResults;
+
     if ($options.log) {
       console.log(projectionResults);
     }
 
     // match next target to current target's projection
-    anime.set(nextTarget, {
-      ...toSubject,
-    });
-
+    setInlineStyles(nextTarget, toSubject);
     setCurrentTarget(nextTarget);
+
     animateClonedpulse(nextTarget);
   }
 
@@ -199,12 +186,8 @@ export const DivGolfCode = `<script lang="ts">
 
   function animateWin(goal: HTMLElement): void {
     // match winner target to current target
-    anime.set(winnerTarget, {
-      ...getProjection(currentTarget!, winnerTarget, {
-        transformType: 'matrix3d',
-      }).toSubject,
-    });
-
+    const { toSubject } = getProjection(currentTarget!, winnerTarget);
+    setInlineStyles(winnerTarget, toSubject);
     setCurrentTarget(winnerTarget);
 
     // animate rest of way to goal
@@ -213,6 +196,7 @@ export const DivGolfCode = `<script lang="ts">
       duration: 300,
       easing: 'easeOutQuad',
 
+      // anime.js takes matrix3d
       ...getProjection(goal, winnerTarget, { transformType: 'matrix3d' }).toSubject,
 
       complete: () => {
@@ -228,9 +212,7 @@ export const DivGolfCode = `<script lang="ts">
   }
 
   function animateMiss(goal: HTMLElement): void {
-    anime.set(goal, {
-      backgroundColor: 'rgba(255, 0, 0, 1)',
-    });
+    goal.style.backgroundColor = 'rgba(255, 0, 0, 1)';
     anime({
       targets: goal,
       duration: 300,
@@ -241,25 +223,18 @@ export const DivGolfCode = `<script lang="ts">
   }
 
   function markGoalCompleted(goal: HTMLElement): void {
-    anime.set(goal, {
-      borderStyle: 'dotted',
-      borderColor: '#32cd32',
-    });
+    goal.style.borderStyle = 'dotted';
+    goal.style.borderColor = '#32cd32';
   }
 
   function animateClonedpulse(subject: HTMLElement): void {
-    const pulseClone = <HTMLElement>pulseTemplate.cloneNode();
+    const pulseClone = pulseTemplate.cloneNode() as HTMLElement;
     pulseContainer.append(pulseClone);
 
-    const { toSubject } = getProjection(subject, pulseClone, {
-      transformType: 'matrix3d',
-    });
+    const { toSubject } = getProjection(subject, pulseClone);
+    setInlineStyles(pulseClone, toSubject);
+    pulseClone.style.opacity = '1';
 
-    anime.set(pulseClone, {
-      ...toSubject,
-      outlineOffset: '0px',
-      outlineColor: 'rgba(50, 205, 50, 1)',
-    });
     anime({
       targets: pulseClone,
       duration: 300,
@@ -553,35 +528,29 @@ export const DivGolfCode = `<script lang="ts">
   .pulse-template {
     border-color: transparent;
     outline: solid 2px transparent;
+    outline-offset: 0px;
+    outline-color: rgba(50, 205, 50, 1);
+    opacity: 0;
   }
 </style>`;
 
-export const DivGolfUsageHL = `<pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#C678DD">import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">getProjection</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'projectrix'</span><span style="color:#ABB2BF">;</span></span>
+export const DivGolfUsageHL = `<pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#C678DD">import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">getProjection</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">setInlineStyles</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'projectrix'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">import</span><span style="color:#E06C75"> anime</span><span style="color:#C678DD"> from</span><span style="color:#98C379"> 'animejs'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#C678DD">let</span><span style="color:#E06C75"> currentTarget</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#7F848E;font-style:italic">// each modifier contains a unique green target. match the next target to</span></span>
-<span class="line"><span style="color:#7F848E;font-style:italic">// the current target and update their opacities to create the illusion of</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">// the current target and swap their opacities to create the illusion of</span></span>
 <span class="line"><span style="color:#7F848E;font-style:italic">// a single green target being passed between the modifiers</span></span>
 <span class="line"><span style="color:#C678DD">function</span><span style="color:#61AFEF"> moveCurrentTargetToModifier</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">modifier</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
 <span class="line"><span style="color:#C678DD">  const</span><span style="color:#E5C07B"> nextTarget</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> modifier</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">firstElementChild</span><span style="color:#C678DD"> as</span><span style="color:#E5C07B"> HTMLElement</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  if</span><span style="color:#ABB2BF"> (</span><span style="color:#E5C07B">currentTarget</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">isSameNode</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">nextTarget</span><span style="color:#ABB2BF">)) </span><span style="color:#C678DD">return</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#7F848E;font-style:italic">  // Anime.js v3 takes matrix3d</span></span>
-<span class="line"><span style="color:#C678DD">  const</span><span style="color:#ABB2BF"> { </span><span style="color:#E5C07B">toSubject</span><span style="color:#ABB2BF"> } </span><span style="color:#56B6C2">=</span><span style="color:#61AFEF"> getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">nextTarget</span><span style="color:#ABB2BF">, {</span></span>
-<span class="line"><span style="color:#E06C75">    transformType</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'matrix3d'</span><span style="color:#ABB2BF">,</span></span>
-<span class="line"><span style="color:#ABB2BF">  });</span></span>
-<span class="line"></span>
 <span class="line"><span style="color:#7F848E;font-style:italic">  // match next target to current target's projection</span></span>
-<span class="line"><span style="color:#E5C07B">  anime</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">set</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">nextTarget</span><span style="color:#ABB2BF">, {</span></span>
-<span class="line"><span style="color:#ABB2BF">    ...</span><span style="color:#E06C75">toSubject</span><span style="color:#ABB2BF">,</span></span>
-<span class="line"><span style="color:#ABB2BF">  });</span></span>
+<span class="line"><span style="color:#C678DD">  const</span><span style="color:#ABB2BF"> { </span><span style="color:#E5C07B">toSubject</span><span style="color:#ABB2BF"> } </span><span style="color:#56B6C2">=</span><span style="color:#61AFEF"> getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">nextTarget</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#61AFEF">  setInlineStyles</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">nextTarget</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">toSubject</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#61AFEF">  setCurrentTarget</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">nextTarget</span><span style="color:#ABB2BF">);</span></span>
-<span class="line"><span style="color:#ABB2BF">}</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#C678DD">function</span><span style="color:#61AFEF"> setCurrentTarget</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">target</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">  // swap targets</span></span>
 <span class="line"><span style="color:#E5C07B">  currentTarget</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">opacity</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> '0'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#E5C07B">  target</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">opacity</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> '1'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#E06C75">  currentTarget</span><span style="color:#56B6C2"> =</span><span style="color:#E06C75"> target</span><span style="color:#ABB2BF">;</span></span>
@@ -591,7 +560,7 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#C678DD">  import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">onMount</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">tick</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'svelte'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">mat4</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">quat</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">vec3</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'gl-matrix'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">getActualClientRect</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'actual-client-rect'</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#C678DD">  import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">getProjection</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'projectrix'</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#C678DD">  import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">getProjection</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">setInlineStyles</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'projectrix'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  import</span><span style="color:#E06C75"> anime</span><span style="color:#C678DD"> from</span><span style="color:#98C379"> 'animejs'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  import</span><span style="color:#C678DD"> type</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">Writable</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'svelte/store'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  import</span><span style="color:#C678DD"> type</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">Options</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> '$lib/options'</span><span style="color:#ABB2BF">;</span></span>
@@ -683,21 +652,17 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#C678DD">      return</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#ABB2BF">    }</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#7F848E;font-style:italic">    // Anime.js v3 takes matrix3d</span></span>
-<span class="line"><span style="color:#C678DD">    const</span><span style="color:#E5C07B"> projectionResults</span><span style="color:#56B6C2"> =</span><span style="color:#61AFEF"> getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">nextTarget</span><span style="color:#ABB2BF">, {</span></span>
-<span class="line"><span style="color:#E06C75">      transformType</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'matrix3d'</span><span style="color:#ABB2BF">,</span></span>
-<span class="line"><span style="color:#ABB2BF">    });</span></span>
+<span class="line"><span style="color:#C678DD">    const</span><span style="color:#E5C07B"> projectionResults</span><span style="color:#56B6C2"> =</span><span style="color:#61AFEF"> getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">nextTarget</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#C678DD">    const</span><span style="color:#ABB2BF"> { </span><span style="color:#E5C07B">toSubject</span><span style="color:#ABB2BF"> } </span><span style="color:#56B6C2">=</span><span style="color:#E06C75"> projectionResults</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"></span>
 <span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> ($</span><span style="color:#E5C07B">options</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">log</span><span style="color:#ABB2BF">) {</span></span>
 <span class="line"><span style="color:#E5C07B">      console</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">log</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">projectionResults</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#ABB2BF">    }</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#7F848E;font-style:italic">    // match next target to current target's projection</span></span>
-<span class="line"><span style="color:#E5C07B">    anime</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">set</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">nextTarget</span><span style="color:#ABB2BF">, {</span></span>
-<span class="line"><span style="color:#ABB2BF">      ...</span><span style="color:#E06C75">toSubject</span><span style="color:#ABB2BF">,</span></span>
-<span class="line"><span style="color:#ABB2BF">    });</span></span>
-<span class="line"></span>
+<span class="line"><span style="color:#61AFEF">    setInlineStyles</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">nextTarget</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">toSubject</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#61AFEF">    setCurrentTarget</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">nextTarget</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"></span>
 <span class="line"><span style="color:#61AFEF">    animateClonedpulse</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">nextTarget</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"></span>
@@ -757,12 +722,8 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"></span>
 <span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> animateWin</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">goal</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
 <span class="line"><span style="color:#7F848E;font-style:italic">    // match winner target to current target</span></span>
-<span class="line"><span style="color:#E5C07B">    anime</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">set</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">winnerTarget</span><span style="color:#ABB2BF">, {</span></span>
-<span class="line"><span style="color:#ABB2BF">      ...</span><span style="color:#61AFEF">getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">currentTarget</span><span style="color:#56B6C2">!</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">winnerTarget</span><span style="color:#ABB2BF">, {</span></span>
-<span class="line"><span style="color:#E06C75">        transformType</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'matrix3d'</span><span style="color:#ABB2BF">,</span></span>
-<span class="line"><span style="color:#ABB2BF">      }).</span><span style="color:#E06C75">toSubject</span><span style="color:#ABB2BF">,</span></span>
-<span class="line"><span style="color:#ABB2BF">    });</span></span>
-<span class="line"></span>
+<span class="line"><span style="color:#C678DD">    const</span><span style="color:#ABB2BF"> { </span><span style="color:#E5C07B">toSubject</span><span style="color:#ABB2BF"> } </span><span style="color:#56B6C2">=</span><span style="color:#61AFEF"> getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">currentTarget</span><span style="color:#56B6C2">!</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">winnerTarget</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#61AFEF">    setInlineStyles</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">winnerTarget</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">toSubject</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#61AFEF">    setCurrentTarget</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">winnerTarget</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#7F848E;font-style:italic">    // animate rest of way to goal</span></span>
@@ -771,6 +732,7 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#E06C75">      duration</span><span style="color:#ABB2BF">: </span><span style="color:#D19A66">300</span><span style="color:#ABB2BF">,</span></span>
 <span class="line"><span style="color:#E06C75">      easing</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'easeOutQuad'</span><span style="color:#ABB2BF">,</span></span>
 <span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">      // anime.js takes matrix3d</span></span>
 <span class="line"><span style="color:#ABB2BF">      ...</span><span style="color:#61AFEF">getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">goal</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">winnerTarget</span><span style="color:#ABB2BF">, { </span><span style="color:#E06C75">transformType</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'matrix3d'</span><span style="color:#ABB2BF"> }).</span><span style="color:#E06C75">toSubject</span><span style="color:#ABB2BF">,</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#61AFEF">      complete</span><span style="color:#ABB2BF">: () </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
@@ -786,9 +748,7 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> animateMiss</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">goal</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#E5C07B">    anime</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">set</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">goal</span><span style="color:#ABB2BF">, {</span></span>
-<span class="line"><span style="color:#E06C75">      backgroundColor</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'rgba(255, 0, 0, 1)'</span><span style="color:#ABB2BF">,</span></span>
-<span class="line"><span style="color:#ABB2BF">    });</span></span>
+<span class="line"><span style="color:#E5C07B">    goal</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">backgroundColor</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> 'rgba(255, 0, 0, 1)'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#61AFEF">    anime</span><span style="color:#ABB2BF">({</span></span>
 <span class="line"><span style="color:#E06C75">      targets</span><span style="color:#ABB2BF">: </span><span style="color:#E06C75">goal</span><span style="color:#ABB2BF">,</span></span>
 <span class="line"><span style="color:#E06C75">      duration</span><span style="color:#ABB2BF">: </span><span style="color:#D19A66">300</span><span style="color:#ABB2BF">,</span></span>
@@ -799,25 +759,18 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> markGoalCompleted</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">goal</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#E5C07B">    anime</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">set</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">goal</span><span style="color:#ABB2BF">, {</span></span>
-<span class="line"><span style="color:#E06C75">      borderStyle</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'dotted'</span><span style="color:#ABB2BF">,</span></span>
-<span class="line"><span style="color:#E06C75">      borderColor</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'#32cd32'</span><span style="color:#ABB2BF">,</span></span>
-<span class="line"><span style="color:#ABB2BF">    });</span></span>
+<span class="line"><span style="color:#E5C07B">    goal</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">borderStyle</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> 'dotted'</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#E5C07B">    goal</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">borderColor</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> '#32cd32'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> animateClonedpulse</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">subject</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#C678DD">    const</span><span style="color:#E5C07B"> pulseClone</span><span style="color:#56B6C2"> =</span><span style="color:#ABB2BF"> &#x3C;</span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">></span><span style="color:#E5C07B">pulseTemplate</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">cloneNode</span><span style="color:#ABB2BF">();</span></span>
+<span class="line"><span style="color:#C678DD">    const</span><span style="color:#E5C07B"> pulseClone</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> pulseTemplate</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">cloneNode</span><span style="color:#ABB2BF">() </span><span style="color:#C678DD">as</span><span style="color:#E5C07B"> HTMLElement</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#E5C07B">    pulseContainer</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">append</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">pulseClone</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#C678DD">    const</span><span style="color:#ABB2BF"> { </span><span style="color:#E5C07B">toSubject</span><span style="color:#ABB2BF"> } </span><span style="color:#56B6C2">=</span><span style="color:#61AFEF"> getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">subject</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">pulseClone</span><span style="color:#ABB2BF">, {</span></span>
-<span class="line"><span style="color:#E06C75">      transformType</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'matrix3d'</span><span style="color:#ABB2BF">,</span></span>
-<span class="line"><span style="color:#ABB2BF">    });</span></span>
+<span class="line"><span style="color:#C678DD">    const</span><span style="color:#ABB2BF"> { </span><span style="color:#E5C07B">toSubject</span><span style="color:#ABB2BF"> } </span><span style="color:#56B6C2">=</span><span style="color:#61AFEF"> getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">subject</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">pulseClone</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#61AFEF">    setInlineStyles</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">pulseClone</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">toSubject</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#E5C07B">    pulseClone</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">opacity</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> '1'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#E5C07B">    anime</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">set</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">pulseClone</span><span style="color:#ABB2BF">, {</span></span>
-<span class="line"><span style="color:#ABB2BF">      ...</span><span style="color:#E06C75">toSubject</span><span style="color:#ABB2BF">,</span></span>
-<span class="line"><span style="color:#E06C75">      outlineOffset</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'0px'</span><span style="color:#ABB2BF">,</span></span>
-<span class="line"><span style="color:#E06C75">      outlineColor</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'rgba(50, 205, 50, 1)'</span><span style="color:#ABB2BF">,</span></span>
-<span class="line"><span style="color:#ABB2BF">    });</span></span>
 <span class="line"><span style="color:#61AFEF">    anime</span><span style="color:#ABB2BF">({</span></span>
 <span class="line"><span style="color:#E06C75">      targets</span><span style="color:#ABB2BF">: </span><span style="color:#E06C75">pulseClone</span><span style="color:#ABB2BF">,</span></span>
 <span class="line"><span style="color:#E06C75">      duration</span><span style="color:#ABB2BF">: </span><span style="color:#D19A66">300</span><span style="color:#ABB2BF">,</span></span>
@@ -1111,5 +1064,8 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#D19A66">  .pulse-template</span><span style="color:#ABB2BF"> {</span></span>
 <span class="line"><span style="color:#ABB2BF">    border-color: </span><span style="color:#D19A66">transparent</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#ABB2BF">    outline: </span><span style="color:#D19A66">solid</span><span style="color:#D19A66"> 2</span><span style="color:#E06C75">px</span><span style="color:#D19A66"> transparent</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#ABB2BF">    outline-offset: </span><span style="color:#D19A66">0</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#ABB2BF">    outline-color: </span><span style="color:#56B6C2">rgba</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">50</span><span style="color:#ABB2BF">, </span><span style="color:#D19A66">205</span><span style="color:#ABB2BF">, </span><span style="color:#D19A66">50</span><span style="color:#ABB2BF">, </span><span style="color:#D19A66">1</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">    opacity: </span><span style="color:#D19A66">0</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"><span style="color:#ABB2BF">&#x3C;/</span><span style="color:#E06C75">style</span><span style="color:#ABB2BF">></span></span></code></pre>`;
