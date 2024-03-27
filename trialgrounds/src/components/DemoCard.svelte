@@ -51,7 +51,6 @@
 
   .demo-card {
     position: relative;
-    margin-bottom: 1.5em;
 
     width: min(700px, calc(100% - 2px));
 

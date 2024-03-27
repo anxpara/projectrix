@@ -17,13 +17,13 @@
 <style lang="scss">
   .all-demos-container {
     width: calc(100% - 2em);
-    padding-top: 1em;
-    padding-inline: 1em;
+    padding: 1em;
 
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: 1.5em;
 
     overflow: hidden;
   }

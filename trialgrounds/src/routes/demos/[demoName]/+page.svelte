@@ -25,7 +25,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-
-    will-change: transform;
+    gap: 1.5em;
   }
 </style>
