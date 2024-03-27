@@ -129,12 +129,13 @@ export type TransformType = 'transform' | 'matrix3d' | 'transformMat4';
 export type BorderSource = 'subject' | 'target' | 'zero';
 
 export type ProjectionOptions = {
-  // (default = transform)
-  transformType?: TransformType;
+  transformType?: TransformType; // (default = 'transform')
 
-  // (default = subject), designates which element's border style, width, and radius to match.
+  // designates which element's border style, width, and radius to match.
   // projected width and height are auto-adjusted. zero means 0px border width. 
-  useBorder?: BorderSource; 
+  useBorder?: BorderSource; // (default = 'subject')
+
+  log?: boolean; // (default = false)
 };
 
 /**

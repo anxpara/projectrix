@@ -79,10 +79,12 @@ export type BorderSource = 'subject' | 'target' | 'zero';
  * @member transformType?: 'transform' | 'matrix3d' | 'transformMat4'; // (default = transform)
  * @member useBorder?: 'subject' | 'target' | 'zero'; // (default = subject), designates which element's border style,
  *   width, and radius to match. zero means 0px border width. target's width and height are auto-adjusted
+ * @member log?: boolean; // (default = false)
  */
 export type ProjectionOptions = {
   transformType?: TransformType;
   useBorder?: BorderSource;
+  log?: boolean;
 };
 
 const DEFAULT_TRANSFORM_TYPE: TransformType = 'transform';
@@ -148,7 +150,7 @@ export function getProjection(
 
   const transformType = options?.transformType ?? DEFAULT_TRANSFORM_TYPE;
 
-  return {
+  const results = {
     toSubject: getProjectionToSubject(subject, target, normalizedTransformOrigin, options),
     toTargetOrigin: getProjectionToTargetOrigin(
       target,
@@ -160,6 +162,10 @@ export function getProjection(
     subject,
     target,
   };
+  if (options?.log) {
+    console.log(results);
+  }
+  return results;
 }
 
 /**
@@ -188,7 +194,10 @@ export function setInlineStyles(target: HTMLElement, partialProjection: PartialP
  * if no partial projection is given, assumes target's inline styles were set to a full projection.
  * if the projection contains matrix3d or transformMat4, then the transform style is cleared
  */
-export function clearInlineStyles(target: HTMLElement, partialProjection?: PartialProjection): void {
+export function clearInlineStyles(
+  target: HTMLElement,
+  partialProjection?: PartialProjection,
+): void {
   if (!partialProjection) {
     partialProjection = {
       width: '',
