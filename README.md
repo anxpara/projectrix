@@ -47,6 +47,8 @@ function flip(subject: HTMLElement, target: HTMLElement): void {
 }
 ```
 
+https://github.com/anxpara/projectrix/assets/90604943/b15ee66d-199f-4806-9b76-3bd69bde8c18
+
 ## Animate target directly to subject using Motion One
 
 ```ts
@@ -75,7 +77,8 @@ function animateDirect(subject: HTMLElement, target: HTMLElement): void {
   );
 }
 ```
-###### (This usage was originally written with Anime.js v3, but v3 has bugs when animating between different shorthands. Will update to Anime.js v4 when it's released, shoutout to the [early access beta](https://github.com/sponsors/juliangarnier))
+
+https://github.com/anxpara/projectrix/assets/90604943/37132aed-57eb-43ee-8bec-18fcb1a9d0f7
 
 ## Match target to subject
 
@@ -89,6 +92,8 @@ function match(subject: HTMLElement, target: HTMLElement): void {
   setInlineStyles(target, toSubject);
 }
 ```
+
+https://github.com/anxpara/projectrix/assets/90604943/36f594b9-303e-4fae-ba5c-84ed3a6b3290
 
 # Types & Documentation
 
