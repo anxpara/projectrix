@@ -168,6 +168,8 @@ export function clearInlineStyles(target: HTMLElement, partialProjection?: Parti
 ## Limitations
 
 - Projectrix will not attempt to match or emulate bugs in rendering engines
+- Projectrix is not an animation engine, and will not attempt to mitigate bugs in animation engines
+  - https://github.com/motiondivision/motionone/issues/249
 - preserve3d property is probably not yet supported
 - perspective properties are not yet supported
 - SVGs are not yet officially supported, but might happen to work in certain scenarios
