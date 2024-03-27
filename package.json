@@ -1,6 +1,6 @@
 {
   "name": "projectrix",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "minimalist dom projection library in js/ts",
   "sideEffects": false,
   "main": "dist/cjs/projectrix.js",
