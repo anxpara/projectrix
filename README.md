@@ -18,6 +18,8 @@ Dom projection has many uses, such as view transitions, FLIP animations, UI walk
 
 Projectrix provides a pure function that returns the styles needed to align a target element to a subject, as well as the styles needed to align it to its original state. Use the projected styles however you want; if animation is your goal, the projection can be spread directly into Anime.js, Motion One, or your preferred animation engine.
 
+###### See all demos here: https://tg.projectrix.dev/demos
+
 # Usage
 
 ## FLIP from subject back to target's origin using Motion One
