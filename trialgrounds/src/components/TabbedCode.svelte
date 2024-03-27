@@ -218,6 +218,12 @@
       border-color: coral;
     }
   }
+  .tab:focus-visible {
+    .tab-border {
+      outline: solid 2px white;
+      outline-offset: 2px;
+    }
+  }
 
   .figure-bg {
     position: absolute;
