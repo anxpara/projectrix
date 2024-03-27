@@ -29,7 +29,9 @@ export const DivGolfCode = `<script lang="ts">
   import type { Writable } from 'svelte/store';
   import type { Options } from '$lib/options';
 
+  // options are part of demos infrastructure
   export let options: Writable<Options>;
+  $: log = $options.log;
 
   let startingTarget: HTMLElement;
   let currentTarget: HTMLElement | undefined;
@@ -116,15 +118,10 @@ export const DivGolfCode = `<script lang="ts">
       return;
     }
 
-    const projectionResults = getProjection(currentTarget, nextTarget);
-    const { toSubject } = projectionResults;
-
-    if ($options.log) {
-      console.log(projectionResults);
-    }
-
     // match next target to current target's projection
+    const { toSubject } = getProjection(currentTarget, nextTarget, { log });
     setInlineStyles(nextTarget, toSubject);
+
     setCurrentTarget(nextTarget);
 
     animateClonedpulse(nextTarget);
@@ -186,7 +183,7 @@ export const DivGolfCode = `<script lang="ts">
 
   function animateWin(goal: HTMLElement): void {
     // match winner target to current target
-    const { toSubject } = getProjection(currentTarget!, winnerTarget);
+    const { toSubject } = getProjection(currentTarget!, winnerTarget, { log });
     setInlineStyles(winnerTarget, toSubject);
     setCurrentTarget(winnerTarget);
 
@@ -197,7 +194,11 @@ export const DivGolfCode = `<script lang="ts">
       easing: 'easeOutQuad',
 
       // anime.js takes matrix3d
-      ...getProjection(goal, winnerTarget, { transformType: 'matrix3d' }).toSubject,
+      ...getProjection(
+           goal, 
+           winnerTarget, 
+           { transformType: 'matrix3d', log }
+         ).toSubject,
 
       complete: () => {
         markGoalCompleted(goal);
@@ -231,7 +232,7 @@ export const DivGolfCode = `<script lang="ts">
     const pulseClone = pulseTemplate.cloneNode() as HTMLElement;
     pulseContainer.append(pulseClone);
 
-    const { toSubject } = getProjection(subject, pulseClone);
+    const { toSubject } = getProjection(subject, pulseClone, { log });
     setInlineStyles(pulseClone, toSubject);
     pulseClone.style.opacity = '1';
 
@@ -565,7 +566,9 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#C678DD">  import</span><span style="color:#C678DD"> type</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">Writable</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'svelte/store'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  import</span><span style="color:#C678DD"> type</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">Options</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> '$lib/options'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">  // options are part of demos infrastructure</span></span>
 <span class="line"><span style="color:#C678DD">  export</span><span style="color:#C678DD"> let</span><span style="color:#E06C75"> options</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">Writable</span><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E5C07B">Options</span><span style="color:#ABB2BF">>;</span></span>
+<span class="line"><span style="color:#E06C75">  $</span><span style="color:#ABB2BF">: </span><span style="color:#E06C75">log</span><span style="color:#56B6C2"> =</span><span style="color:#ABB2BF"> $</span><span style="color:#E5C07B">options</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">log</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> startingTarget</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> currentTarget</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF"> | </span><span style="color:#E5C07B">undefined</span><span style="color:#ABB2BF">;</span></span>
@@ -652,15 +655,10 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#C678DD">      return</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#ABB2BF">    }</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#C678DD">    const</span><span style="color:#E5C07B"> projectionResults</span><span style="color:#56B6C2"> =</span><span style="color:#61AFEF"> getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">nextTarget</span><span style="color:#ABB2BF">);</span></span>
-<span class="line"><span style="color:#C678DD">    const</span><span style="color:#ABB2BF"> { </span><span style="color:#E5C07B">toSubject</span><span style="color:#ABB2BF"> } </span><span style="color:#56B6C2">=</span><span style="color:#E06C75"> projectionResults</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> ($</span><span style="color:#E5C07B">options</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">log</span><span style="color:#ABB2BF">) {</span></span>
-<span class="line"><span style="color:#E5C07B">      console</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">log</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">projectionResults</span><span style="color:#ABB2BF">);</span></span>
-<span class="line"><span style="color:#ABB2BF">    }</span></span>
-<span class="line"></span>
 <span class="line"><span style="color:#7F848E;font-style:italic">    // match next target to current target's projection</span></span>
+<span class="line"><span style="color:#C678DD">    const</span><span style="color:#ABB2BF"> { </span><span style="color:#E5C07B">toSubject</span><span style="color:#ABB2BF"> } </span><span style="color:#56B6C2">=</span><span style="color:#61AFEF"> getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">nextTarget</span><span style="color:#ABB2BF">, { </span><span style="color:#E06C75">log</span><span style="color:#ABB2BF"> });</span></span>
 <span class="line"><span style="color:#61AFEF">    setInlineStyles</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">nextTarget</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">toSubject</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"></span>
 <span class="line"><span style="color:#61AFEF">    setCurrentTarget</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">nextTarget</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#61AFEF">    animateClonedpulse</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">nextTarget</span><span style="color:#ABB2BF">);</span></span>
@@ -722,7 +720,7 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"></span>
 <span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> animateWin</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">goal</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
 <span class="line"><span style="color:#7F848E;font-style:italic">    // match winner target to current target</span></span>
-<span class="line"><span style="color:#C678DD">    const</span><span style="color:#ABB2BF"> { </span><span style="color:#E5C07B">toSubject</span><span style="color:#ABB2BF"> } </span><span style="color:#56B6C2">=</span><span style="color:#61AFEF"> getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">currentTarget</span><span style="color:#56B6C2">!</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">winnerTarget</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#C678DD">    const</span><span style="color:#ABB2BF"> { </span><span style="color:#E5C07B">toSubject</span><span style="color:#ABB2BF"> } </span><span style="color:#56B6C2">=</span><span style="color:#61AFEF"> getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">currentTarget</span><span style="color:#56B6C2">!</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">winnerTarget</span><span style="color:#ABB2BF">, { </span><span style="color:#E06C75">log</span><span style="color:#ABB2BF"> });</span></span>
 <span class="line"><span style="color:#61AFEF">    setInlineStyles</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">winnerTarget</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">toSubject</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#61AFEF">    setCurrentTarget</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">winnerTarget</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"></span>
@@ -733,7 +731,11 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#E06C75">      easing</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'easeOutQuad'</span><span style="color:#ABB2BF">,</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#7F848E;font-style:italic">      // anime.js takes matrix3d</span></span>
-<span class="line"><span style="color:#ABB2BF">      ...</span><span style="color:#61AFEF">getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">goal</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">winnerTarget</span><span style="color:#ABB2BF">, { </span><span style="color:#E06C75">transformType</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'matrix3d'</span><span style="color:#ABB2BF"> }).</span><span style="color:#E06C75">toSubject</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#ABB2BF">      ...</span><span style="color:#61AFEF">getProjection</span><span style="color:#ABB2BF">(</span></span>
+<span class="line"><span style="color:#E06C75">           goal</span><span style="color:#ABB2BF">, </span></span>
+<span class="line"><span style="color:#E06C75">           winnerTarget</span><span style="color:#ABB2BF">, </span></span>
+<span class="line"><span style="color:#ABB2BF">           { </span><span style="color:#E06C75">transformType</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'matrix3d'</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">log</span><span style="color:#ABB2BF"> }</span></span>
+<span class="line"><span style="color:#ABB2BF">         ).</span><span style="color:#E06C75">toSubject</span><span style="color:#ABB2BF">,</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#61AFEF">      complete</span><span style="color:#ABB2BF">: () </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
 <span class="line"><span style="color:#61AFEF">        markGoalCompleted</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">goal</span><span style="color:#ABB2BF">);</span></span>
@@ -767,7 +769,7 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#C678DD">    const</span><span style="color:#E5C07B"> pulseClone</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> pulseTemplate</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">cloneNode</span><span style="color:#ABB2BF">() </span><span style="color:#C678DD">as</span><span style="color:#E5C07B"> HTMLElement</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#E5C07B">    pulseContainer</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">append</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">pulseClone</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#C678DD">    const</span><span style="color:#ABB2BF"> { </span><span style="color:#E5C07B">toSubject</span><span style="color:#ABB2BF"> } </span><span style="color:#56B6C2">=</span><span style="color:#61AFEF"> getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">subject</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">pulseClone</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#C678DD">    const</span><span style="color:#ABB2BF"> { </span><span style="color:#E5C07B">toSubject</span><span style="color:#ABB2BF"> } </span><span style="color:#56B6C2">=</span><span style="color:#61AFEF"> getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">subject</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">pulseClone</span><span style="color:#ABB2BF">, { </span><span style="color:#E06C75">log</span><span style="color:#ABB2BF"> });</span></span>
 <span class="line"><span style="color:#61AFEF">    setInlineStyles</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">pulseClone</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">toSubject</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#E5C07B">    pulseClone</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">opacity</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> '1'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>

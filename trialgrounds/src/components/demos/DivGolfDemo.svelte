@@ -7,7 +7,9 @@
   import type { Writable } from 'svelte/store';
   import type { Options } from '$lib/options';
 
+  // options are part of demos infrastructure
   export let options: Writable<Options>;
+  $: log = $options.log;
 
   let startingTarget: HTMLElement;
   let currentTarget: HTMLElement | undefined;
@@ -94,15 +96,10 @@
       return;
     }
 
-    const projectionResults = getProjection(currentTarget, nextTarget);
-    const { toSubject } = projectionResults;
-
-    if ($options.log) {
-      console.log(projectionResults);
-    }
-
     // match next target to current target's projection
+    const { toSubject } = getProjection(currentTarget, nextTarget, { log });
     setInlineStyles(nextTarget, toSubject);
+
     setCurrentTarget(nextTarget);
 
     animateClonedpulse(nextTarget);
@@ -164,18 +161,18 @@
 
   function animateWin(goal: HTMLElement): void {
     // match winner target to current target
-    const { toSubject } = getProjection(currentTarget!, winnerTarget);
+    const { toSubject } = getProjection(currentTarget!, winnerTarget, { log });
     setInlineStyles(winnerTarget, toSubject);
     setCurrentTarget(winnerTarget);
 
-    // animate rest of way to goal
+    // animate winner target rest of way to goal
     winAnim = anime({
       targets: winnerTarget,
       duration: 300,
       easing: 'easeOutQuad',
 
       // anime.js takes matrix3d
-      ...getProjection(goal, winnerTarget, { transformType: 'matrix3d' }).toSubject,
+      ...getProjection(goal, winnerTarget, { transformType: 'matrix3d', log }).toSubject,
 
       complete: () => {
         markGoalCompleted(goal);
@@ -209,7 +206,7 @@
     const pulseClone = pulseTemplate.cloneNode() as HTMLElement;
     pulseContainer.append(pulseClone);
 
-    const { toSubject } = getProjection(subject, pulseClone);
+    const { toSubject } = getProjection(subject, pulseClone, { log });
     setInlineStyles(pulseClone, toSubject);
     pulseClone.style.opacity = '1';
 

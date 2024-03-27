@@ -6,9 +6,10 @@
   import type { Writable } from 'svelte/store';
   import type DemoStartSlot from '../DemoStartSlot.svelte';
 
-  // starting slot is part of demos infrastructure
+  // start slot and options are part of demos infrastructure
   export let startSlot: DemoStartSlot;
   export let options: Writable<Options>;
+  $: log = $options.log;
 
   let target: HTMLElement;
   let inSlot = false;
@@ -36,18 +37,14 @@
       swapSlotForTarget(target);
     }
 
-    // stop current animation; motion one will update target's inline styles to mid-animation values
+    // stop current animation; motion one will update target's inline styles
+    // to mid-animation values
     if (currentAnim?.currentTime && currentAnim.currentTime < 1) {
       currentAnim.stop();
     }
 
-    const projectionResults = getProjection(subject, target) as PartialProjectionResults;
-    const { toSubject } = projectionResults;
+    const { toSubject } = getProjection(subject, target, { log }) as PartialProjectionResults;
     delete toSubject.borderStyle; // preserve target border style
-
-    if ($options.log) {
-      console.log(projectionResults);
-    }
 
     currentAnim = animate(
       target,
@@ -95,8 +92,8 @@
     // any positioning works with Projectrix
     position: absolute;
 
-    // last i checked, safari webkit can't handle non-integer borders on transformed elements,
-    // so i always recommend pixels for borders
+    // last i checked, safari webkit can't handle non-integer borders
+    // on transformed elements, so i always recommend pixels for borders
     border: solid 3px limegreen;
 
     opacity: 0;

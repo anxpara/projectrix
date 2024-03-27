@@ -31,9 +31,10 @@ export const AnimateCode = `<script lang="ts">
   import type { Writable } from 'svelte/store';
   import type DemoStartSlot from '../DemoStartSlot.svelte';
 
-  // starting slot is part of demos infrastructure
+  // start slot and options are part of demos infrastructure
   export let startSlot: DemoStartSlot;
   export let options: Writable<Options>;
+  $: log = $options.log;
 
   let target: HTMLElement;
   let inSlot = false;
@@ -61,18 +62,15 @@ export const AnimateCode = `<script lang="ts">
       swapSlotForTarget(target);
     }
 
-    // stop current animation; motion one will update target's inline styles to mid-animation values
+    // stop current animation; motion one will update target's inline styles
+    // to mid-animation values
     if (currentAnim?.currentTime && currentAnim.currentTime < 1) {
       currentAnim.stop();
     }
 
-    const projectionResults = getProjection(subject, target) as PartialProjectionResults;
-    const { toSubject } = projectionResults;
+    const { toSubject } =
+      getProjection(subject, target, { log }) as PartialProjectionResults;
     delete toSubject.borderStyle; // preserve target border style
-
-    if ($options.log) {
-      console.log(projectionResults);
-    }
 
     currentAnim = animate(
       target,
@@ -120,8 +118,8 @@ export const AnimateCode = `<script lang="ts">
     // any positioning works with Projectrix
     position: absolute;
 
-    // last i checked, safari webkit can't handle non-integer borders on transformed elements,
-    // so i always recommend pixels for borders
+    // last i checked, safari webkit can't handle non-integer borders
+    // on transformed elements, so i always recommend pixels for borders
     border: solid 3px limegreen;
 
     opacity: 0;
@@ -211,9 +209,10 @@ export const AnimateCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#C678DD">  import</span><span style="color:#C678DD"> type</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">Writable</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'svelte/store'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  import</span><span style="color:#C678DD"> type</span><span style="color:#E06C75"> DemoStartSlot</span><span style="color:#C678DD"> from</span><span style="color:#98C379"> '../DemoStartSlot.svelte'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#7F848E;font-style:italic">  // starting slot is part of demos infrastructure</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">  // start slot and options are part of demos infrastructure</span></span>
 <span class="line"><span style="color:#C678DD">  export</span><span style="color:#C678DD"> let</span><span style="color:#E06C75"> startSlot</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">DemoStartSlot</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  export</span><span style="color:#C678DD"> let</span><span style="color:#E06C75"> options</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">Writable</span><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E5C07B">Options</span><span style="color:#ABB2BF">>;</span></span>
+<span class="line"><span style="color:#E06C75">  $</span><span style="color:#ABB2BF">: </span><span style="color:#E06C75">log</span><span style="color:#56B6C2"> =</span><span style="color:#ABB2BF"> $</span><span style="color:#E5C07B">options</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">log</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> target</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> inSlot</span><span style="color:#56B6C2"> =</span><span style="color:#D19A66"> false</span><span style="color:#ABB2BF">;</span></span>
@@ -241,18 +240,15 @@ export const AnimateCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#61AFEF">      swapSlotForTarget</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">target</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#ABB2BF">    }</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#7F848E;font-style:italic">    // stop current animation; motion one will update target's inline styles to mid-animation values</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">    // stop current animation; motion one will update target's inline styles</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">    // to mid-animation values</span></span>
 <span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> (</span><span style="color:#E5C07B">currentAnim</span><span style="color:#ABB2BF">?.</span><span style="color:#E06C75">currentTime</span><span style="color:#56B6C2"> &#x26;&#x26;</span><span style="color:#E5C07B"> currentAnim</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTime</span><span style="color:#56B6C2"> &#x3C;</span><span style="color:#D19A66"> 1</span><span style="color:#ABB2BF">) {</span></span>
 <span class="line"><span style="color:#E5C07B">      currentAnim</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">stop</span><span style="color:#ABB2BF">();</span></span>
 <span class="line"><span style="color:#ABB2BF">    }</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#C678DD">    const</span><span style="color:#E5C07B"> projectionResults</span><span style="color:#56B6C2"> =</span><span style="color:#61AFEF"> getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">subject</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">target</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">as</span><span style="color:#E5C07B"> PartialProjectionResults</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#C678DD">    const</span><span style="color:#ABB2BF"> { </span><span style="color:#E5C07B">toSubject</span><span style="color:#ABB2BF"> } </span><span style="color:#56B6C2">=</span><span style="color:#E06C75"> projectionResults</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#C678DD">    const</span><span style="color:#ABB2BF"> { </span><span style="color:#E5C07B">toSubject</span><span style="color:#ABB2BF"> } </span><span style="color:#56B6C2">=</span></span>
+<span class="line"><span style="color:#61AFEF">      getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">subject</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">target</span><span style="color:#ABB2BF">, { </span><span style="color:#E06C75">log</span><span style="color:#ABB2BF"> }) </span><span style="color:#C678DD">as</span><span style="color:#E5C07B"> PartialProjectionResults</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">    delete</span><span style="color:#E5C07B"> toSubject</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">borderStyle</span><span style="color:#ABB2BF">; </span><span style="color:#7F848E;font-style:italic">// preserve target border style</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> ($</span><span style="color:#E5C07B">options</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">log</span><span style="color:#ABB2BF">) {</span></span>
-<span class="line"><span style="color:#E5C07B">      console</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">log</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">projectionResults</span><span style="color:#ABB2BF">);</span></span>
-<span class="line"><span style="color:#ABB2BF">    }</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#E06C75">    currentAnim</span><span style="color:#56B6C2"> =</span><span style="color:#61AFEF"> animate</span><span style="color:#ABB2BF">(</span></span>
 <span class="line"><span style="color:#E06C75">      target</span><span style="color:#ABB2BF">,</span></span>
@@ -300,8 +296,8 @@ export const AnimateCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#7F848E;font-style:italic">    // any positioning works with Projectrix</span></span>
 <span class="line"><span style="color:#ABB2BF">    position: </span><span style="color:#D19A66">absolute</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#7F848E;font-style:italic">    // last i checked, safari webkit can't handle non-integer borders on transformed elements,</span></span>
-<span class="line"><span style="color:#7F848E;font-style:italic">    // so i always recommend pixels for borders</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">    // last i checked, safari webkit can't handle non-integer borders</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">    // on transformed elements, so i always recommend pixels for borders</span></span>
 <span class="line"><span style="color:#ABB2BF">    border: </span><span style="color:#D19A66">solid</span><span style="color:#D19A66"> 3</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF"> limegreen;</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#ABB2BF">    opacity: </span><span style="color:#D19A66">0</span><span style="color:#ABB2BF">;</span></span>

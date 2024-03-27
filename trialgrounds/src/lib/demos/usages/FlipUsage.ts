@@ -29,9 +29,10 @@ export const FlipCode = `<script lang="ts">
   import type { Options } from '$lib/options';
   import type DemoStartSlot from '../DemoStartSlot.svelte';
 
-  // starting slot is part of demos infrastructure
+  // start slot and options are part of demos infrastructure
   export let startSlot: DemoStartSlot;
   export let options: Writable<Options>;
+  $: log = $options.log;
 
   let leftParent: HTMLElement;
   let rightParent: HTMLElement;
@@ -79,11 +80,8 @@ export const FlipCode = `<script lang="ts">
   ): void {
     if (!currentTarget) return;
 
-    const projectionResults = getProjection(currentTarget, nextTarget);
-    const { toSubject, toTargetOrigin } = projectionResults;
-    if ($options.log) {
-      console.log(projectionResults);
-    }
+    const { toSubject, toTargetOrigin } =
+      getProjection(currentTarget, nextTarget, { log });
 
     // set next target to current target's projection
     setInlineStyles(nextTarget, toSubject);
@@ -183,8 +181,8 @@ export const FlipCode = `<script lang="ts">
       width: 10.75cqw;
       height: 10.75cqw;
 
-      // last i checked, safari webkit can't handle non-integer borders on transformed elements,
-      // so i always recommend pixels for borders
+      // last i checked, safari webkit can't handle non-integer borders
+      // on transformed elements, so i always recommend pixels for borders
       border: solid 3px limegreen;
 
       opacity: 0;
@@ -229,9 +227,10 @@ export const FlipCodeHL = `<pre class="shiki one-dark-pro" style="background-col
 <span class="line"><span style="color:#C678DD">  import</span><span style="color:#C678DD"> type</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">Options</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> '$lib/options'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  import</span><span style="color:#C678DD"> type</span><span style="color:#E06C75"> DemoStartSlot</span><span style="color:#C678DD"> from</span><span style="color:#98C379"> '../DemoStartSlot.svelte'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#7F848E;font-style:italic">  // starting slot is part of demos infrastructure</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">  // start slot and options are part of demos infrastructure</span></span>
 <span class="line"><span style="color:#C678DD">  export</span><span style="color:#C678DD"> let</span><span style="color:#E06C75"> startSlot</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">DemoStartSlot</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  export</span><span style="color:#C678DD"> let</span><span style="color:#E06C75"> options</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">Writable</span><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E5C07B">Options</span><span style="color:#ABB2BF">>;</span></span>
+<span class="line"><span style="color:#E06C75">  $</span><span style="color:#ABB2BF">: </span><span style="color:#E06C75">log</span><span style="color:#56B6C2"> =</span><span style="color:#ABB2BF"> $</span><span style="color:#E5C07B">options</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">log</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> leftParent</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> rightParent</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">;</span></span>
@@ -279,11 +278,8 @@ export const FlipCodeHL = `<pre class="shiki one-dark-pro" style="background-col
 <span class="line"><span style="color:#ABB2BF">  ): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
 <span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> (</span><span style="color:#56B6C2">!</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">return</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#C678DD">    const</span><span style="color:#E5C07B"> projectionResults</span><span style="color:#56B6C2"> =</span><span style="color:#61AFEF"> getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">nextTarget</span><span style="color:#ABB2BF">);</span></span>
-<span class="line"><span style="color:#C678DD">    const</span><span style="color:#ABB2BF"> { </span><span style="color:#E5C07B">toSubject</span><span style="color:#ABB2BF">, </span><span style="color:#E5C07B">toTargetOrigin</span><span style="color:#ABB2BF"> } </span><span style="color:#56B6C2">=</span><span style="color:#E06C75"> projectionResults</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> ($</span><span style="color:#E5C07B">options</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">log</span><span style="color:#ABB2BF">) {</span></span>
-<span class="line"><span style="color:#E5C07B">      console</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">log</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">projectionResults</span><span style="color:#ABB2BF">);</span></span>
-<span class="line"><span style="color:#ABB2BF">    }</span></span>
+<span class="line"><span style="color:#C678DD">    const</span><span style="color:#ABB2BF"> { </span><span style="color:#E5C07B">toSubject</span><span style="color:#ABB2BF">, </span><span style="color:#E5C07B">toTargetOrigin</span><span style="color:#ABB2BF"> } </span><span style="color:#56B6C2">=</span></span>
+<span class="line"><span style="color:#61AFEF">      getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">nextTarget</span><span style="color:#ABB2BF">, { </span><span style="color:#E06C75">log</span><span style="color:#ABB2BF"> });</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#7F848E;font-style:italic">    // set next target to current target's projection</span></span>
 <span class="line"><span style="color:#61AFEF">    setInlineStyles</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">nextTarget</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">toSubject</span><span style="color:#ABB2BF">);</span></span>
@@ -383,8 +379,8 @@ export const FlipCodeHL = `<pre class="shiki one-dark-pro" style="background-col
 <span class="line"><span style="color:#ABB2BF">      width: </span><span style="color:#D19A66">10.75</span><span style="color:#E06C75">cqw</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#ABB2BF">      height: </span><span style="color:#D19A66">10.75</span><span style="color:#E06C75">cqw</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#7F848E;font-style:italic">      // last i checked, safari webkit can't handle non-integer borders on transformed elements,</span></span>
-<span class="line"><span style="color:#7F848E;font-style:italic">      // so i always recommend pixels for borders</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">      // last i checked, safari webkit can't handle non-integer borders</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">      // on transformed elements, so i always recommend pixels for borders</span></span>
 <span class="line"><span style="color:#ABB2BF">      border: </span><span style="color:#D19A66">solid</span><span style="color:#D19A66"> 3</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF"> limegreen;</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#ABB2BF">      opacity: </span><span style="color:#D19A66">0</span><span style="color:#ABB2BF">;</span></span>

@@ -6,9 +6,10 @@
   import type { Options } from '$lib/options';
   import type DemoStartSlot from '../DemoStartSlot.svelte';
 
-  // starting slot is part of demos infrastructure
+  // start slot and options are part of demos infrastructure
   export let startSlot: DemoStartSlot;
   export let options: Writable<Options>;
+  $: log = $options.log;
 
   let leftParent: HTMLElement;
   let rightParent: HTMLElement;
@@ -56,11 +57,7 @@
   ): void {
     if (!currentTarget) return;
 
-    const projectionResults = getProjection(currentTarget, nextTarget);
-    const { toSubject, toTargetOrigin } = projectionResults;
-    if ($options.log) {
-      console.log(projectionResults);
-    }
+    const { toSubject, toTargetOrigin } = getProjection(currentTarget, nextTarget, { log });
 
     // set next target to current target's projection
     setInlineStyles(nextTarget, toSubject);
@@ -160,8 +157,8 @@
       width: 10.75cqw;
       height: 10.75cqw;
 
-      // last i checked, safari webkit can't handle non-integer borders on transformed elements,
-      // so i always recommend pixels for borders
+      // last i checked, safari webkit can't handle non-integer borders
+      // on transformed elements, so i always recommend pixels for borders
       border: solid 3px limegreen;
 
       opacity: 0;
