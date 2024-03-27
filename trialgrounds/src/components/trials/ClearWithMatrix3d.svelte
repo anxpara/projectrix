@@ -26,6 +26,10 @@
     }) as PartialProjectionResults;
     delete toSubject.borderStyle;
 
+    if (trialOptions.log) {
+      console.log(toSubject);
+    }
+
     targetElement.style.borderStyle = 'dashed';
     setInlineStyles(targetElement, toSubject);
 

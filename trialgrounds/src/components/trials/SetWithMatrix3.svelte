@@ -13,12 +13,10 @@
 
   function playCustomAnimation(defaultSubject: HTMLElement, trialOptions: Options): void {
     clearInlineStyles(targetElement);
-    const projectionResults = getProjection(defaultSubject, targetElement, {
+    const { toSubject, toTargetOrigin } = getProjection(defaultSubject, targetElement, {
       transformType: 'matrix3d',
+      log: trialOptions.log,
     });
-    const { toSubject, toTargetOrigin } = projectionResults;
-
-    if (trialOptions.log) console.log(projectionResults);
 
     const projection = trialOptions.toTargetOrigin ? toTargetOrigin : toSubject;
     setInlineStyles(targetElement, projection);

@@ -15,10 +15,9 @@
     clearInlineStyles(targetElement);
     const projectionResults = getProjection(defaultSubject, targetElement, {
       transformType: 'transformMat4',
+      log: trialOptions.log,
     });
     const { toSubject, toTargetOrigin } = projectionResults;
-
-    if (trialOptions.log) console.log(projectionResults);
 
     const projection = trialOptions.toTargetOrigin ? toTargetOrigin : toSubject;
     setInlineStyles(targetElement, projection);
