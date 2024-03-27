@@ -1,21 +1,14 @@
 <script lang="ts">
-  import { getActualClientRect } from 'actual-client-rect';
-  import anime from 'animejs';
+  import { getProjection, setInlineStyles } from 'projectrix';
 
   let marker: HTMLElement;
   let marked = false;
 
   export function markOrigin(target: HTMLElement): void {
-    const acr = getActualClientRect(target);
-
-    anime.set(marker, {
-      width: acr.basis.width,
-      height: acr.basis.height,
-      top: acr.basis.top,
-      left: acr.basis.left,
-      transformOrigin: acr.transformOrigin,
-      matrix3d: acr.matrix3d,
+    const { toSubject } = getProjection(target, marker, {
+      useBorder: 'target',
     });
+    setInlineStyles(marker, toSubject);
 
     marked = true;
   }
@@ -29,10 +22,10 @@
 
 <style lang="scss">
   .marker {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
-    outline-style: dotted;
+    border: dotted 3px green;
     color: green;
     pointer-events: none;
   }

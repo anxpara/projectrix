@@ -104,12 +104,12 @@
 
 <div class="all-trials-container">
   {#each trials as trial}
-    <OriginMarker bind:this={trial.originMarker} />
     <a
       href="/{trial.name}{$page.url.search}"
       on:mouseenter={() => hoverTrial(trial)}
       on:focus={() => hoverTrial(trial)}
     >
+      <OriginMarker bind:this={trial.originMarker} />
       <svelte:component
         this={trial.trialType}
         bind:this={trial.trialComponent}
@@ -132,6 +132,7 @@
   }
 
   a {
+    position: relative;
     width: fit-content;
     height: fit-content;
     text-decoration: none;
