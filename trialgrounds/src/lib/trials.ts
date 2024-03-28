@@ -39,11 +39,20 @@ import SetWithMat4 from '../components/trials/SetWithMat4.svelte';
 import ClearWithMat4 from '../components/trials/ClearWithMat4.svelte';
 import ClearWithMatrix3d from '../components/trials/ClearWithMatrix3d.svelte';
 
+export type TrialAnimationOptions = {
+  duration?: number;
+  complete?: (trialOptions: Options) => void;
+};
+
 export interface TrialControls {
   getTargetElement: () => HTMLElement;
   getSubjectElement?: () => HTMLElement;
   getProjectionOptions?: () => ProjectionOptions;
-  playCustomAnimation?: (defaultSubject: HTMLElement, trialOptions: Options) => void;
+  playCustomAnimation?: (
+    defaultSubject: HTMLElement,
+    trialOptions: Options,
+    animationOptions?: TrialAnimationOptions,
+  ) => void;
 }
 
 export interface GetTrialControls {

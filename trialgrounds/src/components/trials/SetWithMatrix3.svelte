@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Options } from '$lib/options';
-  import type { Trial, TrialControls } from '$lib/trials';
+  import type { Trial, TrialAnimationOptions, TrialControls } from '$lib/trials';
   import { clearInlineStyles, getProjection, setInlineStyles } from 'projectrix';
 
   export let trial: Trial;
@@ -11,7 +11,11 @@
     return targetElement;
   }
 
-  function playCustomAnimation(defaultSubject: HTMLElement, trialOptions: Options): void {
+  function playCustomAnimation(
+    defaultSubject: HTMLElement,
+    trialOptions: Options,
+    animationOptions?: TrialAnimationOptions,
+  ): void {
     clearInlineStyles(targetElement);
     const { toSubject, toTargetOrigin } = getProjection(defaultSubject, targetElement, {
       transformType: 'matrix3d',
@@ -20,6 +24,8 @@
 
     const projection = trialOptions.toTargetOrigin ? toTargetOrigin : toSubject;
     setInlineStyles(targetElement, projection);
+
+    animationOptions?.complete?.call(null, trialOptions);
   }
 
   export function getTrialControls(): TrialControls {

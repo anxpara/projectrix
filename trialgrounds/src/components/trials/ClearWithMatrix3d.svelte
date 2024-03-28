@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Options } from '$lib/options';
-  import type { Trial, TrialControls } from '$lib/trials';
+  import type { Trial, TrialAnimationOptions, TrialControls } from '$lib/trials';
   import {
     clearInlineStyles,
     getProjection,
@@ -16,7 +16,11 @@
     return targetElement;
   }
 
-  function playCustomAnimation(defaultSubject: HTMLElement, trialOptions: Options): void {
+  function playCustomAnimation(
+    defaultSubject: HTMLElement,
+    trialOptions: Options,
+    animationOptions?: TrialAnimationOptions,
+  ): void {
     clearInlineStyles(targetElement);
     targetElement.style.borderStyle = 'solid';
     targetElement.style.borderColor = 'limegreen';
@@ -38,6 +42,8 @@
     if (targetElement.style.borderStyle !== 'dashed') {
       targetElement.style.borderColor = 'red';
     }
+
+    animationOptions?.complete?.call(null, trialOptions);
   }
 
   export function getTrialControls(): TrialControls {

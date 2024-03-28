@@ -1,5 +1,5 @@
 import anime from 'animejs';
-import type { Trial } from './trials';
+import type { Trial, TrialAnimationOptions } from './trials';
 import {
   clearInlineStyles,
   getProjection,
@@ -10,16 +10,19 @@ import { animate } from 'motion';
 import { mat4 } from 'gl-matrix';
 import type { Options } from './options';
 
+// needs refactoring
 export function animateTrial(
   trial: Trial,
   defaultSubject: HTMLElement,
   trialOptions: Options,
-  duration = 1000,
+  animationOptions?: TrialAnimationOptions,
 ): void {
+  const duration = animationOptions?.duration ?? 1000;
+
   // allow trial to override the animation
   const playCustomAnimation = trial.trialComponent!.getTrialControls().playCustomAnimation;
   if (playCustomAnimation) {
-    playCustomAnimation(defaultSubject, trialOptions);
+    playCustomAnimation(defaultSubject, trialOptions, animationOptions);
     return;
   }
 
@@ -54,6 +57,7 @@ export function animateTrial(
 
   if (trialOptions.skipAnimation) {
     setInlineStyles(target, trialOptions.toTargetOrigin ? toTargetOrigin : toSubject);
+    animationOptions?.complete?.call(null, trialOptions);
     return;
   }
 
@@ -90,6 +94,7 @@ export function animateTrial(
           anime.set(target, {
             pointerEvents: 'all',
           });
+          animationOptions?.complete?.call(null, trialOptions);
         },
       });
     } else {
@@ -106,6 +111,10 @@ export function animateTrial(
         easing: 'easeInOutQuad',
 
         ...toSubject,
+
+        complete: () => {
+          animationOptions?.complete?.call(null, trialOptions);
+        },
       });
     }
   } else if (options.transformType === 'transform') {
@@ -137,6 +146,7 @@ export function animateTrial(
         anime.set(target, {
           pointerEvents: 'all',
         });
+        animationOptions?.complete?.call(null, trialOptions);
       });
     } else {
       animate(
@@ -162,11 +172,20 @@ export function animateTrial(
           easing: 'ease-in-out',
         },
       );
+
+      trial.animation.finished.then(() => {
+        animationOptions?.complete?.call(null, trialOptions);
+      });
     }
   }
 }
 
 export function animateTrialReturn(trial: Trial, trialOptions: Options, duration = 500): void {
+  if (trialOptions.skipAnimation) {
+    clearInlineStyles(trial.trialComponent!.getTrialControls().getTargetElement());
+    trial.originMarker?.unmark();
+    return;
+  }
   if (trialOptions.toTargetOrigin || !trial.toTargetOrigin) return;
 
   const target = trial.trialComponent!.getTrialControls().getTargetElement();

@@ -78,11 +78,19 @@
     if (currentTrial) unselectTrial(currentTrial);
 
     currentTrial = trial;
-    animateTrial(trial, defaultSubject, $options);
+    animateTrial(trial, defaultSubject, $options, {
+      complete: (options) => {
+        if (currentTrial !== trial) {
+          animateTrialReturn(trial, options, 0);
+        }
+      },
+    });
   }
 
   function unselectTrial(trial: Trial): void {
-    animateTrialReturn(trial, $options);
+    if (trial.animation?.currentTime === 0 || $options.skipAnimation) {
+      animateTrialReturn(trial, $options);
+    }
   }
 
   function updateShowDefaultSubject(showDefault: boolean): void {
