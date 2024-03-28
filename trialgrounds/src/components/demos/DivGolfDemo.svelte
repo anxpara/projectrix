@@ -225,8 +225,7 @@
   }
 
   function isEnterKey(key: string): boolean {
-    const SpaceKey = ' '; // wut
-    if (['Enter', SpaceKey].includes(key)) return true;
+    if (['Enter', ' '].includes(key)) return true;
     return false;
   }
 </script>
@@ -243,6 +242,9 @@
         on:keydown={(e) => {
           if (isEnterKey(e.key)) checkWin(e.currentTarget);
         }}
+        on:touchstart|preventDefault={(e) => {
+          checkWin(e.currentTarget);
+        }}
       >
         <div class="golf-target child-target" />
       </button>
@@ -255,6 +257,9 @@
         }}
         on:keydown={(e) => {
           if (isEnterKey(e.key)) checkWin(e.currentTarget);
+        }}
+        on:touchstart|preventDefault={(e) => {
+          checkWin(e.currentTarget);
         }}
       >
         <div class="golf-target child-target" />
@@ -269,6 +274,9 @@
         on:keydown={(e) => {
           if (isEnterKey(e.key)) checkWin(e.currentTarget);
         }}
+        on:touchstart|preventDefault={(e) => {
+          checkWin(e.currentTarget);
+        }}
       >
         <div class="golf-target child-target" />
       </button>
@@ -281,6 +289,9 @@
         }}
         on:keydown={(e) => {
           if (isEnterKey(e.key)) checkWin(e.currentTarget);
+        }}
+        on:touchstart|preventDefault={(e) => {
+          checkWin(e.currentTarget);
         }}
       >
         <div class="golf-target child-target" />
@@ -295,6 +306,9 @@
         on:keydown={(e) => {
           if (isEnterKey(e.key)) checkWin(e.currentTarget);
         }}
+        on:touchstart|preventDefault={(e) => {
+          checkWin(e.currentTarget);
+        }}
       >
         <div class="golf-target child-target" />
       </button>
@@ -305,9 +319,14 @@
       <button
         bind:this={spinnerModifier}
         class="modifier spinner"
-        on:mousedown={(e) => moveCurrentTargetToModifier(e.currentTarget)}
+        on:mousedown={(e) => {
+          moveCurrentTargetToModifier(e.currentTarget);
+        }}
         on:keydown={(e) => {
           if (isEnterKey(e.key)) moveCurrentTargetToModifier(e.currentTarget);
+        }}
+        on:touchstart|preventDefault={(e) => {
+          moveCurrentTargetToModifier(e.currentTarget);
         }}
       >
         <div class="golf-target child-target" />
@@ -316,9 +335,14 @@
       <button
         bind:this={slider1Modifier}
         class="modifier slider1"
-        on:mousedown={(e) => moveCurrentTargetToModifier(e.currentTarget)}
+        on:mousedown={(e) => {
+          moveCurrentTargetToModifier(e.currentTarget);
+        }}
         on:keydown={(e) => {
           if (isEnterKey(e.key)) moveCurrentTargetToModifier(e.currentTarget);
+        }}
+        on:touchstart|preventDefault={(e) => {
+          moveCurrentTargetToModifier(e.currentTarget);
         }}
       >
         <div class="golf-target child-target" />
@@ -327,9 +351,14 @@
       <button
         bind:this={slider2Modifier}
         class="modifier slider2"
-        on:mousedown={(e) => moveCurrentTargetToModifier(e.currentTarget)}
+        on:mousedown={(e) => {
+          moveCurrentTargetToModifier(e.currentTarget);
+        }}
         on:keydown={(e) => {
           if (isEnterKey(e.key)) moveCurrentTargetToModifier(e.currentTarget);
+        }}
+        on:touchstart|preventDefault={(e) => {
+          moveCurrentTargetToModifier(e.currentTarget);
         }}
       >
         <div class="golf-target child-target" />
