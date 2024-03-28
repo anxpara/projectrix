@@ -170,6 +170,7 @@
 
       li {
         margin-bottom: 0.6em;
+        font-weight: 600;
       }
     }
   }

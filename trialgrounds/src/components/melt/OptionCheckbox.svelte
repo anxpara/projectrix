@@ -21,10 +21,10 @@
   });
 </script>
 
-<div class="check-container">
+<div class="check-container {name}">
   <button
     use:melt={$root}
-    class="check-button"
+    class="check-button {name}"
     class:checked={$options[name]}
     class:irrelevant
     id="checkbox-{name}"
@@ -39,6 +39,8 @@
     display: flex;
     align-items: center;
     gap: 0.5em;
+
+    font-weight: 600;
   }
 
   .check-button {
@@ -67,5 +69,10 @@
 
   .check-label {
     cursor: pointer;
+  }
+
+  .hideUI {
+    color: red;
+    border-color: red;
   }
 </style>
