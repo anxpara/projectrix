@@ -420,7 +420,14 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  .modifier:focus-visible,
+  .spinner:focus-visible {
+    background-color: rgba(255, 0, 255, 0.1);
+  }
+  .slider1:focus-visible,
+  .slider2:focus-visible {
+    background-color: rgba(255, 255, 0, 0.2);
+  }
+  .goal:focus-visible,
   .restart:focus-visible {
     outline: solid 2px white;
     outline-offset: 4px;
