@@ -508,7 +508,7 @@
   </div>
   <div class="tracker clock" class:courseCompleted>
     <span class="material-symbols-outlined"> timer </span>
-    <p>{timer}</p>
+    <p>{timer}s</p>
   </div>
 
   <button class="reset" on:click={handleResetClick}>
