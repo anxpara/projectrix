@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount, tick } from 'svelte';
+  import { onDestroy, onMount, tick } from 'svelte';
   import { mat4, quat, vec3 } from 'gl-matrix';
   import { getActualClientRect } from 'actual-client-rect';
   import { getProjection, setInlineStyles } from 'projectrix';
@@ -11,36 +11,46 @@
   export let options: Writable<Options>;
   $: log = $options.log;
 
-  let startingTarget: HTMLElement;
   let currentTarget: HTMLElement | undefined;
+  let startTarget: HTMLElement;
+  let hitTarget: HTMLElement;
+  let hitAnim: anime.AnimeInstance | undefined;
 
   let spinnerModifier: HTMLElement;
   let slider1Modifier: HTMLElement;
   let slider2Modifier: HTMLElement;
 
-  let goals: HTMLElement[] = [];
-  let winnerTarget: HTMLElement;
-  let winAnim: anime.AnimeInstance | undefined;
-
   let pulseContainer: HTMLElement;
   let pulseTemplate: HTMLElement;
 
+  const NumGoals = 5;
+  let goals: HTMLElement[] = [];
+
+  /* game state */
+  const goalsCompleted = new Set<HTMLElement>();
+  let courseCompleted = false;
+  let moves = 0;
+  let startTime = 0;
+  let timer = 0;
+  let timerInterval: NodeJS.Timeout | undefined;
+
   onMount(async () => {
     await tick();
-    restart();
+    reset();
   });
 
-  function restart(): void {
-    setCurrentTarget(startingTarget);
-    startModifiers();
-  }
+  onDestroy(() => {
+    clearInterval(timerInterval);
+  });
 
-  function setCurrentTarget(target: HTMLElement): void {
-    if (currentTarget) {
-      currentTarget.style.opacity = '0';
-    }
-    target.style.opacity = '1';
-    currentTarget = target;
+  function startTimer(): void {
+    startTime = Date.now();
+    timer = 0;
+
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      timer = Math.floor((Date.now() - startTime) / 1000);
+    }, 1000);
   }
 
   function startModifiers(): void {
@@ -85,43 +95,111 @@
     });
   }
 
-  function moveCurrentTargetToModifier(modifier: HTMLElement): void {
-    if (winAnim) return;
+  /* game state management */
+
+  function reset(): void {
+    goals.forEach((goal) => {
+      goal.style.borderStyle = 'solid';
+      goal.style.borderColor = '#f00';
+    });
+    goalsCompleted.clear();
+
+    moves = 0;
+    startTimer();
+
+    courseCompleted = false;
+
+    restart();
+  }
+
+  function restart(): void {
+    setCurrentTarget(startTarget);
+    startModifiers();
+  }
+
+  function countMove(): void {
+    if (courseCompleted) {
+      return;
+    }
+    moves++;
+  }
+
+  function styleGoalCompleted(goal: HTMLElement): void {
+    goal.style.borderStyle = 'dotted';
+    goal.style.borderColor = '#32cd32';
+  }
+
+  function markGoalCompleted(goal: HTMLElement): void {
+    goalsCompleted.add(goal);
+    checkCourseCompleted();
+  }
+
+  function checkCourseCompleted(): void {
+    if (courseCompleted) {
+      return;
+    }
+    if (goalsCompleted.size === NumGoals) {
+      markCourseCompleted();
+    }
+  }
+
+  function markCourseCompleted(): void {
+    courseCompleted = true;
+    clearInterval(timerInterval);
+    timer = (Date.now() - startTime) / 1000;
+  }
+
+  function setCurrentTarget(target: HTMLElement): void {
+    if (currentTarget) {
+      currentTarget.style.opacity = '0';
+    }
+    target.style.opacity = '1';
+    currentTarget = target;
+  }
+
+  function activateModifier(modifier: HTMLElement): void {
+    if (hitAnim) return;
+    if (!currentTarget) return;
+
+    animateClonedpulse(currentTarget);
 
     const nextTarget = modifier.firstElementChild as HTMLElement;
-    if (!currentTarget) return;
+
     if (currentTarget.isSameNode(nextTarget)) {
-      animateClonedpulse(currentTarget);
-      goals.forEach((goal) => checkWin(goal, false));
+      attemptAllgoals();
       return;
     }
 
-    // match next target to current target's projection
-    const { toSubject } = getProjection(currentTarget, nextTarget, { log });
+    moveToModifier(modifier);
+  }
+
+  // match modifier's target to current target's projection
+  function moveToModifier(modifier: HTMLElement): void {
+    const nextTarget = modifier.firstElementChild as HTMLElement;
+    const { toSubject } = getProjection(currentTarget!, nextTarget, { log });
     setInlineStyles(nextTarget, toSubject);
-
     setCurrentTarget(nextTarget);
+  }
 
-    animateClonedpulse(nextTarget);
+  function attemptAllgoals(): void {
+    goals.forEach((goal) => attemptGoalHit(goal, false));
+  }
+
+  function attemptGoalHit(goal: HTMLElement, goalClicked = true): void {
+    const hit = checkIfTolerancesHit(goal);
+
+    if (hit) {
+      markGoalCompleted(goal);
+      animateHit(goal);
+    } else if (goalClicked) {
+      animateMiss(goal);
+    }
   }
 
   const distanceTolerancePx = 10;
   const rotationToleranceDeg = 8;
 
-  function checkWin(goal: HTMLElement, goalClicked = true): void {
-    const win = checkIfTolerancesWin(goal);
-
-    if (win) {
-      animateWin(goal);
-      return;
-    }
-
-    if (goalClicked) {
-      animateMiss(goal);
-    }
-  }
-
-  function checkIfTolerancesWin(goal: HTMLElement): boolean {
+  function checkIfTolerancesHit(goal: HTMLElement): boolean {
     const goalAcr = getActualClientRect(goal, {
       bakePositionIntoTransform: true,
     });
@@ -159,29 +237,31 @@
     return true;
   }
 
-  function animateWin(goal: HTMLElement): void {
-    // match winner target to current target
-    const { toSubject } = getProjection(currentTarget!, winnerTarget, { log });
-    setInlineStyles(winnerTarget, toSubject);
-    setCurrentTarget(winnerTarget);
+  /* animations */
 
-    // animate winner target rest of way to goal
-    winAnim = anime({
-      targets: winnerTarget,
+  function animateHit(goal: HTMLElement): void {
+    // match hit target to current target
+    const { toSubject } = getProjection(currentTarget!, hitTarget, { log });
+    setInlineStyles(hitTarget, toSubject);
+    setCurrentTarget(hitTarget);
+
+    // animate hit target rest of way to goal
+    hitAnim = anime({
+      targets: hitTarget,
       duration: 300,
       easing: 'easeOutQuad',
 
       // anime.js takes matrix3d
-      ...getProjection(goal, winnerTarget, { transformType: 'matrix3d', log }).toSubject,
+      ...getProjection(goal, hitTarget, { transformType: 'matrix3d', log }).toSubject,
 
       complete: () => {
-        markGoalCompleted(goal);
+        styleGoalCompleted(goal);
 
-        animateClonedpulse(winnerTarget);
-        setTimeout(() => animateClonedpulse(winnerTarget), 350);
-        setTimeout(() => animateClonedpulse(winnerTarget), 700);
+        animateClonedpulse(hitTarget);
+        setTimeout(() => animateClonedpulse(hitTarget), 350);
+        setTimeout(() => animateClonedpulse(hitTarget), 700);
 
-        winAnim = undefined;
+        hitAnim = undefined;
       },
     });
   }
@@ -195,11 +275,6 @@
 
       backgroundColor: 'rgba(255, 0, 0, 0)',
     });
-  }
-
-  function markGoalCompleted(goal: HTMLElement): void {
-    goal.style.borderStyle = 'dotted';
-    goal.style.borderColor = '#32cd32';
   }
 
   function animateClonedpulse(subject: HTMLElement): void {
@@ -224,7 +299,7 @@
     });
   }
 
-  // INPUT
+  /* input handling */
 
   // prevent holding keys down
   const keysDownBad: Record<string, boolean> = {};
@@ -258,15 +333,18 @@
 
     switch (key) {
       case '1':
-        moveCurrentTargetToModifier(spinnerModifier);
+        countMove();
+        activateModifier(spinnerModifier);
         spinnerModifier.focus();
         return;
       case '2':
-        moveCurrentTargetToModifier(slider1Modifier);
+        countMove();
+        activateModifier(slider1Modifier);
         slider1Modifier.focus();
         return;
       case '3':
-        moveCurrentTargetToModifier(slider2Modifier);
+        countMove();
+        activateModifier(slider2Modifier);
         slider2Modifier.focus();
         return;
       case 'r':
@@ -277,7 +355,8 @@
 
   function handleModifierTap(e: Event): void {
     const modifier = e.currentTarget as HTMLElement;
-    moveCurrentTargetToModifier(modifier);
+    countMove();
+    activateModifier(modifier);
   }
   function handleModifierKeyDown(e: KeyboardEvent): void {
     const key = e.key;
@@ -289,11 +368,13 @@
       return;
     }
 
-    moveCurrentTargetToModifier(modifier);
+    countMove();
+    activateModifier(modifier);
   }
 
   function handleGoalTap(e: Event): void {
-    checkWin(e.currentTarget as HTMLElement);
+    countMove();
+    attemptGoalHit(e.currentTarget as HTMLElement);
   }
   function handleGoalKeyDown(e: KeyboardEvent): void {
     const key = e.key;
@@ -304,7 +385,17 @@
     if (pressKeyDownBad(key)) {
       return;
     }
-    checkWin(goal);
+    countMove();
+    attemptGoalHit(goal);
+  }
+
+  function handleRestartClick(): void {
+    countMove();
+    restart();
+  }
+
+  function handleResetClick(): void {
+    reset();
   }
 </script>
 
@@ -367,8 +458,8 @@
         <div class="golf-target child-target" />
       </button>
 
-      <div bind:this={startingTarget} class="golf-target starting-target" />
-      <div bind:this={winnerTarget} class="golf-target winner-target" />
+      <div bind:this={startTarget} class="golf-target start-target" />
+      <div bind:this={hitTarget} class="golf-target hit-target" />
 
       <button
         bind:this={spinnerModifier}
@@ -407,9 +498,23 @@
   <div bind:this={pulseTemplate} class="golf-target pulse-template" />
 </div>
 
-<button class="restart" on:click={() => restart()}>
+<button class="restart" on:click={handleRestartClick}>
   <span class="material-symbols-outlined"> replay </span>
 </button>
+<div class="scores">
+  <div class="tracker score" class:courseCompleted>
+    <span class="material-symbols-outlined"> sports_score </span>
+    <p>{moves}</p>
+  </div>
+  <div class="tracker clock" class:courseCompleted>
+    <span class="material-symbols-outlined"> timer </span>
+    <p>{timer}</p>
+  </div>
+
+  <button class="reset" on:click={handleResetClick}>
+    <span class="material-symbols-outlined"> delete </span>
+  </button>
+</div>
 
 <style lang="scss">
   $pxem: 16;
@@ -418,19 +523,6 @@
     all: unset;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
-  }
-
-  .spinner:focus-visible {
-    background-color: rgba(255, 0, 255, 0.1);
-  }
-  .slider1:focus-visible,
-  .slider2:focus-visible {
-    background-color: rgba(255, 255, 0, 0.2);
-  }
-  .goal:focus-visible,
-  .restart:focus-visible {
-    outline: solid 2px white;
-    outline-offset: 4px;
   }
 
   .prevent-select {
@@ -443,10 +535,47 @@
     touch-action: manipulation;
   }
 
+  .spinner:focus-visible {
+    background-color: rgba(255, 0, 255, 0.15);
+  }
+  .slider1:focus-visible,
+  .slider2:focus-visible {
+    background-color: rgba(255, 255, 0, 0.4);
+  }
+  .goal:focus-visible,
+  .restart:focus-visible {
+    outline: solid 2px white;
+    outline-offset: 4px;
+  }
+
   .restart {
     position: absolute;
-    top: 1em;
+    top: min(4.4em, 16.8cqw);
+    left: 0.8em;
+  }
+
+  .scores {
+    position: absolute;
+    top: 0.5em;
     right: 1em;
+
+    display: flex;
+    gap: 1.1em;
+    font-weight: 700;
+
+    .tracker {
+      display: flex;
+      align-items: center;
+      gap: 0.1em;
+      flex-direction: column;
+
+      p {
+        margin: 0;
+      }
+    }
+    .tracker.courseCompleted {
+      color: limeGreen;
+    }
   }
 
   .centerer {
@@ -492,7 +621,7 @@
     pointer-events: none;
   }
 
-  .starting-target {
+  .start-target {
     top: calc(60 / $pxem * 1em);
     left: calc(10 / $pxem * 1em);
   }
@@ -501,7 +630,7 @@
     opacity: 0;
   }
 
-  .winner-target {
+  .hit-target {
     opacity: 0;
     background-color: limegreen;
   }
