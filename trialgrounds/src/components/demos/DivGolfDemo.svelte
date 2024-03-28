@@ -224,11 +224,95 @@
     });
   }
 
+  // INPUT
+
+  // prevent holding keys down
+  const keysDownBad: Record<string, boolean> = {};
+  function liftKey(key: string): void {
+    keysDownBad[key] = false;
+  }
+  // presses key; returns true if key was already down bad
+  function pressKeyDownBad(key: string): boolean {
+    if (keysDownBad[key]) {
+      return true;
+    }
+    keysDownBad[key] = true;
+    return false;
+  }
+
   function isEnterKey(key: string): boolean {
     if (['Enter', ' '].includes(key)) return true;
     return false;
   }
+
+  function handleWindowKeyUp(key: string): void {
+    liftKey(key);
+  }
+  function handleWindowKeyDown(key: string): void {
+    if (isEnterKey(key)) {
+      return;
+    }
+    if (pressKeyDownBad(key)) {
+      return;
+    }
+
+    switch (key) {
+      case '1':
+        moveCurrentTargetToModifier(spinnerModifier);
+        spinnerModifier.focus();
+        return;
+      case '2':
+        moveCurrentTargetToModifier(slider1Modifier);
+        slider1Modifier.focus();
+        return;
+      case '3':
+        moveCurrentTargetToModifier(slider2Modifier);
+        slider2Modifier.focus();
+        return;
+      case 'r':
+        restart();
+        return;
+    }
+  }
+
+  function handleModifierTap(e: Event): void {
+    const modifier = e.currentTarget as HTMLElement;
+    moveCurrentTargetToModifier(modifier);
+  }
+  function handleModifierKeyDown(e: KeyboardEvent): void {
+    const key = e.key;
+    const modifier = e.currentTarget as HTMLElement;
+    if (!isEnterKey(key)) {
+      return;
+    }
+    if (pressKeyDownBad(key)) {
+      return;
+    }
+
+    moveCurrentTargetToModifier(modifier);
+  }
+
+  function handleGoalTap(e: Event): void {
+    checkWin(e.currentTarget as HTMLElement);
+  }
+  function handleGoalKeyDown(e: KeyboardEvent): void {
+    const key = e.key;
+    const goal = e.currentTarget as HTMLElement;
+    if (!isEnterKey(key)) {
+      return;
+    }
+    if (pressKeyDownBad(key)) {
+      return;
+    }
+    checkWin(goal);
+  }
 </script>
+
+<!-- prettier-ignore -->
+<svelte:window 
+  on:keyup={(e) => handleWindowKeyUp(e.key)} 
+  on:keydown={(e) => handleWindowKeyDown(e.key)}
+/>
 
 <div class="centerer prevent-select disable-touch-zoom">
   <div class="course-sizer portrait-size-toggle">
@@ -236,15 +320,9 @@
       <button
         bind:this={goals[0]}
         class="modifier goal goal-0"
-        on:mousedown={(e) => {
-          checkWin(e.currentTarget);
-        }}
-        on:keydown={(e) => {
-          if (isEnterKey(e.key)) checkWin(e.currentTarget);
-        }}
-        on:touchstart|preventDefault={(e) => {
-          checkWin(e.currentTarget);
-        }}
+        on:mousedown={handleGoalTap}
+        on:touchstart|preventDefault={handleGoalTap}
+        on:keydown={handleGoalKeyDown}
       >
         <div class="golf-target child-target" />
       </button>
@@ -252,15 +330,9 @@
       <button
         bind:this={goals[1]}
         class="modifier goal goal-1"
-        on:mousedown={(e) => {
-          checkWin(e.currentTarget);
-        }}
-        on:keydown={(e) => {
-          if (isEnterKey(e.key)) checkWin(e.currentTarget);
-        }}
-        on:touchstart|preventDefault={(e) => {
-          checkWin(e.currentTarget);
-        }}
+        on:mousedown={handleGoalTap}
+        on:touchstart|preventDefault={handleGoalTap}
+        on:keydown={handleGoalKeyDown}
       >
         <div class="golf-target child-target" />
       </button>
@@ -268,15 +340,9 @@
       <button
         bind:this={goals[2]}
         class="modifier goal goal-2"
-        on:mousedown={(e) => {
-          checkWin(e.currentTarget);
-        }}
-        on:keydown={(e) => {
-          if (isEnterKey(e.key)) checkWin(e.currentTarget);
-        }}
-        on:touchstart|preventDefault={(e) => {
-          checkWin(e.currentTarget);
-        }}
+        on:mousedown={handleGoalTap}
+        on:touchstart|preventDefault={handleGoalTap}
+        on:keydown={handleGoalKeyDown}
       >
         <div class="golf-target child-target" />
       </button>
@@ -284,15 +350,9 @@
       <button
         bind:this={goals[3]}
         class="modifier goal goal-3"
-        on:mousedown={(e) => {
-          checkWin(e.currentTarget);
-        }}
-        on:keydown={(e) => {
-          if (isEnterKey(e.key)) checkWin(e.currentTarget);
-        }}
-        on:touchstart|preventDefault={(e) => {
-          checkWin(e.currentTarget);
-        }}
+        on:mousedown={handleGoalTap}
+        on:touchstart|preventDefault={handleGoalTap}
+        on:keydown={handleGoalKeyDown}
       >
         <div class="golf-target child-target" />
       </button>
@@ -300,15 +360,9 @@
       <button
         bind:this={goals[4]}
         class="modifier goal goal-4"
-        on:mousedown={(e) => {
-          checkWin(e.currentTarget);
-        }}
-        on:keydown={(e) => {
-          if (isEnterKey(e.key)) checkWin(e.currentTarget);
-        }}
-        on:touchstart|preventDefault={(e) => {
-          checkWin(e.currentTarget);
-        }}
+        on:mousedown={handleGoalTap}
+        on:touchstart|preventDefault={handleGoalTap}
+        on:keydown={handleGoalKeyDown}
       >
         <div class="golf-target child-target" />
       </button>
@@ -319,15 +373,9 @@
       <button
         bind:this={spinnerModifier}
         class="modifier spinner"
-        on:mousedown={(e) => {
-          moveCurrentTargetToModifier(e.currentTarget);
-        }}
-        on:keydown={(e) => {
-          if (isEnterKey(e.key)) moveCurrentTargetToModifier(e.currentTarget);
-        }}
-        on:touchstart|preventDefault={(e) => {
-          moveCurrentTargetToModifier(e.currentTarget);
-        }}
+        on:mousedown={handleModifierTap}
+        on:touchstart|preventDefault={handleModifierTap}
+        on:keydown={handleModifierKeyDown}
       >
         <div class="golf-target child-target" />
       </button>
@@ -335,15 +383,9 @@
       <button
         bind:this={slider1Modifier}
         class="modifier slider1"
-        on:mousedown={(e) => {
-          moveCurrentTargetToModifier(e.currentTarget);
-        }}
-        on:keydown={(e) => {
-          if (isEnterKey(e.key)) moveCurrentTargetToModifier(e.currentTarget);
-        }}
-        on:touchstart|preventDefault={(e) => {
-          moveCurrentTargetToModifier(e.currentTarget);
-        }}
+        on:mousedown={handleModifierTap}
+        on:touchstart|preventDefault={handleModifierTap}
+        on:keydown={handleModifierKeyDown}
       >
         <div class="golf-target child-target" />
       </button>
@@ -351,15 +393,9 @@
       <button
         bind:this={slider2Modifier}
         class="modifier slider2"
-        on:mousedown={(e) => {
-          moveCurrentTargetToModifier(e.currentTarget);
-        }}
-        on:keydown={(e) => {
-          if (isEnterKey(e.key)) moveCurrentTargetToModifier(e.currentTarget);
-        }}
-        on:touchstart|preventDefault={(e) => {
-          moveCurrentTargetToModifier(e.currentTarget);
-        }}
+        on:mousedown={handleModifierTap}
+        on:touchstart|preventDefault={handleModifierTap}
+        on:keydown={handleModifierKeyDown}
       >
         <div class="golf-target child-target" />
       </button>
