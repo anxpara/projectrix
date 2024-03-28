@@ -54,7 +54,7 @@ export const allDemos: Demo[] = [
   {
     name: DemoName.DivGolf,
     demoType: DivGolfDemo,
-    summary: 'click the modifier divs to match the green div to a red goal. click the goal ftw',
+    summary: 'click modifier divs or num keys 1-3 to match the green div to a red goal. click current modifier to attempt goal',
 
     usage: DivGolfUsage,
     code: DivGolfCode,
