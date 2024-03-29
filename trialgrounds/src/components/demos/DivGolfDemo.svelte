@@ -350,6 +350,9 @@
       case 'r':
         restart();
         return;
+      case 'Delete':
+        reset();
+        return;
     }
   }
 
