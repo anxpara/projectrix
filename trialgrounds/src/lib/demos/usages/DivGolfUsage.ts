@@ -33,10 +33,11 @@ export const DivGolfCode = `<script lang="ts">
   export let options: Writable<Options>;
   $: log = $options.log;
 
-  let currentTarget: HTMLElement | undefined;
+  const NumGoals = 5;
+  let goals: HTMLElement[] = [];
+
   let startTarget: HTMLElement;
   let hitTarget: HTMLElement;
-  let hitAnim: anime.AnimeInstance | undefined;
 
   let spinnerModifier: HTMLElement;
   let slider1Modifier: HTMLElement;
@@ -45,16 +46,18 @@ export const DivGolfCode = `<script lang="ts">
   let pulseContainer: HTMLElement;
   let pulseTemplate: HTMLElement;
 
-  const NumGoals = 5;
-  let goals: HTMLElement[] = [];
-
   /* game state */
-  const goalsCompleted = new Set<HTMLElement>();
-  let courseCompleted = false;
-  let moves = 0;
+
+  let currentTarget: HTMLElement | undefined;
+  let hitAnim: anime.AnimeInstance | undefined;
+
   let startTime = 0;
   let timer = 0;
   let timerInterval: NodeJS.Timeout | undefined;
+
+  let moves = 0;
+  const goalsCompleted = new Set<HTMLElement>();
+  let courseCompleted = false;
 
   onMount(async () => {
     await tick();
@@ -62,17 +65,74 @@ export const DivGolfCode = `<script lang="ts">
   });
 
   onDestroy(() => {
-    clearInterval(timerInterval);
+    clearTimer();
   });
+
+  /* game state management */
+
+  function reset(): void {
+    clearTimer();
+    moves = 0;
+    courseCompleted = false;
+    goals.forEach((goal) => {
+      goal.style.borderStyle = 'solid';
+      goal.style.borderColor = '#f00';
+    });
+    goalsCompleted.clear();
+
+    restart();
+  }
+
+  function restart(): void {
+    setCurrentTarget(startTarget);
+    startModifiers();
+  }
+
+  function clearTimer(): void {
+    clearInterval(timerInterval);
+    timer = 0;
+  }
 
   function startTimer(): void {
     startTime = Date.now();
-    timer = 0;
-
-    clearInterval(timerInterval);
     timerInterval = setInterval(() => {
       timer = Math.floor((Date.now() - startTime) / 1000);
     }, 1000);
+  }
+
+  function countMove(): void {
+    if (courseCompleted) {
+      return;
+    }
+    if (moves === 0) {
+      startTimer();
+    }
+    moves++;
+  }
+
+  function styleGoalCompleted(goal: HTMLElement): void {
+    goal.style.borderStyle = 'dotted';
+    goal.style.borderColor = '#32cd32';
+  }
+
+  function markGoalCompleted(goal: HTMLElement): void {
+    goalsCompleted.add(goal);
+    checkCourseCompleted();
+  }
+
+  function checkCourseCompleted(): void {
+    if (courseCompleted) {
+      return;
+    }
+    if (goalsCompleted.size === NumGoals) {
+      markCourseCompleted();
+    }
+  }
+
+  function markCourseCompleted(): void {
+    courseCompleted = true;
+    clearInterval(timerInterval);
+    timer = (Date.now() - startTime) / 1000;
   }
 
   function startModifiers(): void {
@@ -117,68 +177,6 @@ export const DivGolfCode = `<script lang="ts">
     });
   }
 
-  /* game state management */
-
-  function reset(): void {
-    goals.forEach((goal) => {
-      goal.style.borderStyle = 'solid';
-      goal.style.borderColor = '#f00';
-    });
-    goalsCompleted.clear();
-
-    moves = 0;
-    startTimer();
-
-    courseCompleted = false;
-
-    restart();
-  }
-
-  function restart(): void {
-    setCurrentTarget(startTarget);
-    startModifiers();
-  }
-
-  function countMove(): void {
-    if (courseCompleted) {
-      return;
-    }
-    moves++;
-  }
-
-  function styleGoalCompleted(goal: HTMLElement): void {
-    goal.style.borderStyle = 'dotted';
-    goal.style.borderColor = '#32cd32';
-  }
-
-  function markGoalCompleted(goal: HTMLElement): void {
-    goalsCompleted.add(goal);
-    checkCourseCompleted();
-  }
-
-  function checkCourseCompleted(): void {
-    if (courseCompleted) {
-      return;
-    }
-    if (goalsCompleted.size === NumGoals) {
-      markCourseCompleted();
-    }
-  }
-
-  function markCourseCompleted(): void {
-    courseCompleted = true;
-    clearInterval(timerInterval);
-    timer = (Date.now() - startTime) / 1000;
-  }
-
-  function setCurrentTarget(target: HTMLElement): void {
-    if (currentTarget) {
-      currentTarget.style.opacity = '0';
-    }
-    target.style.opacity = '1';
-    currentTarget = target;
-  }
-
   function activateModifier(modifier: HTMLElement): void {
     if (hitAnim) return;
     if (!currentTarget) return;
@@ -201,6 +199,14 @@ export const DivGolfCode = `<script lang="ts">
     const { toSubject } = getProjection(currentTarget!, nextTarget, { log });
     setInlineStyles(nextTarget, toSubject);
     setCurrentTarget(nextTarget);
+  }
+
+  function setCurrentTarget(target: HTMLElement): void {
+    if (currentTarget) {
+      currentTarget.style.opacity = '0';
+    }
+    target.style.opacity = '1';
+    currentTarget = target;
   }
 
   function attemptAllgoals(): void {
@@ -372,6 +378,9 @@ export const DivGolfCode = `<script lang="ts">
       case 'r':
         restart();
         return;
+      case 'Delete':
+        reset();
+        return;
     }
   }
 
@@ -421,6 +430,7 @@ export const DivGolfCode = `<script lang="ts">
   }
 </script>
 
+<!-- prettier-ignore -->
 <svelte:window 
   on:keyup={(e) => handleWindowKeyUp(e.key)} 
   on:keydown={(e) => handleWindowKeyDown(e.key)}
@@ -529,7 +539,7 @@ export const DivGolfCode = `<script lang="ts">
   </div>
   <div class="tracker clock" class:courseCompleted>
     <span class="material-symbols-outlined"> timer </span>
-    <p>{timer}</p>
+    <p>{timer}s</p>
   </div>
 
   <button class="reset" on:click={handleResetClick}>
@@ -766,10 +776,11 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#C678DD">  export</span><span style="color:#C678DD"> let</span><span style="color:#E06C75"> options</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">Writable</span><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E5C07B">Options</span><span style="color:#ABB2BF">>;</span></span>
 <span class="line"><span style="color:#E06C75">  $</span><span style="color:#ABB2BF">: </span><span style="color:#E06C75">log</span><span style="color:#56B6C2"> =</span><span style="color:#ABB2BF"> $</span><span style="color:#E5C07B">options</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">log</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> currentTarget</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF"> | </span><span style="color:#E5C07B">undefined</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#C678DD">  const</span><span style="color:#E5C07B"> NumGoals</span><span style="color:#56B6C2"> =</span><span style="color:#D19A66"> 5</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> goals</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">[] </span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF"> [];</span></span>
+<span class="line"></span>
 <span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> startTarget</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> hitTarget</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> hitAnim</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">anime</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">AnimeInstance</span><span style="color:#ABB2BF"> | </span><span style="color:#E5C07B">undefined</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> spinnerModifier</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> slider1Modifier</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">;</span></span>
@@ -778,16 +789,18 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> pulseContainer</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> pulseTemplate</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#C678DD">  const</span><span style="color:#E5C07B"> NumGoals</span><span style="color:#56B6C2"> =</span><span style="color:#D19A66"> 5</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> goals</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">[] </span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF"> [];</span></span>
-<span class="line"></span>
 <span class="line"><span style="color:#7F848E;font-style:italic">  /* game state */</span></span>
-<span class="line"><span style="color:#C678DD">  const</span><span style="color:#E5C07B"> goalsCompleted</span><span style="color:#56B6C2"> =</span><span style="color:#C678DD"> new</span><span style="color:#61AFEF"> Set</span><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">>();</span></span>
-<span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> courseCompleted</span><span style="color:#56B6C2"> =</span><span style="color:#D19A66"> false</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> moves</span><span style="color:#56B6C2"> =</span><span style="color:#D19A66"> 0</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> currentTarget</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF"> | </span><span style="color:#E5C07B">undefined</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> hitAnim</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">anime</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">AnimeInstance</span><span style="color:#ABB2BF"> | </span><span style="color:#E5C07B">undefined</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"></span>
 <span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> startTime</span><span style="color:#56B6C2"> =</span><span style="color:#D19A66"> 0</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> timer</span><span style="color:#56B6C2"> =</span><span style="color:#D19A66"> 0</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> timerInterval</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">NodeJS</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">Timeout</span><span style="color:#ABB2BF"> | </span><span style="color:#E5C07B">undefined</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> moves</span><span style="color:#56B6C2"> =</span><span style="color:#D19A66"> 0</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#C678DD">  const</span><span style="color:#E5C07B"> goalsCompleted</span><span style="color:#56B6C2"> =</span><span style="color:#C678DD"> new</span><span style="color:#61AFEF"> Set</span><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">>();</span></span>
+<span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> courseCompleted</span><span style="color:#56B6C2"> =</span><span style="color:#D19A66"> false</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#61AFEF">  onMount</span><span style="color:#ABB2BF">(</span><span style="color:#C678DD">async</span><span style="color:#ABB2BF"> () </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
 <span class="line"><span style="color:#C678DD">    await</span><span style="color:#61AFEF"> tick</span><span style="color:#ABB2BF">();</span></span>
@@ -795,17 +808,74 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#ABB2BF">  });</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#61AFEF">  onDestroy</span><span style="color:#ABB2BF">(() </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#61AFEF">    clearInterval</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">timerInterval</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#61AFEF">    clearTimer</span><span style="color:#ABB2BF">();</span></span>
 <span class="line"><span style="color:#ABB2BF">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">  /* game state management */</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> reset</span><span style="color:#ABB2BF">(): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#61AFEF">    clearTimer</span><span style="color:#ABB2BF">();</span></span>
+<span class="line"><span style="color:#E06C75">    moves</span><span style="color:#56B6C2"> =</span><span style="color:#D19A66"> 0</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#E06C75">    courseCompleted</span><span style="color:#56B6C2"> =</span><span style="color:#D19A66"> false</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#E5C07B">    goals</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">forEach</span><span style="color:#ABB2BF">((</span><span style="color:#E06C75;font-style:italic">goal</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#E5C07B">      goal</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">borderStyle</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> 'solid'</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#E5C07B">      goal</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">borderColor</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> '#f00'</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#ABB2BF">    });</span></span>
+<span class="line"><span style="color:#E5C07B">    goalsCompleted</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">clear</span><span style="color:#ABB2BF">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#61AFEF">    restart</span><span style="color:#ABB2BF">();</span></span>
+<span class="line"><span style="color:#ABB2BF">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> restart</span><span style="color:#ABB2BF">(): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#61AFEF">    setCurrentTarget</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">startTarget</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#61AFEF">    startModifiers</span><span style="color:#ABB2BF">();</span></span>
+<span class="line"><span style="color:#ABB2BF">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> clearTimer</span><span style="color:#ABB2BF">(): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#61AFEF">    clearInterval</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">timerInterval</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#E06C75">    timer</span><span style="color:#56B6C2"> =</span><span style="color:#D19A66"> 0</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> startTimer</span><span style="color:#ABB2BF">(): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
 <span class="line"><span style="color:#E06C75">    startTime</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> Date</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">now</span><span style="color:#ABB2BF">();</span></span>
-<span class="line"><span style="color:#E06C75">    timer</span><span style="color:#56B6C2"> =</span><span style="color:#D19A66"> 0</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#61AFEF">    clearInterval</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">timerInterval</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#E06C75">    timerInterval</span><span style="color:#56B6C2"> =</span><span style="color:#61AFEF"> setInterval</span><span style="color:#ABB2BF">(() </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
 <span class="line"><span style="color:#E06C75">      timer</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> Math</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">floor</span><span style="color:#ABB2BF">((</span><span style="color:#E5C07B">Date</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">now</span><span style="color:#ABB2BF">() </span><span style="color:#56B6C2">-</span><span style="color:#E06C75"> startTime</span><span style="color:#ABB2BF">) </span><span style="color:#56B6C2">/</span><span style="color:#D19A66"> 1000</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#ABB2BF">    }, </span><span style="color:#D19A66">1000</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> countMove</span><span style="color:#ABB2BF">(): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> (</span><span style="color:#E06C75">courseCompleted</span><span style="color:#ABB2BF">) {</span></span>
+<span class="line"><span style="color:#C678DD">      return</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#ABB2BF">    }</span></span>
+<span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> (</span><span style="color:#E06C75">moves</span><span style="color:#56B6C2"> ===</span><span style="color:#D19A66"> 0</span><span style="color:#ABB2BF">) {</span></span>
+<span class="line"><span style="color:#61AFEF">      startTimer</span><span style="color:#ABB2BF">();</span></span>
+<span class="line"><span style="color:#ABB2BF">    }</span></span>
+<span class="line"><span style="color:#E06C75">    moves</span><span style="color:#56B6C2">++</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#ABB2BF">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> styleGoalCompleted</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">goal</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#E5C07B">    goal</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">borderStyle</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> 'dotted'</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#E5C07B">    goal</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">borderColor</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> '#32cd32'</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#ABB2BF">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> markGoalCompleted</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">goal</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#E5C07B">    goalsCompleted</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">add</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">goal</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#61AFEF">    checkCourseCompleted</span><span style="color:#ABB2BF">();</span></span>
+<span class="line"><span style="color:#ABB2BF">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> checkCourseCompleted</span><span style="color:#ABB2BF">(): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> (</span><span style="color:#E06C75">courseCompleted</span><span style="color:#ABB2BF">) {</span></span>
+<span class="line"><span style="color:#C678DD">      return</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#ABB2BF">    }</span></span>
+<span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> (</span><span style="color:#E5C07B">goalsCompleted</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">size</span><span style="color:#56B6C2"> ===</span><span style="color:#E06C75"> NumGoals</span><span style="color:#ABB2BF">) {</span></span>
+<span class="line"><span style="color:#61AFEF">      markCourseCompleted</span><span style="color:#ABB2BF">();</span></span>
+<span class="line"><span style="color:#ABB2BF">    }</span></span>
+<span class="line"><span style="color:#ABB2BF">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> markCourseCompleted</span><span style="color:#ABB2BF">(): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#E06C75">    courseCompleted</span><span style="color:#56B6C2"> =</span><span style="color:#D19A66"> true</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#61AFEF">    clearInterval</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">timerInterval</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#E06C75">    timer</span><span style="color:#56B6C2"> =</span><span style="color:#ABB2BF"> (</span><span style="color:#E5C07B">Date</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">now</span><span style="color:#ABB2BF">() </span><span style="color:#56B6C2">-</span><span style="color:#E06C75"> startTime</span><span style="color:#ABB2BF">) </span><span style="color:#56B6C2">/</span><span style="color:#D19A66"> 1000</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> startModifiers</span><span style="color:#ABB2BF">(): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
@@ -850,68 +920,6 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#ABB2BF">    });</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#7F848E;font-style:italic">  /* game state management */</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> reset</span><span style="color:#ABB2BF">(): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#E5C07B">    goals</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">forEach</span><span style="color:#ABB2BF">((</span><span style="color:#E06C75;font-style:italic">goal</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#E5C07B">      goal</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">borderStyle</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> 'solid'</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#E5C07B">      goal</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">borderColor</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> '#f00'</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#ABB2BF">    });</span></span>
-<span class="line"><span style="color:#E5C07B">    goalsCompleted</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">clear</span><span style="color:#ABB2BF">();</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#E06C75">    moves</span><span style="color:#56B6C2"> =</span><span style="color:#D19A66"> 0</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#61AFEF">    startTimer</span><span style="color:#ABB2BF">();</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#E06C75">    courseCompleted</span><span style="color:#56B6C2"> =</span><span style="color:#D19A66"> false</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#61AFEF">    restart</span><span style="color:#ABB2BF">();</span></span>
-<span class="line"><span style="color:#ABB2BF">  }</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> restart</span><span style="color:#ABB2BF">(): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#61AFEF">    setCurrentTarget</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">startTarget</span><span style="color:#ABB2BF">);</span></span>
-<span class="line"><span style="color:#61AFEF">    startModifiers</span><span style="color:#ABB2BF">();</span></span>
-<span class="line"><span style="color:#ABB2BF">  }</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> countMove</span><span style="color:#ABB2BF">(): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> (</span><span style="color:#E06C75">courseCompleted</span><span style="color:#ABB2BF">) {</span></span>
-<span class="line"><span style="color:#C678DD">      return</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#ABB2BF">    }</span></span>
-<span class="line"><span style="color:#E06C75">    moves</span><span style="color:#56B6C2">++</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#ABB2BF">  }</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> styleGoalCompleted</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">goal</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#E5C07B">    goal</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">borderStyle</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> 'dotted'</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#E5C07B">    goal</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">borderColor</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> '#32cd32'</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#ABB2BF">  }</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> markGoalCompleted</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">goal</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#E5C07B">    goalsCompleted</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">add</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">goal</span><span style="color:#ABB2BF">);</span></span>
-<span class="line"><span style="color:#61AFEF">    checkCourseCompleted</span><span style="color:#ABB2BF">();</span></span>
-<span class="line"><span style="color:#ABB2BF">  }</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> checkCourseCompleted</span><span style="color:#ABB2BF">(): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> (</span><span style="color:#E06C75">courseCompleted</span><span style="color:#ABB2BF">) {</span></span>
-<span class="line"><span style="color:#C678DD">      return</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#ABB2BF">    }</span></span>
-<span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> (</span><span style="color:#E5C07B">goalsCompleted</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">size</span><span style="color:#56B6C2"> ===</span><span style="color:#E06C75"> NumGoals</span><span style="color:#ABB2BF">) {</span></span>
-<span class="line"><span style="color:#61AFEF">      markCourseCompleted</span><span style="color:#ABB2BF">();</span></span>
-<span class="line"><span style="color:#ABB2BF">    }</span></span>
-<span class="line"><span style="color:#ABB2BF">  }</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> markCourseCompleted</span><span style="color:#ABB2BF">(): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#E06C75">    courseCompleted</span><span style="color:#56B6C2"> =</span><span style="color:#D19A66"> true</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#61AFEF">    clearInterval</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">timerInterval</span><span style="color:#ABB2BF">);</span></span>
-<span class="line"><span style="color:#E06C75">    timer</span><span style="color:#56B6C2"> =</span><span style="color:#ABB2BF"> (</span><span style="color:#E5C07B">Date</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">now</span><span style="color:#ABB2BF">() </span><span style="color:#56B6C2">-</span><span style="color:#E06C75"> startTime</span><span style="color:#ABB2BF">) </span><span style="color:#56B6C2">/</span><span style="color:#D19A66"> 1000</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#ABB2BF">  }</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> setCurrentTarget</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">target</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> (</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">) {</span></span>
-<span class="line"><span style="color:#E5C07B">      currentTarget</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">opacity</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> '0'</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#ABB2BF">    }</span></span>
-<span class="line"><span style="color:#E5C07B">    target</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">opacity</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> '1'</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#E06C75">    currentTarget</span><span style="color:#56B6C2"> =</span><span style="color:#E06C75"> target</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#ABB2BF">  }</span></span>
-<span class="line"></span>
 <span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> activateModifier</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">modifier</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
 <span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> (</span><span style="color:#E06C75">hitAnim</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">return</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> (</span><span style="color:#56B6C2">!</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">return</span><span style="color:#ABB2BF">;</span></span>
@@ -934,6 +942,14 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#C678DD">    const</span><span style="color:#ABB2BF"> { </span><span style="color:#E5C07B">toSubject</span><span style="color:#ABB2BF"> } </span><span style="color:#56B6C2">=</span><span style="color:#61AFEF"> getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">currentTarget</span><span style="color:#56B6C2">!</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">nextTarget</span><span style="color:#ABB2BF">, { </span><span style="color:#E06C75">log</span><span style="color:#ABB2BF"> });</span></span>
 <span class="line"><span style="color:#61AFEF">    setInlineStyles</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">nextTarget</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">toSubject</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#61AFEF">    setCurrentTarget</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">nextTarget</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> setCurrentTarget</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">target</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> (</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">) {</span></span>
+<span class="line"><span style="color:#E5C07B">      currentTarget</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">opacity</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> '0'</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#ABB2BF">    }</span></span>
+<span class="line"><span style="color:#E5C07B">    target</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">opacity</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> '1'</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#E06C75">    currentTarget</span><span style="color:#56B6C2"> =</span><span style="color:#E06C75"> target</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> attemptAllgoals</span><span style="color:#ABB2BF">(): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
@@ -1105,6 +1121,9 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#C678DD">      case</span><span style="color:#98C379"> 'r'</span><span style="color:#ABB2BF">:</span></span>
 <span class="line"><span style="color:#61AFEF">        restart</span><span style="color:#ABB2BF">();</span></span>
 <span class="line"><span style="color:#C678DD">        return</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#C678DD">      case</span><span style="color:#98C379"> 'Delete'</span><span style="color:#ABB2BF">:</span></span>
+<span class="line"><span style="color:#61AFEF">        reset</span><span style="color:#ABB2BF">();</span></span>
+<span class="line"><span style="color:#C678DD">        return</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#ABB2BF">    }</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"></span>
@@ -1154,6 +1173,7 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"><span style="color:#ABB2BF">&#x3C;/</span><span style="color:#E06C75">script</span><span style="color:#ABB2BF">></span></span>
 <span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">&#x3C;!-- prettier-ignore --></span></span>
 <span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#C678DD">svelte</span><span style="color:#ABB2BF">:</span><span style="color:#E06C75">window</span><span style="color:#ABB2BF"> </span></span>
 <span class="line"><span style="color:#C678DD">  on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">keyup</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#61AFEF"> handleWindowKeyUp</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">key</span><span style="color:#ABB2BF">)</span><span style="color:#C678DD">}</span><span style="color:#ABB2BF"> </span></span>
 <span class="line"><span style="color:#C678DD">  on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">keydown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#61AFEF"> handleWindowKeyDown</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">key</span><span style="color:#ABB2BF">)</span><span style="color:#C678DD">}</span></span>
@@ -1262,7 +1282,7 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#ABB2BF">  &#x3C;/</span><span style="color:#E06C75">div</span><span style="color:#ABB2BF">></span></span>
 <span class="line"><span style="color:#ABB2BF">  &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"tracker clock"</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">:</span><span style="color:#E06C75;font-style:italic">courseCompleted</span><span style="color:#ABB2BF">></span></span>
 <span class="line"><span style="color:#ABB2BF">    &#x3C;</span><span style="color:#E06C75">span</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"material-symbols-outlined"</span><span style="color:#ABB2BF">> timer &#x3C;/</span><span style="color:#E06C75">span</span><span style="color:#ABB2BF">></span></span>
-<span class="line"><span style="color:#ABB2BF">    &#x3C;</span><span style="color:#E06C75">p</span><span style="color:#ABB2BF">></span><span style="color:#C678DD">{</span><span style="color:#E06C75">timer</span><span style="color:#C678DD">}</span><span style="color:#ABB2BF">&#x3C;/</span><span style="color:#E06C75">p</span><span style="color:#ABB2BF">></span></span>
+<span class="line"><span style="color:#ABB2BF">    &#x3C;</span><span style="color:#E06C75">p</span><span style="color:#ABB2BF">></span><span style="color:#C678DD">{</span><span style="color:#E06C75">timer</span><span style="color:#C678DD">}</span><span style="color:#ABB2BF">s&#x3C;/</span><span style="color:#E06C75">p</span><span style="color:#ABB2BF">></span></span>
 <span class="line"><span style="color:#ABB2BF">  &#x3C;/</span><span style="color:#E06C75">div</span><span style="color:#ABB2BF">></span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#ABB2BF">  &#x3C;</span><span style="color:#E06C75">button</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"reset"</span><span style="color:#C678DD"> on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">click</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">handleResetClick</span><span style="color:#C678DD">}</span><span style="color:#ABB2BF">></span></span>
