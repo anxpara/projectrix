@@ -11,10 +11,11 @@
   export let options: Writable<Options>;
   $: log = $options.log;
 
-  let currentTarget: HTMLElement | undefined;
+  const NumGoals = 5;
+  let goals: HTMLElement[] = [];
+
   let startTarget: HTMLElement;
   let hitTarget: HTMLElement;
-  let hitAnim: anime.AnimeInstance | undefined;
 
   let spinnerModifier: HTMLElement;
   let slider1Modifier: HTMLElement;
@@ -23,16 +24,18 @@
   let pulseContainer: HTMLElement;
   let pulseTemplate: HTMLElement;
 
-  const NumGoals = 5;
-  let goals: HTMLElement[] = [];
-
   /* game state */
-  const goalsCompleted = new Set<HTMLElement>();
-  let courseCompleted = false;
-  let moves = 0;
+
+  let currentTarget: HTMLElement | undefined;
+  let hitAnim: anime.AnimeInstance | undefined;
+
   let startTime = 0;
   let timer = 0;
   let timerInterval: NodeJS.Timeout | undefined;
+
+  let moves = 0;
+  const goalsCompleted = new Set<HTMLElement>();
+  let courseCompleted = false;
 
   onMount(async () => {
     await tick();
@@ -40,17 +43,74 @@
   });
 
   onDestroy(() => {
-    clearInterval(timerInterval);
+    clearTimer();
   });
+
+  /* game state management */
+
+  function reset(): void {
+    clearTimer();
+    moves = 0;
+    courseCompleted = false;
+    goals.forEach((goal) => {
+      goal.style.borderStyle = 'solid';
+      goal.style.borderColor = '#f00';
+    });
+    goalsCompleted.clear();
+
+    restart();
+  }
+
+  function restart(): void {
+    setCurrentTarget(startTarget);
+    startModifiers();
+  }
+
+  function clearTimer(): void {
+    clearInterval(timerInterval);
+    timer = 0;
+  }
 
   function startTimer(): void {
     startTime = Date.now();
-    timer = 0;
-
-    clearInterval(timerInterval);
     timerInterval = setInterval(() => {
       timer = Math.floor((Date.now() - startTime) / 1000);
     }, 1000);
+  }
+
+  function countMove(): void {
+    if (courseCompleted) {
+      return;
+    }
+    if (moves === 0) {
+      startTimer();
+    }
+    moves++;
+  }
+
+  function styleGoalCompleted(goal: HTMLElement): void {
+    goal.style.borderStyle = 'dotted';
+    goal.style.borderColor = '#32cd32';
+  }
+
+  function markGoalCompleted(goal: HTMLElement): void {
+    goalsCompleted.add(goal);
+    checkCourseCompleted();
+  }
+
+  function checkCourseCompleted(): void {
+    if (courseCompleted) {
+      return;
+    }
+    if (goalsCompleted.size === NumGoals) {
+      markCourseCompleted();
+    }
+  }
+
+  function markCourseCompleted(): void {
+    courseCompleted = true;
+    clearInterval(timerInterval);
+    timer = (Date.now() - startTime) / 1000;
   }
 
   function startModifiers(): void {
@@ -95,68 +155,6 @@
     });
   }
 
-  /* game state management */
-
-  function reset(): void {
-    goals.forEach((goal) => {
-      goal.style.borderStyle = 'solid';
-      goal.style.borderColor = '#f00';
-    });
-    goalsCompleted.clear();
-
-    moves = 0;
-    startTimer();
-
-    courseCompleted = false;
-
-    restart();
-  }
-
-  function restart(): void {
-    setCurrentTarget(startTarget);
-    startModifiers();
-  }
-
-  function countMove(): void {
-    if (courseCompleted) {
-      return;
-    }
-    moves++;
-  }
-
-  function styleGoalCompleted(goal: HTMLElement): void {
-    goal.style.borderStyle = 'dotted';
-    goal.style.borderColor = '#32cd32';
-  }
-
-  function markGoalCompleted(goal: HTMLElement): void {
-    goalsCompleted.add(goal);
-    checkCourseCompleted();
-  }
-
-  function checkCourseCompleted(): void {
-    if (courseCompleted) {
-      return;
-    }
-    if (goalsCompleted.size === NumGoals) {
-      markCourseCompleted();
-    }
-  }
-
-  function markCourseCompleted(): void {
-    courseCompleted = true;
-    clearInterval(timerInterval);
-    timer = (Date.now() - startTime) / 1000;
-  }
-
-  function setCurrentTarget(target: HTMLElement): void {
-    if (currentTarget) {
-      currentTarget.style.opacity = '0';
-    }
-    target.style.opacity = '1';
-    currentTarget = target;
-  }
-
   function activateModifier(modifier: HTMLElement): void {
     if (hitAnim) return;
     if (!currentTarget) return;
@@ -179,6 +177,14 @@
     const { toSubject } = getProjection(currentTarget!, nextTarget, { log });
     setInlineStyles(nextTarget, toSubject);
     setCurrentTarget(nextTarget);
+  }
+
+  function setCurrentTarget(target: HTMLElement): void {
+    if (currentTarget) {
+      currentTarget.style.opacity = '0';
+    }
+    target.style.opacity = '1';
+    currentTarget = target;
   }
 
   function attemptAllgoals(): void {
