@@ -56,7 +56,7 @@
     const nextTrial = trials[autoSelectIndex];
 
     // trial component was probably garbage collected
-    if (!nextTrial?.trialComponent) return;
+    if (!nextTrial?.trialComponent || !defaultSubject) return;
 
     selectTrial(nextTrial);
   }
