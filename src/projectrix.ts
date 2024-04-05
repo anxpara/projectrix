@@ -138,6 +138,12 @@ export function getProjection(
   target: HTMLElement,
   options?: ProjectionOptions,
 ): ProjectionResults {
+  if (!subject) {
+    throw new Error('Projectrix: null subject');
+  }
+  if (!target) {
+    throw new Error('Projectrix: null target');
+  }
   if (target === document.documentElement || target === document.body) {
     console.warn('Projectrix: behavior is undefined when target is root or body');
   }
