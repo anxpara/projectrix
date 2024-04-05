@@ -1,7 +1,7 @@
 import { ActualClientRect, getActualClientRect } from 'actual-client-rect';
 import { mat4 } from 'gl-matrix';
 import {
-  convertCssTransformOriginToVec3,
+  convertComputedTransformOriginToVec3,
   convertMat4ToCssMatrix3dSubstring,
   getElementTransformMat4,
 } from './utils/transform-utils';
@@ -143,7 +143,7 @@ export function getProjection(
   }
 
   let targetAcr = getActualClientRect(target);
-  const targetOrigin = convertCssTransformOriginToVec3(targetAcr.transformOrigin);
+  const targetOrigin = convertComputedTransformOriginToVec3(targetAcr.transformOrigin);
   const originXPercent = (targetOrigin[0] / targetAcr.basis.width) * 100;
   const originYPercent = (targetOrigin[1] / targetAcr.basis.height) * 100;
   const normalizedTransformOrigin = `${originXPercent}% ${originYPercent}% ${targetOrigin[2]}px`;
