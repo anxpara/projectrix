@@ -4,6 +4,7 @@ export const OptionName = {
   ToTargetOrigin: 'toTargetOrigin',
   SkipAnimation: 'skipAnimation',
   ProjectOnce: 'projectOnce',
+  AlwaysMeasure: 'alwaysMeasure',
 };
 export type OptionName = (typeof OptionName)[keyof typeof OptionName];
 export const allOptionNames: string[] = Object.values(OptionName);
@@ -13,6 +14,7 @@ export const trialOptionNames = [
   OptionName.ToTargetOrigin,
   OptionName.SkipAnimation,
   OptionName.ProjectOnce,
+  OptionName.AlwaysMeasure,
 ];
 export const forPlaywrightOptionNames = [
   OptionName.HideUI,

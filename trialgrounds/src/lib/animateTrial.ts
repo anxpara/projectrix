@@ -5,6 +5,8 @@ import {
   getProjection,
   setInlineStyles,
   type ProjectionOptions,
+  measureSubject,
+  type Measurement,
 } from 'projectrix';
 import { animate } from 'motion';
 import { mat4 } from 'gl-matrix';
@@ -27,7 +29,7 @@ export function animateTrial(
   }
 
   const target = trial.trialComponent!.getTrialControls().getTargetElement();
-  const subject =
+  const subjectEl =
     trial.trialComponent!.getTrialControls().getSubjectElement?.call(null) ?? defaultSubject;
   let options: ProjectionOptions =
     trial.trialComponent!.getTrialControls().getProjectionOptions?.call(null) ?? {};
@@ -51,6 +53,10 @@ export function animateTrial(
   } else {
     trial.originMarker?.unmark();
   }
+
+  const subject: HTMLElement | Measurement = trialOptions.alwaysMeasure
+    ? measureSubject(subjectEl)
+    : subjectEl;
 
   // project
   const { toSubject, toTargetOrigin } = getProjection(subject, target, options);
