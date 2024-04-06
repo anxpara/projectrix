@@ -143,17 +143,12 @@ export function getProjection(
   }
 
   let targetAcr = getActualClientRect(target);
-  const targetOrigin = convertComputedTransformOriginToVec3(targetAcr.transformOrigin);
-  const originXPercent = (targetOrigin[0] / targetAcr.basis.width) * 100;
-  const originYPercent = (targetOrigin[1] / targetAcr.basis.height) * 100;
-  const sharedTransformOrigin = `${originXPercent}% ${originYPercent}% ${targetOrigin[2]}px`;
-
-  const transformType = options?.transformType ?? DEFAULT_TRANSFORM_TYPE;
+  const sharedTransformOrigin = getSharedTransformOrigin(targetAcr);
 
   const results = {
     toSubject: getProjectionToSubject(subject, target, sharedTransformOrigin, options),
     toTargetOrigin: getProjectionToTargetOrigin(target, targetAcr, sharedTransformOrigin, options),
-    transformType,
+    transformType: options?.transformType ?? DEFAULT_TRANSFORM_TYPE,
     subject,
     target,
   };
@@ -422,6 +417,13 @@ function getProjectionToTargetOrigin(
     transformOrigin: sharedTransformOrigin,
     ...getTransformAsRequestedType(transformMat4, options),
   };
+}
+
+function getSharedTransformOrigin(acr: ActualClientRect): string {
+  const originVec3 = convertComputedTransformOriginToVec3(acr.transformOrigin);
+  const originXPercent = (originVec3[0] / acr.basis.width) * 100;
+  const originYPercent = (originVec3[1] / acr.basis.height) * 100;
+  return `${originXPercent}% ${originYPercent}% ${originVec3[2]}px`;
 }
 
 type Transforms = {
