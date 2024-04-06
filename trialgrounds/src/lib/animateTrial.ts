@@ -19,6 +19,11 @@ export function animateTrial(
   trialOptions: Options,
   animationOptions?: TrialAnimationOptions,
 ): void {
+  trialOptions = {
+    ...trialOptions,
+    ...trial.trialComponent?.getTrialControls().getTrialOptionOverrides?.call(null),
+  };
+
   const duration = animationOptions?.duration ?? 1000;
 
   // allow trial to override the animation
