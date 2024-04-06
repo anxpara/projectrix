@@ -1,5 +1,5 @@
 import { ActualClientRect, getActualClientRect } from 'actual-client-rect';
-import { mat4 } from 'gl-matrix';
+import { mat4, vec3 } from 'gl-matrix';
 import {
   convertComputedTransformOriginToVec3,
   convertMat4ToCssMatrix3dSubstring,
@@ -18,36 +18,34 @@ import {
  *
  * note if using an animation engine: some engines behave better when animating between values of the
  * same format, so it may be necessary to set the target to its origin projection before animating to the
- * subject's projection.
- *
- * the origin projection is also useful for easy, robust FLIP animations
+ * subject's projection, or vice versa
  *
  * ---
  *
  * @member toSubject: Projection; // for aligning the target to the subject
  * @member toTargetOrigin: Projection; // for aligning the target to its original state
  * @member transformType: TransformType; // the type of transform that both projections contain
- * @member subject: HTMLElement;
+ * @member subject: HTMLElement | Measurement;
  * @member target: HTMLElement;
  */
 export type ProjectionResults = {
   toSubject: Projection;
   toTargetOrigin: Projection;
   transformType: TransformType;
-  subject: HTMLElement;
+  subject: HTMLElement | Measurement;
   target: HTMLElement;
 };
 export type PartialProjectionResults = {
   toSubject: PartialProjection;
   toTargetOrigin: PartialProjection;
   transformType: TransformType;
-  subject: HTMLElement;
+  subject: HTMLElement | Measurement;
   target: HTMLElement;
 };
 
 /**
  * a Projection contains the set of styles that--when applied to a target element--will make the target
- * visually align and match either the given subject element, or the target's original state
+ * visually align with either a subject element, or the target's original state
  *
  * @member width: string; // 'Wpx'
  * @member height: string; // 'Hpx'
@@ -57,8 +55,8 @@ export type PartialProjectionResults = {
  * @member — transformOrigin: string; // 'X% Y% Zpx'
  *
  * contains exactly one of the following members, depending on the given transformType option:
- * @member matrix3d: string; // (default)
- * @member transform: string; // \`matrix3d(${matrix3d})\`
+ * @member transform: string; // (default) \`matrix3d(${matrix3d})\`
+ * @member matrix3d: string;
  * @member transformMat4: mat4; // (row-major array from gl-matrix)
  */
 export type Projection = {
@@ -75,10 +73,13 @@ export type PartialProjection = Partial<Projection>;
 export type TransformType = 'transform' | 'matrix3d' | 'transformMat4';
 export type BorderSource = 'subject' | 'target' | 'zero';
 
+const DEFAULT_TRANSFORM_TYPE: TransformType = 'transform';
+const DEFAULT_BORDER_SOURCE: BorderSource = 'subject';
+
 /**
- * @member transformType?: 'transform' | 'matrix3d' | 'transformMat4'; // (default = transform)
- * @member useBorder?: 'subject' | 'target' | 'zero'; // (default = subject), designates which element's border style,
- *   width, and radius to match. zero means 0px border width. target's width and height are auto-adjusted
+ * @member transformType?: 'transform' | 'matrix3d' | 'transformMat4'; // (default = 'transform')
+ * @member useBorder?: 'subject' | 'target' | 'zero'; // (default = 'subject'), designates which element's border width,
+ *   radius, and style to match. projected width and height are auto-adjusted. zero means 0px border width and radius
  * @member log?: boolean; // (default = false)
  */
 export type ProjectionOptions = {
@@ -86,11 +87,6 @@ export type ProjectionOptions = {
   useBorder?: BorderSource;
   log?: boolean;
 };
-
-const DEFAULT_TRANSFORM_TYPE: TransformType = 'transform';
-const DEFAULT_BORDER_SOURCE: BorderSource = 'subject';
-const BORDER_WIDTH_ZERO = '0px 0px 0px 0px';
-const BORDER_RADIUS_ZERO = '0px 0px 0px 0px';
 
 /**
  * DOM projection is the calculation of how two elements across the DOM hierarchy spatially (or visually) relate to each other
@@ -104,14 +100,12 @@ const BORDER_RADIUS_ZERO = '0px 0px 0px 0px';
  *
  * note if using an animation engine: some engines behave better when animating between values of the
  * same format, so it may be necessary to set the target to its origin projection before animating to the
- * subject's projection
- *
- * the origin projection is also useful for easy, robust FLIP animations
+ * subject's projection, or vice versa
  *
  * ---
  *
  * Arguments
- * @argument subject: HTMLElement; // the element that you plan to align the target to
+ * @argument subject: HTMLElement | Measurement; // the element or measurement that you plan to align the target to
  * @argument target: HTMLElement; // the element that you plan to modify
  * @argument — options?: ProjectionOptions;
  *
@@ -129,12 +123,12 @@ const BORDER_RADIUS_ZERO = '0px 0px 0px 0px';
  * @member toSubject: Projection; // for aligning the target to the subject
  * @member toTargetOrigin: Projection; // for aligning the target to its original state
  * @member transformType: TransformType; // the type of transform that both projections contain
- * @member subject: HTMLElement;
+ * @member subject: HTMLElement | Measurement;
  * @member target: HTMLElement;
  *
  */
 export function getProjection(
-  subject: HTMLElement,
+  subject: HTMLElement | Measurement,
   target: HTMLElement,
   options?: ProjectionOptions,
 ): ProjectionResults {
@@ -152,18 +146,13 @@ export function getProjection(
   const targetOrigin = convertComputedTransformOriginToVec3(targetAcr.transformOrigin);
   const originXPercent = (targetOrigin[0] / targetAcr.basis.width) * 100;
   const originYPercent = (targetOrigin[1] / targetAcr.basis.height) * 100;
-  const normalizedTransformOrigin = `${originXPercent}% ${originYPercent}% ${targetOrigin[2]}px`;
+  const sharedTransformOrigin = `${originXPercent}% ${originYPercent}% ${targetOrigin[2]}px`;
 
   const transformType = options?.transformType ?? DEFAULT_TRANSFORM_TYPE;
 
   const results = {
-    toSubject: getProjectionToSubject(subject, target, normalizedTransformOrigin, options),
-    toTargetOrigin: getProjectionToTargetOrigin(
-      target,
-      targetAcr,
-      normalizedTransformOrigin,
-      options,
-    ),
+    toSubject: getProjectionToSubject(subject, target, sharedTransformOrigin, options),
+    toTargetOrigin: getProjectionToTargetOrigin(target, targetAcr, sharedTransformOrigin, options),
     transformType,
     subject,
     target,
@@ -172,6 +161,36 @@ export function getProjection(
     console.log(results);
   }
   return results;
+}
+
+/**
+ * a Measurement contains subject data useful for future projections
+ */
+export type Measurement = {
+  acr: ActualClientRect;
+  border: BorderMeasurement;
+};
+export type BorderMeasurement = {
+  style: string;
+  top: number;
+  right: number;
+  bottom: number;
+  left: number;
+  radius: string;
+};
+
+/**
+ * measures a subject for future projections. useful if the subject and target cannot coexist,
+ * such as a flip animation where the subject is the target's past
+ */
+export function measureSubject(subject: HTMLElement): Measurement {
+  return {
+    acr: getActualClientRect(subject, {
+      bakePositionIntoTransform: true,
+      useTransformOrigin: 'center',
+    }),
+    border: measureElementBorder(subject),
+  };
 }
 
 /**
@@ -228,68 +247,34 @@ export function clearInlineStyles(
 }
 
 function getProjectionToSubject(
-  subject: HTMLElement,
+  subject: HTMLElement | Measurement,
   target: HTMLElement,
-  normalizedTransformOrigin: string,
+  sharedTransformOrigin: string,
   options?: ProjectionOptions,
 ): Projection {
-  const subjectAcr = getActualClientRect(subject, {
-    bakePositionIntoTransform: true,
-    useTransformOrigin: normalizedTransformOrigin,
-  });
+  const subjectAcr = getSubjectAcr(subject, sharedTransformOrigin);
+  const border = getBorderMeasurement(subject, target, options);
+  const width = subjectAcr.basis.width - border.left - border.right;
+  const height = subjectAcr.basis.height - border.top - border.bottom;
+  const borderWidth = `${border.top}px ${border.right}px ${border.bottom}px ${border.left}px`;
 
-  let destWidth = subjectAcr.basis.width;
-  let destHeight = subjectAcr.basis.height;
-  let destBorderStyle = '';
-  let destBorderWidth = BORDER_WIDTH_ZERO;
-  let destBorderRadius = BORDER_RADIUS_ZERO;
-
-  const borderSrc = options?.useBorder ?? DEFAULT_BORDER_SOURCE;
-
-  if (['subject', 'target'].includes(borderSrc)) {
-    const borderSrcEl = borderSrc === 'subject' ? subject : target;
-    const computedBorderSrc = getComputedStyle(borderSrcEl);
-    const borderTop = parseFloat(computedBorderSrc.getPropertyValue('border-top-width'));
-    const borderRight = parseFloat(computedBorderSrc.getPropertyValue('border-right-width'));
-    const borderBottom = parseFloat(computedBorderSrc.getPropertyValue('border-bottom-width'));
-    const borderLeft = parseFloat(computedBorderSrc.getPropertyValue('border-left-width'));
-    const radiusTopLeft = parseFloat(computedBorderSrc.getPropertyValue('border-top-left-radius'));
-    const radiusTopRight = parseFloat(
-      computedBorderSrc.getPropertyValue('border-top-right-radius'),
-    );
-    const radiusBottomRight = parseFloat(
-      computedBorderSrc.getPropertyValue('border-bottom-right-radius'),
-    );
-    const radiusBottomLeft = parseFloat(
-      computedBorderSrc.getPropertyValue('border-bottom-left-radius'),
-    );
-
-    destWidth -= borderLeft + borderRight;
-    destHeight -= borderTop + borderBottom;
-    destBorderStyle = computedBorderSrc.getPropertyValue('border-style');
-    destBorderWidth = `${borderTop}px ${borderRight}px ${borderBottom}px ${borderLeft}px`;
-    destBorderRadius = `${radiusTopLeft}px ${radiusTopRight}px ${radiusBottomRight}px ${radiusBottomLeft}px`;
-  }
-
-  const targetInlineTransform = target.style.transform;
-  const targetInlineWidth = target.style.width;
-  const targetInlineHeight = target.style.height;
-  const targetInlineBorderStyle = target.style.borderStyle;
-  const targetInlineBorderWidth = target.style.borderWidth;
+  const savedInlineStyles: PartialProjection = {
+    transform: target.style.transform,
+    width: target.style.width,
+    height: target.style.height,
+    borderStyle: target.style.borderStyle,
+    borderWidth: target.style.borderWidth,
+  };
 
   target.style.transform = 'unset';
-  target.style.width = `${destWidth}px`;
-  target.style.height = `${destHeight}px`;
+  target.style.width = `${width}px`;
+  target.style.height = `${height}px`;
   target.style.borderStyle = 'solid';
-  target.style.borderWidth = destBorderWidth;
+  target.style.borderWidth = borderWidth;
 
   const targetRestingAcr = getActualClientRect(target, { bakePositionIntoTransform: true });
 
-  target.style.transform = targetInlineTransform;
-  target.style.width = targetInlineWidth;
-  target.style.height = targetInlineHeight;
-  target.style.borderStyle = targetInlineBorderStyle;
-  target.style.borderWidth = targetInlineBorderWidth;
+  setInlineStyles(target, savedInlineStyles);
 
   const Mvt = targetRestingAcr.transformMat4;
   const Mvs = subjectAcr.transformMat4;
@@ -301,47 +286,140 @@ function getProjectionToSubject(
   mat4.multiply(Mts, Mtv, Mvs);
 
   return {
-    width: `${destWidth}px`,
-    height: `${destHeight}px`,
-    borderStyle: destBorderStyle,
-    borderWidth: destBorderWidth,
-    borderRadius: destBorderRadius,
-    transformOrigin: normalizedTransformOrigin,
+    width: `${width}px`,
+    height: `${height}px`,
+    borderStyle: border.style,
+    borderWidth,
+    borderRadius: border.radius,
+    transformOrigin: sharedTransformOrigin,
     ...getTransformAsRequestedType(Mts, options),
+  };
+}
+
+function getSubjectAcr(
+  subject: HTMLElement | Measurement,
+  sharedTransformOrigin: string,
+): ActualClientRect {
+  return isMeasurement(subject)
+    ? setAcrToSharedTransformOrigin(subject.acr, sharedTransformOrigin)
+    : getActualClientRect(subject, {
+        bakePositionIntoTransform: true,
+        useTransformOrigin: sharedTransformOrigin,
+      });
+}
+
+function setAcrToSharedTransformOrigin(
+  acr: ActualClientRect,
+  sharedTransformOrigin: string,
+): ActualClientRect {
+  const newAcr: ActualClientRect = {
+    ...acr,
+  };
+
+  const Va = convertComputedTransformOriginToVec3(acr.transformOrigin);
+
+  const Vx = convertComputedTransformOriginToVec3(sharedTransformOrigin);
+  Vx[0] = acr.basis.width * (Vx[0] / 100);
+  Vx[1] = acr.basis.height * (Vx[1] / 100);
+
+  if (vec3.equals(Va, Vx)) {
+    newAcr.transformOrigin = sharedTransformOrigin;
+    return newAcr;
+  }
+
+  // have transform from current origin (Mab), want transform from shared origin (Mxy)
+  const Mab = acr.transformMat4;
+
+  // get difference in origins
+  const Vax = vec3.create();
+  vec3.subtract(Vax, Vx, Va);
+  const Max = mat4.create();
+  mat4.fromTranslation(Max, Vax);
+
+  // difference in destinations is identical to difference in origins,
+  // within respective frames of reference
+  const Mby = Max;
+
+  const Mxa = mat4.create();
+  mat4.invert(Mxa, Max);
+
+  const May = mat4.create();
+  mat4.multiply(May, Mab, Mby);
+
+  const Mxy = mat4.create();
+  mat4.multiply(Mxy, Mxa, May);
+
+  newAcr.transformMat4 = Mxy;
+  newAcr.matrix3d = convertMat4ToCssMatrix3dSubstring(Mxy);
+  newAcr.transform = `matrix3d(${newAcr.matrix3d})`;
+  newAcr.transformOrigin = sharedTransformOrigin;
+  return newAcr;
+}
+
+function getBorderMeasurement(
+  subject: HTMLElement | Measurement,
+  target: HTMLElement,
+  options?: ProjectionOptions,
+): BorderMeasurement {
+  const borderSrc = options?.useBorder ?? DEFAULT_BORDER_SOURCE;
+
+  if (borderSrc === 'zero') {
+    return {
+      style: '',
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      radius: '0px 0px 0px 0px',
+    };
+  }
+
+  if (borderSrc === 'subject' && isMeasurement(subject)) {
+    return subject.border;
+  }
+
+  const borderSrcEl = borderSrc === 'subject' ? subject : target;
+  return measureElementBorder(borderSrcEl as HTMLElement);
+}
+
+function measureElementBorder(element: HTMLElement): BorderMeasurement {
+  const computedStyle = getComputedStyle(element);
+  const radiusTopLeft = parseFloat(computedStyle.getPropertyValue('border-top-left-radius'));
+  const radiusTopRight = parseFloat(computedStyle.getPropertyValue('border-top-right-radius'));
+  const radiusBottomRight = parseFloat(
+    computedStyle.getPropertyValue('border-bottom-right-radius'),
+  );
+  const radiusBottomLeft = parseFloat(computedStyle.getPropertyValue('border-bottom-left-radius'));
+
+  return {
+    style: computedStyle.getPropertyValue('border-style'),
+    top: parseFloat(computedStyle.getPropertyValue('border-top-width')),
+    right: parseFloat(computedStyle.getPropertyValue('border-right-width')),
+    bottom: parseFloat(computedStyle.getPropertyValue('border-bottom-width')),
+    left: parseFloat(computedStyle.getPropertyValue('border-left-width')),
+    radius: `${radiusTopLeft}px ${radiusTopRight}px ${radiusBottomRight}px ${radiusBottomLeft}px`,
   };
 }
 
 function getProjectionToTargetOrigin(
   target: HTMLElement,
   acr: ActualClientRect,
-  normalizedTransformOrigin: string,
+  sharedTransformOrigin: string,
   options?: ProjectionOptions,
 ): Projection {
-  let width = acr.basis.width;
-  let height = acr.basis.height;
-
-  const computed = getComputedStyle(target);
-  const borderTop = parseFloat(computed.getPropertyValue('border-top-width'));
-  const borderRight = parseFloat(computed.getPropertyValue('border-right-width'));
-  const borderBottom = parseFloat(computed.getPropertyValue('border-bottom-width'));
-  const borderLeft = parseFloat(computed.getPropertyValue('border-left-width'));
-  const radiusTopLeft = parseFloat(computed.getPropertyValue('border-top-left-radius'));
-  const radiusTopRight = parseFloat(computed.getPropertyValue('border-top-right-radius'));
-  const radiusBottomRight = parseFloat(computed.getPropertyValue('border-bottom-right-radius'));
-  const radiusBottomLeft = parseFloat(computed.getPropertyValue('border-bottom-left-radius'));
-
-  width -= borderLeft + borderRight;
-  height -= borderTop + borderBottom;
+  const border = measureElementBorder(target);
+  const width = acr.basis.width - border.left - border.right;
+  const height = acr.basis.height - border.top - border.bottom;
 
   const transformMat4 = getElementTransformMat4(target);
 
   return {
     width: `${width}px`,
     height: `${height}px`,
-    borderStyle: computed.getPropertyValue('border-style'),
-    borderWidth: `${borderTop}px ${borderRight}px ${borderBottom}px ${borderLeft}px`,
-    borderRadius: `${radiusTopLeft}px ${radiusTopRight}px ${radiusBottomRight}px ${radiusBottomLeft}px`,
-    transformOrigin: normalizedTransformOrigin,
+    borderStyle: border.style,
+    borderWidth: `${border.top}px ${border.right}px ${border.bottom}px ${border.left}px`,
+    borderRadius: border.radius,
+    transformOrigin: sharedTransformOrigin,
     ...getTransformAsRequestedType(transformMat4, options),
   };
 }
@@ -368,6 +446,10 @@ function getTransformAsRequestedType(transformMat4: mat4, options?: ProjectionOp
         transformMat4,
       };
   }
+}
+
+function isMeasurement(subject: HTMLElement | Measurement): subject is Measurement {
+  return 'acr' in subject;
 }
 
 function propKeyToPropName(key: string): string {
