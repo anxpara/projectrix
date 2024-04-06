@@ -8,6 +8,13 @@ import { FlipCode, FlipCodeHL, FlipUsage, FlipUsageHL } from './usages/FlipUsage
 import { AnimateCode, AnimateCodeHL, AnimateUsage, AnimateUsageHL } from './usages/AnimateUsage';
 import { MatchCode, MatchCodeHL, MatchUsage, MatchUsageHL } from './usages/MatchUsage';
 import { DivGolfCode, DivGolfCodeHL, DivGolfUsage, DivGolfUsageHL } from './usages/DivGolfUsage';
+import FlipCoexistDemo from '../../components/demos/FlipCoexistDemo.svelte';
+import {
+  FlipCoexistCode,
+  FlipCoexistCodeHL,
+  FlipCoexistUsage,
+  FlipCoexistUsageHL,
+} from './usages/FlipCoexistUsage';
 
 export type DemoComponent = SvelteComponent;
 
@@ -54,12 +61,22 @@ export const allDemos: Demo[] = [
   {
     name: DemoName.DivGolf,
     demoType: DivGolfDemo,
-    summary: 'click modifier divs or num keys 1-3 to match the green div to a red goal. click current modifier to attempt goal',
+    summary:
+      'click modifier divs or num keys 1-3 to match the green div to a red goal. click current modifier to attempt goal',
 
     usage: DivGolfUsage,
     code: DivGolfCode,
     usageHL: DivGolfUsageHL,
     codeHL: DivGolfCodeHL,
+  },
+  {
+    name: DemoName.FlipCoexist,
+    demoType: FlipCoexistDemo,
+    summary: 'flip using coexisting target children',
+    usage: FlipCoexistUsage,
+    code: FlipCoexistCode,
+    usageHL: FlipCoexistUsageHL,
+    codeHL: FlipCoexistCodeHL,
   },
 ];
 export const demosByName = new Map<DemoName, Demo>(allDemos.map((demo) => [demo.name, demo]));
