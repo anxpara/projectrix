@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onDestroy, onMount, tick } from 'svelte';
-  import { getProjection, clearInlineStyles, setInlineStyles } from 'projectrix';
+  import { getProjection, clearInlineStyles, setInlineStyles, measureSubject } from 'projectrix';
   import { animate, type AnimationControls } from 'motion';
   import type { Writable } from 'svelte/store';
   import type { Options } from '$lib/options';
@@ -11,92 +11,81 @@
   export let options: Writable<Options>;
   $: log = $options.log;
 
+  let target: HTMLElement;
   let leftParent: HTMLElement;
   let rightParent: HTMLElement;
-  let leftChildTarget: HTMLElement;
-  let rightChildTarget: HTMLElement;
 
-  let currentTarget: HTMLElement | undefined;
+  let currentParent: HTMLElement | undefined;
   let currentAnim: AnimationControls | undefined;
   let currentTimeout: NodeJS.Timeout | undefined;
 
   onMount(async () => {
     await tick();
     startSlot.show();
+    currentParent = leftParent;
 
     currentTimeout = setTimeout(() => {
-      startSlot.hide();
-      currentTarget = startSlot.getSlotSubject();
-      flipToRightTarget();
+      flipToNextParent();
     }, 1000);
   });
 
   onDestroy(() => {
-    currentTarget = undefined;
-
-    currentAnim?.stop();
-    currentAnim = undefined;
-
     clearTimeout(currentTimeout);
     currentTimeout = undefined;
+
+    currentAnim?.pause();
+    currentAnim = undefined;
   });
 
-  function flipToLeftTarget(): void {
-    flipToTarget(leftChildTarget, leftParent, 1, flipToRightTarget);
-  }
+  function flipToNextParent(): void {
+    let subjectEl = startSlot.isShowing() ? startSlot.getSlotSubject() : target;
+    const subject = measureSubject(subjectEl);
 
-  function flipToRightTarget(): void {
-    flipToTarget(rightChildTarget, rightParent, -1, flipToLeftTarget);
-  }
+    const nextParent = currentParent === rightParent ? leftParent : rightParent;
+    nextParent.append(target);
+    currentParent = nextParent;
 
-  function flipToTarget(
-    nextTarget: HTMLElement,
-    nextParent: HTMLElement,
-    dir: number,
-    nextFlip: () => void,
-  ): void {
-    if (!currentTarget) return;
+    requestAnimationFrame(() => {
+      const { toSubject, toTargetOrigin } = getProjection(subject, target, { log });
 
-    const { toSubject, toTargetOrigin } = getProjection(currentTarget, nextTarget, { log });
+      setInlineStyles(target, toSubject);
+      target.style.opacity = '1';
+      startSlot.hide();
 
-    // set next target to current target's projection
-    setInlineStyles(nextTarget, toSubject);
-    nextTarget.style.opacity = '1';
-    currentTarget.style.opacity = '0';
-    currentTarget = nextTarget;
+      currentAnim = animate(
+        target,
+        {
+          ...toTargetOrigin,
+        },
+        {
+          duration: 1,
+          easing: 'ease-out',
+        },
+      );
 
-    // FLIP next target back to its origin
-    currentAnim = animate(
-      nextTarget,
-      {
-        ...toTargetOrigin,
-      },
-      {
-        duration: 1,
-        easing: 'ease-out',
-      },
-    );
+      currentAnim.finished.then(() => {
+        clearInlineStyles(target);
 
-    currentAnim.finished.then(() => {
-      clearInlineStyles(nextTarget);
-
-      playParentAnimation(nextParent, dir).finished.then(() => {
-        currentTimeout = setTimeout(() => {
-          nextFlip();
-        }, 1000);
+        playParentAnimation(nextParent).finished.then(() => {
+          currentTimeout = setTimeout(() => {
+            flipToNextParent();
+          }, 1000);
+        });
       });
     });
   }
 
-  function playParentAnimation(parent: HTMLElement, dir: number): AnimationControls {
+  function playParentAnimation(parent: HTMLElement): AnimationControls {
+    const dir = parent === rightParent ? -1 : 1;
+
     currentAnim = animate(
       parent,
       {
         transform: [
-          `skew(${15 * dir}deg)`,
-          `skew(${15 * dir}deg) rotate(${-20 * dir}deg)`,
-          `skew(${15 * dir}deg) rotate(${20 * dir}deg)`,
-          `skew(${15 * dir}deg)`,
+          'skew(' + 15 * dir + 'deg)',
+          'skew(' + 15 * dir + 'deg) rotate(' + -20 * dir + 'deg)',
+          'skew(' + 15 * dir + 'deg) rotate(' + 20 * dir + 'deg)',
+          'skew(' + 15 * dir + 'deg)',
         ],
       },
       {
@@ -112,12 +101,10 @@
 <div class="size-container">
   <div class="parents-container">
     <div bind:this={leftParent} class="parent left">
-      <div bind:this={leftChildTarget} class="demo-target child" />
+      <div bind:this={target} class="demo-target child" />
     </div>
 
-    <div bind:this={rightParent} class="parent right">
-      <div bind:this={rightChildTarget} class="demo-target child" />
-    </div>
+    <div bind:this={rightParent} class="parent right"></div>
   </div>
 </div>
 

@@ -33,7 +33,7 @@ export const allDemos: Demo[] = [
   {
     name: DemoName.Flip,
     demoType: FlipDemo,
-    summary: "animate from subject to target's origin using first-last-invert-play technique",
+    summary: 'animate target between two parents using first-last-invert-play technique',
     usage: FlipUsage,
     code: FlipCode,
     usageHL: FlipUsageHL,
