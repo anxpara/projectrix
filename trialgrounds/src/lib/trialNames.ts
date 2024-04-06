@@ -33,6 +33,10 @@ export const TrialName = {
   SetWithMat4: 'set-with-mat4',
   ClearWithMatrix3d: 'clear-with-matrix3d',
   ClearWithMat4: 'clear-with-mat4',
+  MeasureSubject: 'measure-subject',
+  MeasureSubjectOrigin0: 'measure-subject-origin-0',
+  MeasureSubjectOriginOdd: 'measure-subject-origin-odd',
+  MeasureSubjectSmaller: 'measure-subject-smaller',
 } as const;
 export type TrialName = (typeof TrialName)[keyof typeof TrialName];
 export const trialNames: string[] = Object.values(TrialName);

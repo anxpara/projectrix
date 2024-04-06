@@ -38,6 +38,10 @@ import SetWithMatrix3 from '../components/trials/SetWithMatrix3.svelte';
 import SetWithMat4 from '../components/trials/SetWithMat4.svelte';
 import ClearWithMat4 from '../components/trials/ClearWithMat4.svelte';
 import ClearWithMatrix3d from '../components/trials/ClearWithMatrix3d.svelte';
+import MeasureSubject from '../components/trials/MeasureSubject.svelte';
+import MeasureSubjectOrigin0 from '../components/trials/MeasureSubjectOrigin0.svelte';
+import MeasureSubjectOriginOdd from '../components/trials/MeasureSubjectOriginOdd.svelte';
+import MeasureSubjectSmaller from '../components/trials/MeasureSubjectSmaller.svelte';
 
 export type TrialAnimationOptions = {
   duration?: number;
@@ -106,6 +110,10 @@ export const allTrials: Trial[] = [
   { name: TrialName.SetWithMat4, trialType: SetWithMat4 },
   { name: TrialName.ClearWithMatrix3d, trialType: ClearWithMatrix3d },
   { name: TrialName.ClearWithMat4, trialType: ClearWithMat4 },
+  { name: TrialName.MeasureSubject, trialType: MeasureSubject },
+  { name: TrialName.MeasureSubjectOrigin0, trialType: MeasureSubjectOrigin0 },
+  { name: TrialName.MeasureSubjectOriginOdd, trialType: MeasureSubjectOriginOdd },
+  { name: TrialName.MeasureSubjectSmaller, trialType: MeasureSubjectSmaller },
 ];
 export const trialsByName = new Map<TrialName, Trial>(
   allTrials.map((trial) => [trial.name, trial]),
