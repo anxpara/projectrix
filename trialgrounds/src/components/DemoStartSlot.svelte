@@ -1,12 +1,19 @@
 <script lang="ts">
   let slotSubect: HTMLElement;
+  let showing = false;
 
   export function show(): void {
     slotSubect.style.opacity = '1';
+    showing = true;
   }
 
   export function hide(): void {
     slotSubect.style.opacity = '0';
+    showing = false;
+  }
+
+  export function isShowing(): boolean {
+    return showing;
   }
 
   export function getSlotSubject(): HTMLElement {
