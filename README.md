@@ -23,38 +23,42 @@ Also provided:
 * **setInlineStyles()**, a convenient function that sets a target to match a projection
 * **clearInlineStyles()**, a function that clears the styles from setInlineStyles
 
+# Usage examples
 ###### See all demos here: https://tg.projectrix.dev/demos
-
-# Usage
-
-## FLIP from subject back to target's origin using Motion One
+## FLIP target between parents using Motion One
 
 ```ts
-import { getProjection, setInlineStyles, clearInlineStyles } from 'projectrix';
+import { getProjection, measureSubject, setInlineStyles, clearInlineStyles } from 'projectrix';
 import { animate } from 'motion';
 
-function flip(subject: HTMLElement, target: HTMLElement): void {
-  const { toSubject, toTargetOrigin } = getProjection(subject, target);
-  
-  // set target to subject's projection
-  setInlineStyles(target, toSubject);
-  
-  // FLIP back to origin
-  const flipAnimation = animate(
-    target,
-    { ...toTargetOrigin },
-    {
-      duration: 1,
-      easing: 'ease-out',
-    },
-  );
-    
-  // clear inline styles once they're redundant
-  flipAnimation.finished.then(() => clearInlineStyles(target, toTargetOrigin));
+function flip(target: HTMLElement, nextParent: HTMLElement): void {
+  const subject = measureSubject(target);
+
+  nextParent.append(target);
+
+  requestAnimationFrame(() => {
+    const { toSubject, toTargetOrigin } = getProjection(subject, target);
+
+    // set target to subject's projection
+    setInlineStyles(target, toSubject);
+
+    // FLIP back to origin
+    const flipAnimation = animate(
+      target,
+      { ...toTargetOrigin },
+      {
+        duration: 1,
+        easing: 'ease-out',
+      },
+    );
+
+    // clear inline styles once they're redundant
+    flipAnimation.finished.then(() => clearInlineStyles(target, toTargetOrigin));
+  });
 }
 ```
 
-https://github.com/anxpara/projectrix/assets/90604943/b15ee66d-199f-4806-9b76-3bd69bde8c18
+https://github.com/anxpara/projectrix/assets/90604943/ccbe959b-1fe4-43bd-b4fd-8b24cc55b0d4
 
 ## Animate target directly to subject using Motion One
 
