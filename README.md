@@ -128,7 +128,7 @@ export type Projection = {
 };
 export type PartialProjection = Partial<Projection>;
 ```
-#### getProjection, ProjectionOptions, ProjectionResults
+#### getProjection(), ProjectionOptions, ProjectionResults
 ```ts
 export function getProjection(
   subject: HTMLElement | Measurement, // the element or measurement that you plan to align the target to
@@ -169,7 +169,7 @@ export type PartialProjectionResults = {
   target: HTMLElement;
 };
 ```
-#### measureSubject, Measurement
+#### measureSubject(), Measurement
 ```ts
 /**
  * measures a subject for future projections. useful if the subject and target cannot coexist,
@@ -183,7 +183,7 @@ export type Measurement = {
 };
 export type BorderMeasurement = { /* style, top, right, bottom, left, radius */ };
 ```
-#### setInlineStyles, clearInlineStyles
+#### setInlineStyles(), clearInlineStyles()
 ```ts
 /**
  * sets the inline style on the target for each style in the given partial projection.
