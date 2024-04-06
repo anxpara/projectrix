@@ -12,14 +12,12 @@
   $: log = $options.log;
 
   let target: HTMLElement;
-  let inSlot = false;
 
   let currentAnim: AnimationControls | undefined;
 
   onMount(async () => {
     await tick();
     startSlot.show();
-    inSlot = true;
   });
 
   function swapSlotForTarget(target: HTMLElement): void {
@@ -29,11 +27,10 @@
     target.style.opacity = '1';
 
     startSlot.hide();
-    inSlot = false;
   }
 
   function animateDirect(subject: HTMLElement, target: HTMLElement): void {
-    if (inSlot) {
+    if (startSlot.isShowing()) {
       swapSlotForTarget(target);
     }
 

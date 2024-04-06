@@ -37,14 +37,12 @@ export const AnimateCode = `<script lang="ts">
   $: log = $options.log;
 
   let target: HTMLElement;
-  let inSlot = false;
 
   let currentAnim: AnimationControls | undefined;
 
   onMount(async () => {
     await tick();
     startSlot.show();
-    inSlot = true;
   });
 
   function swapSlotForTarget(target: HTMLElement): void {
@@ -54,11 +52,10 @@ export const AnimateCode = `<script lang="ts">
     target.style.opacity = '1';
 
     startSlot.hide();
-    inSlot = false;
   }
 
   function animateDirect(subject: HTMLElement, target: HTMLElement): void {
-    if (inSlot) {
+    if (startSlot.isShowing()) {
       swapSlotForTarget(target);
     }
 
@@ -68,8 +65,7 @@ export const AnimateCode = `<script lang="ts">
       currentAnim.stop();
     }
 
-    const { toSubject } =
-      getProjection(subject, target, { log }) as PartialProjectionResults;
+    const { toSubject } = getProjection(subject, target, { log }) as PartialProjectionResults;
     delete toSubject.borderStyle; // preserve target border style
 
     currentAnim = animate(
@@ -215,14 +211,12 @@ export const AnimateCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#E06C75">  $</span><span style="color:#ABB2BF">: </span><span style="color:#E06C75">log</span><span style="color:#56B6C2"> =</span><span style="color:#ABB2BF"> $</span><span style="color:#E5C07B">options</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">log</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> target</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> inSlot</span><span style="color:#56B6C2"> =</span><span style="color:#D19A66"> false</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> currentAnim</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">AnimationControls</span><span style="color:#ABB2BF"> | </span><span style="color:#E5C07B">undefined</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#61AFEF">  onMount</span><span style="color:#ABB2BF">(</span><span style="color:#C678DD">async</span><span style="color:#ABB2BF"> () </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
 <span class="line"><span style="color:#C678DD">    await</span><span style="color:#61AFEF"> tick</span><span style="color:#ABB2BF">();</span></span>
 <span class="line"><span style="color:#E5C07B">    startSlot</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">show</span><span style="color:#ABB2BF">();</span></span>
-<span class="line"><span style="color:#E06C75">    inSlot</span><span style="color:#56B6C2"> =</span><span style="color:#D19A66"> true</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#ABB2BF">  });</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> swapSlotForTarget</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">target</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
@@ -232,11 +226,10 @@ export const AnimateCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#E5C07B">    target</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">opacity</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> '1'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#E5C07B">    startSlot</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">hide</span><span style="color:#ABB2BF">();</span></span>
-<span class="line"><span style="color:#E06C75">    inSlot</span><span style="color:#56B6C2"> =</span><span style="color:#D19A66"> false</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> animateDirect</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">subject</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75;font-style:italic">target</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> (</span><span style="color:#E06C75">inSlot</span><span style="color:#ABB2BF">) {</span></span>
+<span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> (</span><span style="color:#E5C07B">startSlot</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">isShowing</span><span style="color:#ABB2BF">()) {</span></span>
 <span class="line"><span style="color:#61AFEF">      swapSlotForTarget</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">target</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#ABB2BF">    }</span></span>
 <span class="line"></span>
@@ -246,8 +239,7 @@ export const AnimateCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#E5C07B">      currentAnim</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">stop</span><span style="color:#ABB2BF">();</span></span>
 <span class="line"><span style="color:#ABB2BF">    }</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#C678DD">    const</span><span style="color:#ABB2BF"> { </span><span style="color:#E5C07B">toSubject</span><span style="color:#ABB2BF"> } </span><span style="color:#56B6C2">=</span></span>
-<span class="line"><span style="color:#61AFEF">      getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">subject</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">target</span><span style="color:#ABB2BF">, { </span><span style="color:#E06C75">log</span><span style="color:#ABB2BF"> }) </span><span style="color:#C678DD">as</span><span style="color:#E5C07B"> PartialProjectionResults</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#C678DD">    const</span><span style="color:#ABB2BF"> { </span><span style="color:#E5C07B">toSubject</span><span style="color:#ABB2BF"> } </span><span style="color:#56B6C2">=</span><span style="color:#61AFEF"> getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">subject</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">target</span><span style="color:#ABB2BF">, { </span><span style="color:#E06C75">log</span><span style="color:#ABB2BF"> }) </span><span style="color:#C678DD">as</span><span style="color:#E5C07B"> PartialProjectionResults</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">    delete</span><span style="color:#E5C07B"> toSubject</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">borderStyle</span><span style="color:#ABB2BF">; </span><span style="color:#7F848E;font-style:italic">// preserve target border style</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#E06C75">    currentAnim</span><span style="color:#56B6C2"> =</span><span style="color:#61AFEF"> animate</span><span style="color:#ABB2BF">(</span></span>

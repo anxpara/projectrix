@@ -11,19 +11,16 @@
   $: log = $options.log;
 
   let target: HTMLElement;
-  let inSlot = false;
 
   onMount(async () => {
     await tick();
     startSlot.show();
-    inSlot = true;
   });
 
   function match(subject: HTMLElement, target: HTMLElement): void {
-    if (inSlot) {
+    if (startSlot.isShowing()) {
       startSlot.hide();
       target.style.opacity = '1';
-      inSlot = false;
     }
 
     const { toSubject } = getProjection(subject, target, { log }) as PartialProjectionResults;
