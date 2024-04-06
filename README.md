@@ -14,9 +14,14 @@ $ npm install projectrix --save
 
 # Summary
 
-Dom projection has many uses, such as view transitions, FLIP animations, UI walkthroughs, css-oriented puzzle games, and art. However, the best implementations of this tricky math technique are hidden behind apis that are specific to a given use-case, or technology.
+Dom projection has many uses, such as view transitions, FLIP animations, UI walkthroughs, css-oriented puzzle games, and art. However, implementations of this tricky math technique are usually hidden behind apis that prescribe a specific use-case or technology.
 
-Projectrix provides a pure function that returns the styles needed to align a target element to a subject, as well as the styles needed to align it to its original state. Use the projected styles however you want; if animation is your goal, the projection can be spread directly into Anime.js, Motion One, or your preferred animation engine.
+Projectrix provides **getProjection()**, a pure function that returns the styles needed to align a target element to a subject, as well as the styles needed to align it to its original state. Use the projected styles however you want; if animation is your goal, the projection can be spread directly into Anime.js, Motion One, or your preferred animation engine.
+
+Also provided: 
+* **measureSubject()**, a pure function that records a subject's position and shape in case the subject and target cannot coexist (e.g. a FLIP animation where the subject is the target's past)
+* **setInlineStyles()**, a convenient function that sets a target to match a projection
+* **clearInlineStyles()**, a function that clears the styles from setInlineStyles
 
 ###### See all demos here: https://tg.projectrix.dev/demos
 
@@ -97,20 +102,21 @@ function match(subject: HTMLElement, target: HTMLElement): void {
 
 https://github.com/anxpara/projectrix/assets/90604943/36f594b9-303e-4fae-ba5c-84ed3a6b3290
 
-# Types & Documentation
+# API / Types / Documentation
 
+#### Projection
 ```ts
 export type Projection = {
-  width: string; // 'Wpx'
-  height: string; // 'Hpx'
-  borderStyle: string; // '' | 'none' | 'solid' | 'dashed' | etc.
-  borderWidth: string; // 'Tpx Rpx Bpx Lpx'
-  borderRadius: string; // 'TLpx TRpx BRpx BLpx'
+  width: string;           // 'Wpx'
+  height: string;          // 'Hpx'
+  borderStyle: string;     // '' | 'none' | 'solid' | 'dashed' | etc.
+  borderWidth: string;     // 'Tpx Rpx Bpx Lpx'
+  borderRadius: string;    // 'TLpx TRpx BRpx BLpx'
   transformOrigin: string; // 'X% Y% Zpx'
 
   /**
    * contains exactly one of the following members, depending on the given transformType option:
-   * @member transform: string; // `matrix3d(${matrix3d})`
+   * @member transform: string;   // (default) `matrix3d(${matrix3d})`
    * @member matrix3d: string;
    * @member transformMat4: mat4; // row-major array from gl-matrix
    */
@@ -118,10 +124,11 @@ export type Projection = {
 };
 export type PartialProjection = Partial<Projection>;
 ```
+#### getProjection, ProjectionOptions, ProjectionResults
 ```ts
 export function getProjection(
-  subject: HTMLElement, // the element that you plan to align the target to
-  target: HTMLElement, // the element that you plan to modify
+  subject: HTMLElement | Measurement, // the element or measurement that you plan to align the target to
+  target: HTMLElement,                // the element that you plan to modify
   options?: ProjectionOptions,
 ): ProjectionResults;
 
@@ -131,8 +138,8 @@ export type BorderSource = 'subject' | 'target' | 'zero';
 export type ProjectionOptions = {
   transformType?: TransformType; // (default = 'transform')
 
-  // designates which element's border style, width, and radius to match.
-  // projected width and height are auto-adjusted. zero means 0px border width. 
+  // designates which element's border width, radius, and style to match.
+  // projected width and height are auto-adjusted. zero means 0px border width and radius. 
   useBorder?: BorderSource; // (default = 'subject')
 
   log?: boolean; // (default = false)
@@ -147,17 +154,32 @@ export type ProjectionResults = {
   toSubject: Projection;
   toTargetOrigin: Projection;
   transformType: TransformType; // the type of transform that both projections contain
-  subject: HTMLElement;
+  subject: HTMLElement | Measurement;
   target: HTMLElement;
 };
 export type PartialProjectionResults = {
   toSubject: PartialProjection;
   toTargetOrigin: PartialProjection;
   transformType: TransformType;
-  subject: HTMLElement;
+  subject: HTMLElement | Measurement;
   target: HTMLElement;
 };
 ```
+#### measureSubject, Measurement
+```ts
+/**
+ * measures a subject for future projections. useful if the subject and target cannot coexist,
+ * such as a flip animation where the subject is the target's past
+ */
+export function measureSubject(subject: HTMLElement): Measurement;
+
+export type Measurement = {
+  acr: ActualClientRect; // from getActualClientRect
+  border: BorderMeasurement;
+};
+export type BorderMeasurement = { /* style, top, right, bottom, left, radius */ };
+```
+#### setInlineStyles, clearInlineStyles
 ```ts
 /**
  * sets the inline style on the target for each style in the given partial projection.
