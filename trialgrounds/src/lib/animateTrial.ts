@@ -38,11 +38,11 @@ export function animateTrial(
     trial.trialComponent!.getTrialControls().getSubjectElement?.call(null) ?? defaultSubject;
   let options: ProjectionOptions =
     trial.trialComponent!.getTrialControls().getProjectionOptions?.call(null) ?? {};
-  options = { ...options };
-  options.transformType = trialOptions.skipAnimation
-    ? 'transform'
-    : options.transformType ?? 'transform';
-  options.log = trialOptions.log;
+  options = {
+    ...options,
+    transformType: options.transformType ?? 'transform',
+    log: trialOptions.log,
+  };
 
   // reset target
   anime.remove(target);
@@ -192,14 +192,19 @@ export function animateTrial(
 }
 
 export function animateTrialReturn(trial: Trial, trialOptions: Options, duration = 500): void {
+  trialOptions = {
+    ...trialOptions,
+    ...trial.trialComponent?.getTrialControls().getTrialOptionOverrides?.call(null),
+  };
+
+  const target = trial.trialComponent!.getTrialControls().getTargetElement();
   if (trialOptions.skipAnimation) {
-    clearInlineStyles(trial.trialComponent!.getTrialControls().getTargetElement());
+    clearInlineStyles(target);
     trial.originMarker?.unmark();
     return;
   }
   if (trialOptions.toTargetOrigin || !trial.toTargetOrigin) return;
 
-  const target = trial.trialComponent!.getTrialControls().getTargetElement();
   const options: ProjectionOptions =
     trial.trialComponent!.getTrialControls().getProjectionOptions?.call(null) ?? {};
   options.transformType = options.transformType ?? 'transform';

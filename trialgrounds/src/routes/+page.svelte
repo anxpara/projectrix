@@ -88,7 +88,16 @@
   }
 
   function unselectTrial(trial: Trial): void {
-    if (trial.animation?.currentTime === 0 || $options.skipAnimation) {
+    const skipAnimation =
+      $options.skipAnimation ||
+      !!trial.trialComponent?.getTrialControls?.call(null).getTrialOptionOverrides?.call(null)
+        .skipAnimation;
+
+    const transformType =
+      trial.trialComponent?.getTrialControls?.call(null).getProjectionOptions?.call(null)
+        .transformType ?? 'transform';
+
+    if (transformType !== 'transform' || trial.animation?.currentTime === 0 || skipAnimation) {
       animateTrialReturn(trial, $options);
     }
   }
