@@ -26,7 +26,8 @@
 
   /* game state */
 
-  let currentTarget: HTMLElement | undefined;
+  let currentTarget: HTMLElement | null;
+  let currentModifier: HTMLElement | null;
   let hitAnim: anime.AnimeInstance | undefined;
 
   let startTime = 0;
@@ -62,6 +63,7 @@
   }
 
   function restart(): void {
+    currentModifier = null;
     setCurrentTarget(startTarget);
     startModifiers();
   }
@@ -161,9 +163,7 @@
 
     animateClonedpulse(currentTarget);
 
-    const nextTarget = modifier.firstElementChild as HTMLElement;
-
-    if (currentTarget.isSameNode(nextTarget)) {
+    if (modifier.isSameNode(currentModifier)) {
       attemptAllgoals();
       return;
     }
@@ -177,6 +177,7 @@
     const { toSubject } = getProjection(currentTarget!, nextTarget, { log });
     setInlineStyles(nextTarget, toSubject);
     setCurrentTarget(nextTarget);
+    currentModifier = modifier;
   }
 
   function setCurrentTarget(target: HTMLElement): void {
@@ -195,6 +196,7 @@
     const hit = checkIfTolerancesHit(goal);
 
     if (hit) {
+      currentModifier = null;
       markGoalCompleted(goal);
       animateHit(goal);
     } else if (goalClicked) {
@@ -473,6 +475,7 @@
       <button
         bind:this={spinnerModifier}
         class="modifier spinner"
+        class:current={spinnerModifier?.isSameNode(currentModifier)}
         on:mousedown={handleModifierTap}
         on:touchstart|preventDefault={handleModifierTap}
         on:keydown={handleModifierKeyDown}
@@ -483,6 +486,7 @@
       <button
         bind:this={slider1Modifier}
         class="modifier slider1"
+        class:current={slider1Modifier?.isSameNode(currentModifier)}
         on:mousedown={handleModifierTap}
         on:touchstart|preventDefault={handleModifierTap}
         on:keydown={handleModifierKeyDown}
@@ -493,6 +497,7 @@
       <button
         bind:this={slider2Modifier}
         class="modifier slider2"
+        class:current={slider2Modifier?.isSameNode(currentModifier)}
         on:mousedown={handleModifierTap}
         on:touchstart|preventDefault={handleModifierTap}
         on:keydown={handleModifierKeyDown}
@@ -544,11 +549,11 @@
     touch-action: manipulation;
   }
 
-  .spinner:focus-visible {
+  .spinner.current {
     background-color: rgba(255, 0, 255, 0.15);
   }
-  .slider1:focus-visible,
-  .slider2:focus-visible {
+  .slider1.current,
+  .slider2.current {
     background-color: rgba(255, 255, 0, 0.4);
   }
   .goal:focus-visible,
@@ -650,6 +655,10 @@
     width: calc(150 / $pxem * 1em);
     height: calc(150 / $pxem * 1em);
     border: dashed 3px darkmagenta;
+  }
+  .modifier:focus-visible {
+    outline: solid 2px white;
+    outline-offset: 3px;
   }
 
   .spinner {

@@ -48,7 +48,8 @@ export const DivGolfCode = `<script lang="ts">
 
   /* game state */
 
-  let currentTarget: HTMLElement | undefined;
+  let currentTarget: HTMLElement | null;
+  let currentModifier: HTMLElement | null;
   let hitAnim: anime.AnimeInstance | undefined;
 
   let startTime = 0;
@@ -84,6 +85,7 @@ export const DivGolfCode = `<script lang="ts">
   }
 
   function restart(): void {
+    currentModifier = null;
     setCurrentTarget(startTarget);
     startModifiers();
   }
@@ -183,9 +185,7 @@ export const DivGolfCode = `<script lang="ts">
 
     animateClonedpulse(currentTarget);
 
-    const nextTarget = modifier.firstElementChild as HTMLElement;
-
-    if (currentTarget.isSameNode(nextTarget)) {
+    if (modifier.isSameNode(currentModifier)) {
       attemptAllgoals();
       return;
     }
@@ -199,6 +199,7 @@ export const DivGolfCode = `<script lang="ts">
     const { toSubject } = getProjection(currentTarget!, nextTarget, { log });
     setInlineStyles(nextTarget, toSubject);
     setCurrentTarget(nextTarget);
+    currentModifier = modifier;
   }
 
   function setCurrentTarget(target: HTMLElement): void {
@@ -217,6 +218,7 @@ export const DivGolfCode = `<script lang="ts">
     const hit = checkIfTolerancesHit(goal);
 
     if (hit) {
+      currentModifier = null;
       markGoalCompleted(goal);
       animateHit(goal);
     } else if (goalClicked) {
@@ -495,6 +497,7 @@ export const DivGolfCode = `<script lang="ts">
       <button
         bind:this={spinnerModifier}
         class="modifier spinner"
+        class:current={spinnerModifier?.isSameNode(currentModifier)}
         on:mousedown={handleModifierTap}
         on:touchstart|preventDefault={handleModifierTap}
         on:keydown={handleModifierKeyDown}
@@ -505,6 +508,7 @@ export const DivGolfCode = `<script lang="ts">
       <button
         bind:this={slider1Modifier}
         class="modifier slider1"
+        class:current={slider1Modifier?.isSameNode(currentModifier)}
         on:mousedown={handleModifierTap}
         on:touchstart|preventDefault={handleModifierTap}
         on:keydown={handleModifierKeyDown}
@@ -515,6 +519,7 @@ export const DivGolfCode = `<script lang="ts">
       <button
         bind:this={slider2Modifier}
         class="modifier slider2"
+        class:current={slider2Modifier?.isSameNode(currentModifier)}
         on:mousedown={handleModifierTap}
         on:touchstart|preventDefault={handleModifierTap}
         on:keydown={handleModifierKeyDown}
@@ -566,11 +571,11 @@ export const DivGolfCode = `<script lang="ts">
     touch-action: manipulation;
   }
 
-  .spinner:focus-visible {
+  .spinner.current {
     background-color: rgba(255, 0, 255, 0.15);
   }
-  .slider1:focus-visible,
-  .slider2:focus-visible {
+  .slider1.current,
+  .slider2.current {
     background-color: rgba(255, 255, 0, 0.4);
   }
   .goal:focus-visible,
@@ -672,6 +677,10 @@ export const DivGolfCode = `<script lang="ts">
     width: calc(150 / $pxem * 1em);
     height: calc(150 / $pxem * 1em);
     border: dashed 3px darkmagenta;
+  }
+  .modifier:focus-visible {
+    outline: solid 2px white;
+    outline-offset: 3px;
   }
 
   .spinner {
@@ -791,7 +800,8 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"></span>
 <span class="line"><span style="color:#7F848E;font-style:italic">  /* game state */</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> currentTarget</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF"> | </span><span style="color:#E5C07B">undefined</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> currentTarget</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF"> | </span><span style="color:#E5C07B">null</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> currentModifier</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF"> | </span><span style="color:#E5C07B">null</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> hitAnim</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">anime</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">AnimeInstance</span><span style="color:#ABB2BF"> | </span><span style="color:#E5C07B">undefined</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> startTime</span><span style="color:#56B6C2"> =</span><span style="color:#D19A66"> 0</span><span style="color:#ABB2BF">;</span></span>
@@ -827,6 +837,7 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> restart</span><span style="color:#ABB2BF">(): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#E06C75">    currentModifier</span><span style="color:#56B6C2"> =</span><span style="color:#D19A66"> null</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#61AFEF">    setCurrentTarget</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">startTarget</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#61AFEF">    startModifiers</span><span style="color:#ABB2BF">();</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
@@ -926,9 +937,7 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"></span>
 <span class="line"><span style="color:#61AFEF">    animateClonedpulse</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#C678DD">    const</span><span style="color:#E5C07B"> nextTarget</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> modifier</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">firstElementChild</span><span style="color:#C678DD"> as</span><span style="color:#E5C07B"> HTMLElement</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> (</span><span style="color:#E5C07B">currentTarget</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">isSameNode</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">nextTarget</span><span style="color:#ABB2BF">)) {</span></span>
+<span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> (</span><span style="color:#E5C07B">modifier</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">isSameNode</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">currentModifier</span><span style="color:#ABB2BF">)) {</span></span>
 <span class="line"><span style="color:#61AFEF">      attemptAllgoals</span><span style="color:#ABB2BF">();</span></span>
 <span class="line"><span style="color:#C678DD">      return</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#ABB2BF">    }</span></span>
@@ -942,6 +951,7 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#C678DD">    const</span><span style="color:#ABB2BF"> { </span><span style="color:#E5C07B">toSubject</span><span style="color:#ABB2BF"> } </span><span style="color:#56B6C2">=</span><span style="color:#61AFEF"> getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">currentTarget</span><span style="color:#56B6C2">!</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">nextTarget</span><span style="color:#ABB2BF">, { </span><span style="color:#E06C75">log</span><span style="color:#ABB2BF"> });</span></span>
 <span class="line"><span style="color:#61AFEF">    setInlineStyles</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">nextTarget</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">toSubject</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#61AFEF">    setCurrentTarget</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">nextTarget</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#E06C75">    currentModifier</span><span style="color:#56B6C2"> =</span><span style="color:#E06C75"> modifier</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> setCurrentTarget</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">target</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
@@ -960,6 +970,7 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#C678DD">    const</span><span style="color:#E5C07B"> hit</span><span style="color:#56B6C2"> =</span><span style="color:#61AFEF"> checkIfTolerancesHit</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">goal</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> (</span><span style="color:#E06C75">hit</span><span style="color:#ABB2BF">) {</span></span>
+<span class="line"><span style="color:#E06C75">      currentModifier</span><span style="color:#56B6C2"> =</span><span style="color:#D19A66"> null</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#61AFEF">      markGoalCompleted</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">goal</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#61AFEF">      animateHit</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">goal</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#ABB2BF">    } </span><span style="color:#C678DD">else</span><span style="color:#C678DD"> if</span><span style="color:#ABB2BF"> (</span><span style="color:#E06C75">goalClicked</span><span style="color:#ABB2BF">) {</span></span>
@@ -1238,6 +1249,7 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#ABB2BF">      &#x3C;</span><span style="color:#E06C75">button</span></span>
 <span class="line"><span style="color:#C678DD">        bind</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">this</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">spinnerModifier</span><span style="color:#C678DD">}</span></span>
 <span class="line"><span style="color:#D19A66">        class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"modifier spinner"</span></span>
+<span class="line"><span style="color:#D19A66">        class</span><span style="color:#ABB2BF">:</span><span style="color:#D19A66">current</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E5C07B">spinnerModifier</span><span style="color:#ABB2BF">?.</span><span style="color:#61AFEF">isSameNode</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">currentModifier</span><span style="color:#ABB2BF">)</span><span style="color:#C678DD">}</span></span>
 <span class="line"><span style="color:#C678DD">        on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">mousedown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">handleModifierTap</span><span style="color:#C678DD">}</span></span>
 <span class="line"><span style="color:#C678DD">        on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">touchstart</span><span style="color:#ABB2BF">|</span><span style="color:#56B6C2">preventDefault</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">handleModifierTap</span><span style="color:#C678DD">}</span></span>
 <span class="line"><span style="color:#C678DD">        on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">keydown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">handleModifierKeyDown</span><span style="color:#C678DD">}</span></span>
@@ -1248,6 +1260,7 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#ABB2BF">      &#x3C;</span><span style="color:#E06C75">button</span></span>
 <span class="line"><span style="color:#C678DD">        bind</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">this</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">slider1Modifier</span><span style="color:#C678DD">}</span></span>
 <span class="line"><span style="color:#D19A66">        class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"modifier slider1"</span></span>
+<span class="line"><span style="color:#D19A66">        class</span><span style="color:#ABB2BF">:</span><span style="color:#D19A66">current</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E5C07B">slider1Modifier</span><span style="color:#ABB2BF">?.</span><span style="color:#61AFEF">isSameNode</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">currentModifier</span><span style="color:#ABB2BF">)</span><span style="color:#C678DD">}</span></span>
 <span class="line"><span style="color:#C678DD">        on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">mousedown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">handleModifierTap</span><span style="color:#C678DD">}</span></span>
 <span class="line"><span style="color:#C678DD">        on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">touchstart</span><span style="color:#ABB2BF">|</span><span style="color:#56B6C2">preventDefault</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">handleModifierTap</span><span style="color:#C678DD">}</span></span>
 <span class="line"><span style="color:#C678DD">        on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">keydown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">handleModifierKeyDown</span><span style="color:#C678DD">}</span></span>
@@ -1258,6 +1271,7 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#ABB2BF">      &#x3C;</span><span style="color:#E06C75">button</span></span>
 <span class="line"><span style="color:#C678DD">        bind</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">this</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">slider2Modifier</span><span style="color:#C678DD">}</span></span>
 <span class="line"><span style="color:#D19A66">        class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"modifier slider2"</span></span>
+<span class="line"><span style="color:#D19A66">        class</span><span style="color:#ABB2BF">:</span><span style="color:#D19A66">current</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E5C07B">slider2Modifier</span><span style="color:#ABB2BF">?.</span><span style="color:#61AFEF">isSameNode</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">currentModifier</span><span style="color:#ABB2BF">)</span><span style="color:#C678DD">}</span></span>
 <span class="line"><span style="color:#C678DD">        on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">mousedown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">handleModifierTap</span><span style="color:#C678DD">}</span></span>
 <span class="line"><span style="color:#C678DD">        on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">touchstart</span><span style="color:#ABB2BF">|</span><span style="color:#56B6C2">preventDefault</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">handleModifierTap</span><span style="color:#C678DD">}</span></span>
 <span class="line"><span style="color:#C678DD">        on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">keydown</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#E06C75">handleModifierKeyDown</span><span style="color:#C678DD">}</span></span>
@@ -1309,11 +1323,11 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#ABB2BF">    touch-action: </span><span style="color:#D19A66">manipulation</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#D19A66">  .spinner</span><span style="color:#56B6C2">:focus-visible</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#D19A66">  .spinner.current</span><span style="color:#ABB2BF"> {</span></span>
 <span class="line"><span style="color:#ABB2BF">    background-color: </span><span style="color:#56B6C2">rgba</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">255</span><span style="color:#ABB2BF">, </span><span style="color:#D19A66">0</span><span style="color:#ABB2BF">, </span><span style="color:#D19A66">255</span><span style="color:#ABB2BF">, </span><span style="color:#D19A66">0.15</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
-<span class="line"><span style="color:#D19A66">  .slider1</span><span style="color:#56B6C2">:focus-visible</span><span style="color:#ABB2BF">,</span></span>
-<span class="line"><span style="color:#D19A66">  .slider2</span><span style="color:#56B6C2">:focus-visible</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#D19A66">  .slider1.current</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#D19A66">  .slider2.current</span><span style="color:#ABB2BF"> {</span></span>
 <span class="line"><span style="color:#ABB2BF">    background-color: </span><span style="color:#56B6C2">rgba</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">255</span><span style="color:#ABB2BF">, </span><span style="color:#D19A66">255</span><span style="color:#ABB2BF">, </span><span style="color:#D19A66">0</span><span style="color:#ABB2BF">, </span><span style="color:#D19A66">0.4</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"><span style="color:#D19A66">  .goal</span><span style="color:#56B6C2">:focus-visible</span><span style="color:#ABB2BF">,</span></span>
@@ -1415,6 +1429,10 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#ABB2BF">    width: </span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">150</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#ABB2BF">    height: </span><span style="color:#56B6C2">calc</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">150</span><span style="color:#56B6C2"> /</span><span style="color:#E06C75"> $pxem</span><span style="color:#56B6C2"> *</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">em</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#ABB2BF">    border: </span><span style="color:#D19A66">dashed</span><span style="color:#D19A66"> 3</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF"> darkmagenta;</span></span>
+<span class="line"><span style="color:#ABB2BF">  }</span></span>
+<span class="line"><span style="color:#D19A66">  .modifier</span><span style="color:#56B6C2">:focus-visible</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#ABB2BF">    outline: </span><span style="color:#D19A66">solid</span><span style="color:#D19A66"> 2</span><span style="color:#E06C75">px</span><span style="color:#D19A66"> white</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#ABB2BF">    outline-offset: </span><span style="color:#D19A66">3</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#D19A66">  .spinner</span><span style="color:#ABB2BF"> {</span></span>
