@@ -42,6 +42,9 @@ import MeasureSubject from '../components/trials/MeasureSubject.svelte';
 import MeasureSubjectOrigin0 from '../components/trials/MeasureSubjectOrigin0.svelte';
 import MeasureSubjectOriginOdd from '../components/trials/MeasureSubjectOriginOdd.svelte';
 import MeasureSubjectSmaller from '../components/trials/MeasureSubjectSmaller.svelte';
+import TargetInPreserve3d from '../components/trials/TargetInPreserve3d.svelte';
+import TwoContainersPreserve3d from '../components/trials/TwoContainersPreserve3d.svelte';
+import OuterContainerPreserve3d from '../components/trials/OuterContainerPreserve3d.svelte';
 
 export type TrialAnimationOptions = {
   duration?: number;
@@ -104,6 +107,9 @@ export const allTrials: Trial[] = [
   { name: TrialName.TargetOrigin0Bigger, trialType: TargetOrigin0Bigger },
   { name: TrialName.TargetInOrigin0, trialType: TargetInOrigin0 },
   { name: TrialName.TargetInOrigin0Bigger, trialType: TargetInOrigin0Bigger },
+  { name: TrialName.TargetInPreserve3d, trialType: TargetInPreserve3d },
+  { name: TrialName.TwoContainersPreserve3d, trialType: TwoContainersPreserve3d },
+  { name: TrialName.OuterContainerPreserve3d, trialType: OuterContainerPreserve3d },
   { name: TrialName.UseMatrix3dType, trialType: UseMatrix3dType },
   { name: TrialName.UseMat4Type, trialType: UseMat4Type },
   { name: TrialName.SetWithMatrix3d, trialType: SetWithMatrix3 },
