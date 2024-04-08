@@ -201,7 +201,8 @@ export function clearInlineStyles(target: HTMLElement, partialProjection?: Parti
 
 ## Limitations
 
-- Projectrix will not attempt to match or emulate bugs in rendering engines
+- Projectrix will not attempt to match, emulate, or mitigate bugs in rendering engines
+  - [Stackoverflow: -webkit-transform-style: preserve-3d not working](https://stackoverflow.com/questions/11664255/webkit-transform-style-preserve-3d-not-working)
 - Projectrix is not an animation engine, and will not attempt to mitigate bugs in animation engines
   - https://github.com/motiondivision/motionone/issues/249
 - performance has not yet been profiled
