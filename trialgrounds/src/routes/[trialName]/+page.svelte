@@ -13,11 +13,14 @@
   let options = getContext<Writable<Options>>('options');
 
   $: trial = trialsByName.get($page.params.trialName as TrialName)!;
-  $: trialSubject = trial.trialComponent?.getTrialControls?.call(null).getSubjectElement?.call(null);
+  $: trialSubject = trial.trialComponent?.getTrialControls
+    ?.call(null)
+    .getSubjectElement?.call(null);
   $: updateShowDefaultSubject(!trialSubject);
   const defaultSubject = getContext<Writable<HTMLElement | undefined>>('default-subject');
 
   let animateInterval: NodeJS.Timeout | undefined = undefined;
+  let projected = false;
 
   onMount(async () => {
     await tick();
@@ -27,8 +30,6 @@
     }
 
     animate();
-    if ($options.projectOnce) return;
-
     animateInterval = setInterval(animate, 2000);
   });
 
@@ -39,12 +40,18 @@
       trial.animation = undefined;
     }
     const target = trial.trialComponent?.getTrialControls().getTargetElement();
-    if (!target) return;
+    if (!target) {
+      return;
+    }
     anime.remove(target);
   });
 
   function animate(): void {
+    if ($options.projectOnce && projected) {
+      return;
+    }
     animateTrial(trial, $defaultSubject!, $options);
+    projected = true;
   }
 
   function updateShowDefaultSubject(showDefault: boolean): void {
