@@ -45,6 +45,11 @@ import MeasureSubjectSmaller from '../components/trials/MeasureSubjectSmaller.sv
 import TargetInPreserve3d from '../components/trials/TargetInPreserve3d.svelte';
 import TwoContainersPreserve3d from '../components/trials/TwoContainersPreserve3d.svelte';
 import OuterContainerPreserve3d from '../components/trials/OuterContainerPreserve3d.svelte';
+import SubjectPerspective from '../components/trials/SubjectPerspective.svelte';
+import TargetPerspective from '../components/trials/TargetPerspective.svelte';
+import BothPerspective from '../components/trials/BothPerspective.svelte';
+import PerspectiveOrigin from '../components/trials/PerspectiveOrigin.svelte';
+import PerspectivePreserve3d from '../components/trials/PerspectivePreserve3d.svelte';
 
 export type TrialAnimationOptions = {
   duration?: number;
@@ -110,6 +115,11 @@ export const allTrials: Trial[] = [
   { name: TrialName.TargetInPreserve3d, trialType: TargetInPreserve3d },
   { name: TrialName.TwoContainersPreserve3d, trialType: TwoContainersPreserve3d },
   { name: TrialName.OuterContainerPreserve3d, trialType: OuterContainerPreserve3d },
+  { name: TrialName.SubjectPerspective, trialType: SubjectPerspective },
+  { name: TrialName.TargetPerspective, trialType: TargetPerspective },
+  { name: TrialName.BothPerspective, trialType: BothPerspective },
+  { name: TrialName.PerspectiveOrigin, trialType: PerspectiveOrigin },
+  { name: TrialName.PerspectivePreserve3d, trialType: PerspectivePreserve3d },
   { name: TrialName.UseMatrix3dType, trialType: UseMatrix3dType },
   { name: TrialName.UseMat4Type, trialType: UseMat4Type },
   { name: TrialName.SetWithMatrix3d, trialType: SetWithMatrix3 },

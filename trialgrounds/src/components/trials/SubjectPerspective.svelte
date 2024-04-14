@@ -1,0 +1,48 @@
+<script lang="ts">
+  import type { Trial, TrialControls } from '$lib/trials';
+
+  export let trial: Trial;
+  export let hideSubject: boolean | undefined = undefined;
+
+  let targetElement: HTMLElement;
+  function getTargetElement(): HTMLElement {
+    return targetElement;
+  }
+
+  let subjectElement: HTMLElement;
+  function getSubjectElement(): HTMLElement {
+    return subjectElement;
+  }
+
+  export function getTrialControls(): TrialControls {
+    return {
+      getTargetElement,
+      getSubjectElement,
+    };
+  }
+</script>
+
+<div class="subject-container" class:hideSubject>
+  <div
+    bind:this={subjectElement}
+    class="default-subject-element subject-element subject-perspective"
+  >
+    subject-perspective
+  </div>
+</div>
+
+<div class="target-container">
+  <div bind:this={targetElement} class="target-element">{trial.name}</div>
+</div>
+
+<style lang="scss">
+  .subject-container {
+    perspective: 200px;
+  }
+
+  .subject-perspective {
+    top: 1em;
+    left: 1em;
+    transform: rotateX(20deg) rotateZ(15deg);
+  }
+</style>
