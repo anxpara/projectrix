@@ -203,6 +203,11 @@ export function clearInlineStyles(target: HTMLElement, partialProjection?: Parti
 
 - Projectrix will not attempt to match, emulate, or mitigate bugs in rendering engines
   - [Stackoverflow: -webkit-transform-style: preserve-3d not working](https://stackoverflow.com/questions/11664255/webkit-transform-style-preserve-3d-not-working)
+  - some engines don't follow the [preserve-3d _used_ value specs](https://www.w3.org/TR/css-transforms-2/#grouping-property-values), and still use preserve-3d even when combined with certain grouping properties:
+    - Chrome v123 / Blink -- contain: strict | content | paint, content-visibility: auto
+    - Firefox v124 / Gecko -- will-change: filter
+    - Safari v17.4 / Webkit -- will-change: filter | opacity
+    - (Properties not yet supported by particular browsers omitted from their respective lists)
 - Projectrix is not an animation engine, and will not attempt to mitigate bugs in animation engines
   - https://github.com/motiondivision/motionone/issues/249
 - performance has not yet been profiled
