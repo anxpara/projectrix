@@ -28,12 +28,22 @@ pre {
   overflow-x: auto;
 }
 
+.subject-container,
 .target-container {
   width: 14em;
   height: 12em;
 
   color: purple;
   outline: solid 2px;
+}
+
+.subject-container {
+  position: fixed;
+  top: 1em;
+  left: 1em;
+
+  color: yellow;
+  outline-style: dotted;
 }
 
 .subject-element,

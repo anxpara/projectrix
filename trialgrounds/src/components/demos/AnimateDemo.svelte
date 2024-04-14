@@ -59,7 +59,7 @@
 </script>
 
 <div class="size-container">
-  <div class="subject-container">
+  <div class="subject-flex">
     <button class="demo-subject" on:click={(e) => subjectClickHandler(e.currentTarget)} />
     <button class="demo-subject rotated" on:click={(e) => subjectClickHandler(e.currentTarget)} />
     <button class="demo-subject parent" on:click={(e) => subjectClickHandler(e.currentTarget)}>
@@ -106,7 +106,7 @@
     container-type: size;
   }
 
-  .subject-container {
+  .subject-flex {
     width: 100%;
     height: 100%;
 
