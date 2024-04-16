@@ -208,37 +208,37 @@
   const rotationToleranceDeg = 8;
 
   function checkIfTolerancesHit(goal: HTMLElement): boolean {
-    const goalAcr = getActualClientRect(goal, {
-      bakePositionIntoTransform: true,
-    });
-    const currentAcr = getActualClientRect(currentTarget!, {
-      bakePositionIntoTransform: true,
+    const { toSubject, toTargetOrigin } = getProjection(goal, currentTarget!, {
+      transformType: 'transformMat4',
     });
 
-    const Mvc = currentAcr.transformMat4;
-    const Mcv = mat4.create();
-    mat4.invert(Mcv, Mvc);
+    const basisToOrigin = toTargetOrigin.transformMat4 as mat4;
+    const basisToSubject = toSubject.transformMat4 as mat4;
 
-    const Mvg = goalAcr.transformMat4;
+    const originToBasis = mat4.create();
+    mat4.invert(originToBasis, basisToOrigin);
 
-    const Mcg = mat4.create();
-    mat4.multiply(Mcg, Mcv, Mvg);
+    const originToSubject = mat4.create();
+    mat4.multiply(originToSubject, originToBasis, basisToSubject);
+
+    const xPx = originToSubject[12];
+    const yPx = originToSubject[13];
 
     // check distance
-    const distancePx = Math.sqrt(Mcg[12] * Mcg[12] + Mcg[13] * Mcg[13]);
+    const distancePx = Math.sqrt(xPx * xPx + yPx * yPx);
     if (distancePx > distanceTolerancePx) {
       return false;
     }
 
     const rotationQuat = quat.create();
-    mat4.getRotation(rotationQuat, Mcg);
+    mat4.getRotation(rotationQuat, originToSubject);
 
     const rotationVec3 = vec3.create();
     const rotationDeg = (quat.getAxisAngle(rotationVec3, rotationQuat) * 180) / Math.PI;
-    const rotationDiff = 45 - Math.abs((rotationDeg % 90) - 45);
 
     // check rotation
-    if (rotationDiff > rotationToleranceDeg) {
+    const rotationDeltaDeg = 45 - Math.abs((rotationDeg % 90) - 45);
+    if (rotationDeltaDeg > rotationToleranceDeg) {
       return false;
     }
 

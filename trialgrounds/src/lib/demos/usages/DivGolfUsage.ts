@@ -230,37 +230,37 @@ export const DivGolfCode = `<script lang="ts">
   const rotationToleranceDeg = 8;
 
   function checkIfTolerancesHit(goal: HTMLElement): boolean {
-    const goalAcr = getActualClientRect(goal, {
-      bakePositionIntoTransform: true,
-    });
-    const currentAcr = getActualClientRect(currentTarget!, {
-      bakePositionIntoTransform: true,
+    const { toSubject, toTargetOrigin } = getProjection(goal, currentTarget!, {
+      transformType: 'transformMat4',
     });
 
-    const Mvc = currentAcr.transformMat4;
-    const Mcv = mat4.create();
-    mat4.invert(Mcv, Mvc);
+    const basisToOrigin = toTargetOrigin.transformMat4 as mat4;
+    const basisToSubject = toSubject.transformMat4 as mat4;
 
-    const Mvg = goalAcr.transformMat4;
+    const originToBasis = mat4.create();
+    mat4.invert(originToBasis, basisToOrigin);
 
-    const Mcg = mat4.create();
-    mat4.multiply(Mcg, Mcv, Mvg);
+    const originToSubject = mat4.create();
+    mat4.multiply(originToSubject, originToBasis, basisToSubject);
+
+    const xPx = originToSubject[12];
+    const yPx = originToSubject[13];
 
     // check distance
-    const distancePx = Math.sqrt(Mcg[12] * Mcg[12] + Mcg[13] * Mcg[13]);
+    const distancePx = Math.sqrt(xPx * xPx + yPx * yPx);
     if (distancePx > distanceTolerancePx) {
       return false;
     }
 
     const rotationQuat = quat.create();
-    mat4.getRotation(rotationQuat, Mcg);
+    mat4.getRotation(rotationQuat, originToSubject);
 
     const rotationVec3 = vec3.create();
     const rotationDeg = (quat.getAxisAngle(rotationVec3, rotationQuat) * 180) / Math.PI;
-    const rotationDiff = 45 - Math.abs((rotationDeg % 90) - 45);
 
     // check rotation
-    if (rotationDiff > rotationToleranceDeg) {
+    const rotationDeltaDeg = 45 - Math.abs((rotationDeg % 90) - 45);
+    if (rotationDeltaDeg > rotationToleranceDeg) {
       return false;
     }
 
@@ -982,37 +982,37 @@ export const DivGolfCodeHL = `<pre class="shiki one-dark-pro" style="background-
 <span class="line"><span style="color:#C678DD">  const</span><span style="color:#E5C07B"> rotationToleranceDeg</span><span style="color:#56B6C2"> =</span><span style="color:#D19A66"> 8</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> checkIfTolerancesHit</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">goal</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">): </span><span style="color:#E5C07B">boolean</span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#C678DD">    const</span><span style="color:#E5C07B"> goalAcr</span><span style="color:#56B6C2"> =</span><span style="color:#61AFEF"> getActualClientRect</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">goal</span><span style="color:#ABB2BF">, {</span></span>
-<span class="line"><span style="color:#E06C75">      bakePositionIntoTransform</span><span style="color:#ABB2BF">: </span><span style="color:#D19A66">true</span><span style="color:#ABB2BF">,</span></span>
-<span class="line"><span style="color:#ABB2BF">    });</span></span>
-<span class="line"><span style="color:#C678DD">    const</span><span style="color:#E5C07B"> currentAcr</span><span style="color:#56B6C2"> =</span><span style="color:#61AFEF"> getActualClientRect</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">currentTarget</span><span style="color:#56B6C2">!</span><span style="color:#ABB2BF">, {</span></span>
-<span class="line"><span style="color:#E06C75">      bakePositionIntoTransform</span><span style="color:#ABB2BF">: </span><span style="color:#D19A66">true</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#C678DD">    const</span><span style="color:#ABB2BF"> { </span><span style="color:#E5C07B">toSubject</span><span style="color:#ABB2BF">, </span><span style="color:#E5C07B">toTargetOrigin</span><span style="color:#ABB2BF"> } </span><span style="color:#56B6C2">=</span><span style="color:#61AFEF"> getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">goal</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">currentTarget</span><span style="color:#56B6C2">!</span><span style="color:#ABB2BF">, {</span></span>
+<span class="line"><span style="color:#E06C75">      transformType</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'transformMat4'</span><span style="color:#ABB2BF">,</span></span>
 <span class="line"><span style="color:#ABB2BF">    });</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#C678DD">    const</span><span style="color:#E5C07B"> Mvc</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> currentAcr</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">transformMat4</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#C678DD">    const</span><span style="color:#E5C07B"> Mcv</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> mat4</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">create</span><span style="color:#ABB2BF">();</span></span>
-<span class="line"><span style="color:#E5C07B">    mat4</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">invert</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">Mcv</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">Mvc</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#C678DD">    const</span><span style="color:#E5C07B"> basisToOrigin</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> toTargetOrigin</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">transformMat4</span><span style="color:#C678DD"> as</span><span style="color:#E5C07B"> mat4</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#C678DD">    const</span><span style="color:#E5C07B"> basisToSubject</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> toSubject</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">transformMat4</span><span style="color:#C678DD"> as</span><span style="color:#E5C07B"> mat4</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#C678DD">    const</span><span style="color:#E5C07B"> Mvg</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> goalAcr</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">transformMat4</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#C678DD">    const</span><span style="color:#E5C07B"> originToBasis</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> mat4</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">create</span><span style="color:#ABB2BF">();</span></span>
+<span class="line"><span style="color:#E5C07B">    mat4</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">invert</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">originToBasis</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">basisToOrigin</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#C678DD">    const</span><span style="color:#E5C07B"> Mcg</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> mat4</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">create</span><span style="color:#ABB2BF">();</span></span>
-<span class="line"><span style="color:#E5C07B">    mat4</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">multiply</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">Mcg</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">Mcv</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">Mvg</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#C678DD">    const</span><span style="color:#E5C07B"> originToSubject</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> mat4</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">create</span><span style="color:#ABB2BF">();</span></span>
+<span class="line"><span style="color:#E5C07B">    mat4</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">multiply</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">originToSubject</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">originToBasis</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">basisToSubject</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#C678DD">    const</span><span style="color:#E5C07B"> xPx</span><span style="color:#56B6C2"> =</span><span style="color:#E06C75"> originToSubject</span><span style="color:#ABB2BF">[</span><span style="color:#D19A66">12</span><span style="color:#ABB2BF">];</span></span>
+<span class="line"><span style="color:#C678DD">    const</span><span style="color:#E5C07B"> yPx</span><span style="color:#56B6C2"> =</span><span style="color:#E06C75"> originToSubject</span><span style="color:#ABB2BF">[</span><span style="color:#D19A66">13</span><span style="color:#ABB2BF">];</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#7F848E;font-style:italic">    // check distance</span></span>
-<span class="line"><span style="color:#C678DD">    const</span><span style="color:#E5C07B"> distancePx</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> Math</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">sqrt</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">Mcg</span><span style="color:#ABB2BF">[</span><span style="color:#D19A66">12</span><span style="color:#ABB2BF">] </span><span style="color:#56B6C2">*</span><span style="color:#E06C75"> Mcg</span><span style="color:#ABB2BF">[</span><span style="color:#D19A66">12</span><span style="color:#ABB2BF">] </span><span style="color:#56B6C2">+</span><span style="color:#E06C75"> Mcg</span><span style="color:#ABB2BF">[</span><span style="color:#D19A66">13</span><span style="color:#ABB2BF">] </span><span style="color:#56B6C2">*</span><span style="color:#E06C75"> Mcg</span><span style="color:#ABB2BF">[</span><span style="color:#D19A66">13</span><span style="color:#ABB2BF">]);</span></span>
+<span class="line"><span style="color:#C678DD">    const</span><span style="color:#E5C07B"> distancePx</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> Math</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">sqrt</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">xPx</span><span style="color:#56B6C2"> *</span><span style="color:#E06C75"> xPx</span><span style="color:#56B6C2"> +</span><span style="color:#E06C75"> yPx</span><span style="color:#56B6C2"> *</span><span style="color:#E06C75"> yPx</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> (</span><span style="color:#E06C75">distancePx</span><span style="color:#56B6C2"> ></span><span style="color:#E06C75"> distanceTolerancePx</span><span style="color:#ABB2BF">) {</span></span>
 <span class="line"><span style="color:#C678DD">      return</span><span style="color:#D19A66"> false</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#ABB2BF">    }</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#C678DD">    const</span><span style="color:#E5C07B"> rotationQuat</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> quat</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">create</span><span style="color:#ABB2BF">();</span></span>
-<span class="line"><span style="color:#E5C07B">    mat4</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">getRotation</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">rotationQuat</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">Mcg</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#E5C07B">    mat4</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">getRotation</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">rotationQuat</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">originToSubject</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#C678DD">    const</span><span style="color:#E5C07B"> rotationVec3</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> vec3</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">create</span><span style="color:#ABB2BF">();</span></span>
 <span class="line"><span style="color:#C678DD">    const</span><span style="color:#E5C07B"> rotationDeg</span><span style="color:#56B6C2"> =</span><span style="color:#ABB2BF"> (</span><span style="color:#E5C07B">quat</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">getAxisAngle</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">rotationVec3</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">rotationQuat</span><span style="color:#ABB2BF">) </span><span style="color:#56B6C2">*</span><span style="color:#D19A66"> 180</span><span style="color:#ABB2BF">) </span><span style="color:#56B6C2">/</span><span style="color:#E5C07B"> Math</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">PI</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#C678DD">    const</span><span style="color:#E5C07B"> rotationDiff</span><span style="color:#56B6C2"> =</span><span style="color:#D19A66"> 45</span><span style="color:#56B6C2"> -</span><span style="color:#E5C07B"> Math</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">abs</span><span style="color:#ABB2BF">((</span><span style="color:#E06C75">rotationDeg</span><span style="color:#56B6C2"> %</span><span style="color:#D19A66"> 90</span><span style="color:#ABB2BF">) </span><span style="color:#56B6C2">-</span><span style="color:#D19A66"> 45</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#7F848E;font-style:italic">    // check rotation</span></span>
-<span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> (</span><span style="color:#E06C75">rotationDiff</span><span style="color:#56B6C2"> ></span><span style="color:#E06C75"> rotationToleranceDeg</span><span style="color:#ABB2BF">) {</span></span>
+<span class="line"><span style="color:#C678DD">    const</span><span style="color:#E5C07B"> rotationDeltaDeg</span><span style="color:#56B6C2"> =</span><span style="color:#D19A66"> 45</span><span style="color:#56B6C2"> -</span><span style="color:#E5C07B"> Math</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">abs</span><span style="color:#ABB2BF">((</span><span style="color:#E06C75">rotationDeg</span><span style="color:#56B6C2"> %</span><span style="color:#D19A66"> 90</span><span style="color:#ABB2BF">) </span><span style="color:#56B6C2">-</span><span style="color:#D19A66"> 45</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> (</span><span style="color:#E06C75">rotationDeltaDeg</span><span style="color:#56B6C2"> ></span><span style="color:#E06C75"> rotationToleranceDeg</span><span style="color:#ABB2BF">) {</span></span>
 <span class="line"><span style="color:#C678DD">      return</span><span style="color:#D19A66"> false</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#ABB2BF">    }</span></span>
 <span class="line"></span>
