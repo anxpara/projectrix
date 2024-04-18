@@ -50,6 +50,8 @@ import TargetPerspective from '../components/trials/TargetPerspective.svelte';
 import BothPerspective from '../components/trials/BothPerspective.svelte';
 import PerspectiveOrigin from '../components/trials/PerspectiveOrigin.svelte';
 import PerspectivePreserve3d from '../components/trials/PerspectivePreserve3d.svelte';
+import TargetPadded from '../components/trials/TargetPadded.svelte';
+import TargetBorderBox from '../components/trials/TargetBorderBox.svelte';
 
 export type TrialAnimationOptions = {
   duration?: number;
@@ -90,6 +92,8 @@ export const allTrials: Trial[] = [
   { name: TrialName.UseZeroBorder, trialType: UseZeroBorder },
   { name: TrialName.TargetSmaller, trialType: TargetSmaller },
   { name: TrialName.TargetBigger, trialType: TargetBigger },
+  { name: TrialName.TargetPadded, trialType: TargetPadded },
+  { name: TrialName.TargetBorderBox, trialType: TargetBorderBox },
   { name: TrialName.TargetInPadded, trialType: TargetInPadded },
   { name: TrialName.TargetMargined, trialType: TargetMargined },
   { name: TrialName.Target2ndChild, trialType: Target2ndChild },

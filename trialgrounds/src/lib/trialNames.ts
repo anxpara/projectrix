@@ -5,6 +5,8 @@ export const TrialName = {
   UseZeroBorder: 'use-zero-border',
   TargetSmaller: 'target-smaller',
   TargetBigger: 'target-bigger',
+  TargetPadded: 'target-padded',
+  TargetBorderBox: 'target-border-box',
   TargetInPadded: 'target-in-padded',
   TargetMargined: 'target-margined',
   Target2ndChild: 'target-2nd-child',
