@@ -212,6 +212,8 @@ export function clearInlineStyles(target: HTMLElement, partialProjection?: Parti
 - Projectrix is not an animation engine, and will not attempt to mitigate bugs in animation engines
   - https://github.com/motiondivision/motionone/issues/249
   - some engines might animate perspective incorrectly in particular scenarios
+- Targeting an element with an ["internal" display value](https://developer.mozilla.org/en-US/docs/Web/CSS/display#internal), or any value that causes the element to control its own size, will lead to undefined behavior, since the projected width and height will be ignored:
+  - display: inline | table | inline-table | table-row | table-column | table-cell | table-row-group | table-column-group | table-header-group | table-footer-group | ruby-base | ruby-text | ruby-base-container | ruby-text-container | run-in
 - performance has not yet been profiled
 - SVGs are not yet officially supported, but might happen to work in certain scenarios
 
