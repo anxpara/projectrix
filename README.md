@@ -143,7 +143,8 @@ export type ProjectionOptions = {
   transformType?: TransformType; // (default = 'transform')
 
   // designates which element's border width, radius, and style to match.
-  // projected width and height are auto-adjusted. zero means 0px border width and radius. 
+  // projected width and height are auto-adjusted if the target has content-box sizing.
+  // zero means 0px border width and radius
   useBorder?: BorderSource; // (default = 'subject')
 
   log?: boolean; // (default = false)

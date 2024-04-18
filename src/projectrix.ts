@@ -79,7 +79,8 @@ const DEFAULT_BORDER_SOURCE: BorderSource = 'subject';
 /**
  * @member transformType?: 'transform' | 'matrix3d' | 'transformMat4'; // (default = 'transform')
  * @member useBorder?: 'subject' | 'target' | 'zero'; // (default = 'subject'), designates which element's border width,
- *   radius, and style to match. projected width and height are auto-adjusted. zero means 0px border width and radius
+ *   radius, and style to match. projected width and height are auto-adjusted if the target has content-box sizing.
+ *   zero means 0px border width and radius
  * @member log?: boolean; // (default = false)
  */
 export type ProjectionOptions = {
@@ -113,8 +114,9 @@ export type ProjectionOptions = {
  *
  * ProjectionOptions
  * @member transformType?: 'transform' | 'matrix3d' | 'transformMat4'; // (default = transform)
- * @member — useBorder?: 'subject' | 'target' | 'zero'; // (default = subject), designates which element's border style,
- *   width, and radius to match. zero means 0px border width. width and height are auto-adjusted
+ * @member — useBorder?: 'subject' | 'target' | 'zero'; // (default = subject), designates which element's border width,
+ *   radius, and style to match. projected width and height are auto-adjusted if the target has content-box sizing.
+ *   zero means 0px border width and radius
  *
  * ---
  *
@@ -249,9 +251,8 @@ function getProjectionToSubject(
 ): Projection {
   const subjectAcr = getSubjectAcr(subject, sharedTransformOrigin);
   const border = getBorderMeasurement(subject, target, options);
-  const width = subjectAcr.basis.width - border.left - border.right;
-  const height = subjectAcr.basis.height - border.top - border.bottom;
   const borderWidth = `${border.top}px ${border.right}px ${border.bottom}px ${border.left}px`;
+  const adjustedAcr = adjustAcrForBoxSizing(subjectAcr, target, border);
 
   const savedInlineStyles: PartialProjection = {
     transform: target.style.transform,
@@ -262,8 +263,8 @@ function getProjectionToSubject(
   };
 
   target.style.transform = 'unset';
-  target.style.width = `${width}px`;
-  target.style.height = `${height}px`;
+  target.style.width = `${adjustedAcr.basis.width}px`;
+  target.style.height = `${adjustedAcr.basis.height}px`;
   target.style.borderStyle = 'solid';
   target.style.borderWidth = borderWidth;
 
@@ -281,8 +282,8 @@ function getProjectionToSubject(
   mat4.multiply(Mts, Mtv, Mvs);
 
   return {
-    width: `${width}px`,
-    height: `${height}px`,
+    width: `${adjustedAcr.basis.width}px`,
+    height: `${adjustedAcr.basis.height}px`,
     borderStyle: border.style,
     borderWidth,
     borderRadius: border.radius,
@@ -307,9 +308,7 @@ function setAcrToSharedTransformOrigin(
   acr: ActualClientRect,
   sharedTransformOrigin: string,
 ): ActualClientRect {
-  const newAcr: ActualClientRect = {
-    ...acr,
-  };
+  const newAcr = structuredClone(acr);
 
   const Va = convertComputedTransformOriginToVec3(acr.transformOrigin);
 
@@ -349,6 +348,27 @@ function setAcrToSharedTransformOrigin(
   newAcr.transform = `matrix3d(${newAcr.matrix3d})`;
   newAcr.transformOrigin = sharedTransformOrigin;
   return newAcr;
+}
+
+function adjustAcrForBoxSizing(
+  acr: ActualClientRect,
+  element: HTMLElement,
+  border: BorderMeasurement,
+): ActualClientRect {
+  const adjustedAcr = structuredClone(acr);
+  const computedStyle = getComputedStyle(element);
+  if (computedStyle.boxSizing === 'border-box') {
+    return adjustedAcr;
+  }
+
+  const paddingWidth =
+    parseFloat(computedStyle.paddingLeft) + parseFloat(computedStyle.paddingRight);
+  const paddingHeight =
+    parseFloat(computedStyle.paddingTop) + parseFloat(computedStyle.paddingBottom);
+  adjustedAcr.basis.width -= border.left + border.right + paddingWidth;
+  adjustedAcr.basis.height -= border.top + border.bottom + paddingHeight;
+
+  return adjustedAcr;
 }
 
 function getBorderMeasurement(
@@ -403,14 +423,12 @@ function getProjectionToTargetOrigin(
   options?: ProjectionOptions,
 ): Projection {
   const border = measureElementBorder(target);
-  const width = acr.basis.width - border.left - border.right;
-  const height = acr.basis.height - border.top - border.bottom;
-
+  const adjustedAcr = adjustAcrForBoxSizing(acr, target, border);
   const transformMat4 = getElementTransformMat4(target);
 
   return {
-    width: `${width}px`,
-    height: `${height}px`,
+    width: `${adjustedAcr.basis.width}px`,
+    height: `${adjustedAcr.basis.height}px`,
     borderStyle: border.style,
     borderWidth: `${border.top}px ${border.right}px ${border.bottom}px ${border.left}px`,
     borderRadius: border.radius,
