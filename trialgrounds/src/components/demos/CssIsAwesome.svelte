@@ -163,7 +163,7 @@
 
     width: 100%;
     aspect-ratio: 3.6 / 1;
-    container-type: size;
+    container-type: inline-size;
 
     display: flex;
     justify-content: space-around;

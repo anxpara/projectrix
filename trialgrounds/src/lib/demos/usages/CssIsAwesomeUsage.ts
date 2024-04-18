@@ -190,7 +190,7 @@ export const CssIsAwesomeCode = `<script lang="ts">
 
     width: 100%;
     aspect-ratio: 3.6 / 1;
-    container-type: size;
+    container-type: inline-size;
 
     display: flex;
     justify-content: space-around;
@@ -453,7 +453,7 @@ export const CssIsAwesomeCodeHL = `<pre class="shiki one-dark-pro" style="backgr
 <span class="line"></span>
 <span class="line"><span style="color:#ABB2BF">    width: </span><span style="color:#D19A66">100</span><span style="color:#E06C75">%</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#ABB2BF">    aspect-ratio: </span><span style="color:#D19A66">3.6</span><span style="color:#56B6C2"> /</span><span style="color:#D19A66"> 1</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#ABB2BF">    container-type: size;</span></span>
+<span class="line"><span style="color:#ABB2BF">    container-type: inline-size;</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#ABB2BF">    display: </span><span style="color:#D19A66">flex</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#ABB2BF">    justify-content: </span><span style="color:#D19A66">space-around</span><span style="color:#ABB2BF">;</span></span>
