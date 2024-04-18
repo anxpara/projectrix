@@ -15,6 +15,13 @@ import {
   FlipCoexistUsage,
   FlipCoexistUsageHL,
 } from './usages/FlipCoexistUsage';
+import CssIsAwesome from '../../components/demos/CssIsAwesome.svelte';
+import {
+  CssIsAwesomeCode,
+  CssIsAwesomeCodeHL,
+  CssIsAwesomeUsage,
+  CssIsAwesomeUsageHL,
+} from './usages/CssIsAwesomeUsage';
 
 export type DemoComponent = SvelteComponent;
 
@@ -77,6 +84,16 @@ export const allDemos: Demo[] = [
     code: FlipCoexistCode,
     usageHL: FlipCoexistUsageHL,
     codeHL: FlipCoexistCodeHL,
+  },
+  {
+    name: DemoName.CssIsAwesome,
+    demoType: CssIsAwesome,
+    summary:
+      'preserve-3d and perspective are supported; confirm your animation engine animates with perspectives properly',
+    usage: CssIsAwesomeUsage,
+    code: CssIsAwesomeCode,
+    usageHL: CssIsAwesomeUsageHL,
+    codeHL: CssIsAwesomeCodeHL,
   },
 ];
 export const demosByName = new Map<DemoName, Demo>(allDemos.map((demo) => [demo.name, demo]));

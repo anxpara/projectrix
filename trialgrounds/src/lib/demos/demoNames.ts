@@ -4,6 +4,7 @@ export const DemoName = {
   Match: 'match',
   DivGolf: 'divGolf',
   FlipCoexist: 'flipCoexist',
+  CssIsAwesome: 'cssIsAwesome',
 } as const;
 export type DemoName = (typeof DemoName)[keyof typeof DemoName];
 export const demoNames: string[] = Object.values(DemoName);
