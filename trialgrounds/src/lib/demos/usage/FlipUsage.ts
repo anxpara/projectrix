@@ -1,7 +1,6 @@
 import { getProjection, measureSubject, setInlineStyles, clearInlineStyles } from 'projectrix';
 import { animate } from 'motion';
 
-
 function flip(target: HTMLElement, nextParent: HTMLElement): void {
   const subject = measureSubject(target);
 

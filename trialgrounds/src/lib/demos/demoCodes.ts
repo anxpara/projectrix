@@ -8,18 +8,32 @@ export type DemoCodes = {
 };
 export type CodesByDemoName = Map<DemoName, DemoCodes>;
 
-export function getSvelteFileNameForDemo(demoName: string): string {
+export function getUsageFileNameForDemo(demoName: string): string {
+  return `src/lib/demos/usage/${capDemoName(demoName)}Usage.ts`;
+}
+
+export function getCodeFileNameForDemo(demoName: string): string {
   return `src/components/demos/${capDemoName(demoName)}Demo.svelte`;
 }
 
-export function getSvelteHighlightsFileNameForDemo(demoName: string): string {
-  return `static/highlights/demos/${capDemoName(demoName)}Demo.svelte.html`;
+export function getUsageLocation(): string {
+  return './src/lib/demos/usage';
 }
 
-export function getUsageFileNameForDemo(demoName: string): string {
-  return `static/highlights/demos/usage/${capDemoName(demoName)}Usage.ts`;
+export function getCodeLocation(): string {
+  return './src/components/demos';
 }
 
-export function getUsageHighlightsFileNameForDemo(demoName: string): string {
-  return `static/highlights/demos/${capDemoName(demoName)}Usage.ts.html`;
+export function getCodesByDemoNameFilename(): string {
+  return 'src/lib/demos/codesByDemoName.ts';
+}
+
+export type DemoCodeMapEntries = [string, DemoCodes][];
+
+export function computeCodesByDemoNameFile(demoCodeEntries: DemoCodeMapEntries): string {
+  const demoCodesString = JSON.stringify(demoCodeEntries);
+
+  return `import type { CodesByDemoName } from './demoCodes';
+
+export const codesByDemoName: CodesByDemoName = new Map(${demoCodesString});`;
 }

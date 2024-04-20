@@ -18,9 +18,6 @@
   });
   setContext('pageUrl', pageUrl);
 
-  const codesByDemoName = readable(data.codesByDemoName);
-  setContext('codesByDemoName', codesByDemoName);
-
   if (browser) {
     window.addEventListener('popstate', handlePopstate);
     options.subscribe(handleOptionsChanged);
