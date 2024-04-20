@@ -1,0 +1,25 @@
+<pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#C678DD">import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">getProjection</span><span style="color:#ABB2BF">, </span><span style="color:#C678DD">type</span><span style="color:#E06C75"> PartialProjection</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'projectrix'</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#C678DD">import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">animate</span><span style="color:#ABB2BF">, </span><span style="color:#C678DD">type</span><span style="color:#E06C75"> AnimationControls</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'motion'</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#C678DD">let</span><span style="color:#E06C75"> currentAnim</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">AnimationControls</span><span style="color:#ABB2BF"> | </span><span style="color:#E5C07B">undefined</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#C678DD">function</span><span style="color:#61AFEF"> animateDirect</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">subject</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75;font-style:italic">target</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">  // stop current animation; motion one will update target's inline</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">  // styles to mid-animation values</span></span>
+<span class="line"><span style="color:#C678DD">  if</span><span style="color:#ABB2BF"> (</span><span style="color:#E5C07B">currentAnim</span><span style="color:#ABB2BF">?.</span><span style="color:#E06C75">currentTime</span><span style="color:#56B6C2"> &#x26;&#x26;</span><span style="color:#E5C07B"> currentAnim</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTime</span><span style="color:#56B6C2"> &#x3C;</span><span style="color:#D19A66"> 1</span><span style="color:#ABB2BF">) {</span></span>
+<span class="line"><span style="color:#E5C07B">    currentAnim</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">stop</span><span style="color:#ABB2BF">();</span></span>
+<span class="line"><span style="color:#ABB2BF">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#C678DD">  const</span><span style="color:#E5C07B"> toSubject</span><span style="color:#56B6C2"> =</span><span style="color:#61AFEF"> getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">subject</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">target</span><span style="color:#ABB2BF">).</span><span style="color:#E06C75">toSubject</span><span style="color:#C678DD"> as</span><span style="color:#E5C07B"> PartialProjection</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#C678DD">  delete</span><span style="color:#E5C07B"> toSubject</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">borderStyle</span><span style="color:#ABB2BF">; </span><span style="color:#7F848E;font-style:italic">// preserve target border style</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E06C75">  currentAnim</span><span style="color:#56B6C2"> =</span><span style="color:#61AFEF"> animate</span><span style="color:#ABB2BF">(</span></span>
+<span class="line"><span style="color:#E06C75">    target</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#ABB2BF">    { ...</span><span style="color:#E06C75">toSubject</span><span style="color:#ABB2BF"> },</span></span>
+<span class="line"><span style="color:#ABB2BF">    {</span></span>
+<span class="line"><span style="color:#E06C75">      duration</span><span style="color:#ABB2BF">: </span><span style="color:#D19A66">0.4</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#E06C75">      easing</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'ease-out'</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#ABB2BF">    },</span></span>
+<span class="line"><span style="color:#ABB2BF">  );</span></span>
+<span class="line"><span style="color:#ABB2BF">}</span></span>
+<span class="line"></span></code></pre>

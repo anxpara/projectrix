@@ -1,14 +1,12 @@
 <script lang="ts">
   import '../app.scss';
   import { page } from '$app/stores';
-  import { derived, writable } from 'svelte/store';
+  import { derived, readable, writable } from 'svelte/store';
   import { getUrlForOptions, type Options } from '$lib/options';
-  import { onMount, setContext } from 'svelte';
+  import { setContext } from 'svelte';
   import { goto } from '$app/navigation';
   import { browser } from '$app/environment';
   import MainMenu from '../components/menus/MainMenu.svelte';
-  import type { Highlighter } from 'shiki/bundle/web';
-  import { getShikiHighlighter, logUpToDateHighlightsToConsole } from '$lib/highlightCode';
 
   export let data;
 
@@ -20,17 +18,13 @@
   });
   setContext('pageUrl', pageUrl);
 
-  const highlighter = writable<Highlighter | undefined>(undefined);
-  setContext('highlighter', highlighter);
+  const codesByDemoName = readable(data.codesByDemoName);
+  setContext('codesByDemoName', codesByDemoName);
 
   if (browser) {
     window.addEventListener('popstate', handlePopstate);
     options.subscribe(handleOptionsChanged);
   }
-
-  onMount(async () => {
-    $highlighter = await getShikiHighlighter();
-  });
 
   function handlePopstate(): void {
     setUrlToOptions($options);
@@ -50,11 +44,6 @@
       goto(nextUrl, { replaceState: true, keepFocus: true });
     }, 1);
   }
-
-  // highlighter.subscribe((hl) => {
-  //   if (!hl) return;
-  //   logUpToDateHighlightsToConsole(hl);
-  // });
 </script>
 
 {#if !$options.hideUI}

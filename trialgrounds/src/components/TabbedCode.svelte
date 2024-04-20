@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Demo } from '$lib/demos/demos';
-  import { tick } from 'svelte';
+  import { getContext, tick } from 'svelte';
   import { fade } from 'svelte/transition';
   import { createTabs, melt } from '@melt-ui/svelte';
   import {
@@ -10,6 +10,8 @@
     type PartialProjectionResults,
   } from 'projectrix';
   import anime from 'animejs';
+  import type { Readable } from 'svelte/store';
+  import type { CodesByDemoName } from '$lib/demos/demoCodes';
 
   export let demo: Demo;
   const usageFigureTitle = `${demo.name} demo usage`;
@@ -22,9 +24,11 @@
 
   let figuresByTabId: Record<string, HTMLElement | undefined> = {};
   let figureBg: HTMLElement;
-  const highlightsByTabId: Record<string, string> = {
-    'tab-usage': demo.usageHL,
-    'tab-code': demo.codeHL,
+
+  const codesByDemoName = getContext<Readable<CodesByDemoName>>('codesByDemoName');
+  $: highlightsByTabId = <Record<string, string>>{
+    'tab-usage': $codesByDemoName.get(demo.name)!.usageHL,
+    'tab-code': $codesByDemoName.get(demo.name)!.codeHL,
   };
 
   const {

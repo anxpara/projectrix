@@ -1,148 +1,6 @@
-export const MatchUsage = `import { getProjection, setInlineStyles, type PartialProjectionResults } from 'projectrix';
-
-function match(subject: HTMLElement, target: HTMLElement): void {
-  const { toSubject } = getProjection(subject, target) as PartialProjectionResults;
-  delete toSubject.borderStyle; // preserve target border style
-  
-  setInlineStyles(target, toSubject);
-}`;
-
-export const MatchCode = `<script lang="ts">
-  import type { Options } from '$lib/options';
-  import { getProjection, setInlineStyles, type PartialProjectionResults } from 'projectrix';
-  import { onMount, tick } from 'svelte';
-  import type { Writable } from 'svelte/store';
-  import type DemoStartSlot from '../DemoStartSlot.svelte';
-
-  // start slot and options are part of demos infrastructure
-  export let startSlot: DemoStartSlot;
-  export let options: Writable<Options>;
-  $: log = $options.log;
-
-  let target: HTMLElement;
-
-  onMount(async () => {
-    await tick();
-    startSlot.show();
-  });
-
-  function match(subject: HTMLElement, target: HTMLElement): void {
-    if (startSlot.isShowing()) {
-      startSlot.hide();
-      target.style.opacity = '1';
-    }
-
-    const { toSubject } = getProjection(subject, target, { log }) as PartialProjectionResults;
-    delete toSubject.borderStyle; // preserve target border style
-
-    setInlineStyles(target, toSubject);
-  }
-
-  function subjectClickHandler(subject: HTMLElement): void {
-    match(subject, target);
-  }
-</script>
-
-<div class="size-container">
-  <div class="subject-container">
-    <button class="demo-subject" on:click={(e) => subjectClickHandler(e.currentTarget)} />
-    <button class="demo-subject rotated" on:click={(e) => subjectClickHandler(e.currentTarget)} />
-    <button class="demo-subject parent" on:click={(e) => subjectClickHandler(e.currentTarget)}>
-      <button
-        class="demo-subject child"
-        on:click|stopPropagation={(e) => subjectClickHandler(e.currentTarget)}
-      />
-    </button>
-  </div>
-</div>
-
-<div bind:this={target} class="demo-target" />
-
-<style lang="scss">
-  button {
-    all: unset;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .demo-subject:focus-visible,
-  .parent:focus-visible {
-    outline: solid 2px white;
-    outline-offset: 4px;
-  }
-
-  .demo-target {
-    // any positioning works with Projectrix
-    position: absolute;
-
-    // last i checked, safari webkit can't handle non-integer borders
-    // on transformed elements, so i always recommend pixels for borders
-    border: solid 3px limegreen;
-
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  .size-container {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 4 / 1;
-    margin-top: 1.5em;
-
-    container-type: size;
-  }
-
-  .subject-container {
-    width: 100%;
-    height: 100%;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    gap: 10cqw;
-  }
-
-  .demo-subject {
-    width: 14.25cqw;
-    height: 14.25cqw;
-    border: dashed 3px yellow;
-
-    cursor: pointer;
-  }
-
-  .rotated {
-    transform: rotate(45deg);
-  }
-
-  .parent {
-    width: 21cqw;
-    height: 21cqw;
-    border-color: darkmagenta;
-
-    transform: skew(-15deg);
-
-    .child {
-      position: absolute;
-      top: 0px;
-      left: 0px;
-
-      width: 10.75cqw;
-      height: 10.75cqw;
-    }
-  }
-</style>`;
-
-export const MatchUsageHL = `<pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#C678DD">import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">getProjection</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">setInlineStyles</span><span style="color:#ABB2BF">, </span><span style="color:#C678DD">type</span><span style="color:#E06C75"> PartialProjectionResults</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'projectrix'</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#C678DD">function</span><span style="color:#61AFEF"> match</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">subject</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75;font-style:italic">target</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#C678DD">  const</span><span style="color:#ABB2BF"> { </span><span style="color:#E5C07B">toSubject</span><span style="color:#ABB2BF"> } </span><span style="color:#56B6C2">=</span><span style="color:#61AFEF"> getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">subject</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">target</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">as</span><span style="color:#E5C07B"> PartialProjectionResults</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#C678DD">  delete</span><span style="color:#E5C07B"> toSubject</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">borderStyle</span><span style="color:#ABB2BF">; </span><span style="color:#7F848E;font-style:italic">// preserve target border style</span></span>
-<span class="line"><span style="color:#ABB2BF">  </span></span>
-<span class="line"><span style="color:#61AFEF">  setInlineStyles</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">target</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">toSubject</span><span style="color:#ABB2BF">);</span></span>
-<span class="line"><span style="color:#ABB2BF">}</span></span></code></pre>`;
-
-export const MatchCodeHL = `<pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">script</span><span style="color:#D19A66"> lang</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"ts"</span><span style="color:#ABB2BF">></span></span>
+<pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">script</span><span style="color:#D19A66"> lang</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"ts"</span><span style="color:#ABB2BF">></span></span>
 <span class="line"><span style="color:#C678DD">  import</span><span style="color:#C678DD"> type</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">Options</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> '$lib/options'</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#C678DD">  import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">animate</span><span style="color:#ABB2BF">, </span><span style="color:#C678DD">type</span><span style="color:#E06C75"> AnimationControls</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'motion'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">getProjection</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">setInlineStyles</span><span style="color:#ABB2BF">, </span><span style="color:#C678DD">type</span><span style="color:#E06C75"> PartialProjectionResults</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'projectrix'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">onMount</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">tick</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'svelte'</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">  import</span><span style="color:#C678DD"> type</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">Writable</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'svelte/store'</span><span style="color:#ABB2BF">;</span></span>
@@ -155,30 +13,53 @@ export const MatchCodeHL = `<pre class="shiki one-dark-pro" style="background-co
 <span class="line"></span>
 <span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> target</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
+<span class="line"><span style="color:#C678DD">  let</span><span style="color:#E06C75"> currentAnim</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">AnimationControls</span><span style="color:#ABB2BF"> | </span><span style="color:#E5C07B">undefined</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"></span>
 <span class="line"><span style="color:#61AFEF">  onMount</span><span style="color:#ABB2BF">(</span><span style="color:#C678DD">async</span><span style="color:#ABB2BF"> () </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
 <span class="line"><span style="color:#C678DD">    await</span><span style="color:#61AFEF"> tick</span><span style="color:#ABB2BF">();</span></span>
 <span class="line"><span style="color:#E5C07B">    startSlot</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">show</span><span style="color:#ABB2BF">();</span></span>
 <span class="line"><span style="color:#ABB2BF">  });</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> match</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">subject</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75;font-style:italic">target</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> swapSlotForTarget</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">target</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#C678DD">    const</span><span style="color:#ABB2BF"> { </span><span style="color:#E5C07B">toSubject</span><span style="color:#ABB2BF"> } </span><span style="color:#56B6C2">=</span><span style="color:#61AFEF"> getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">startSlot</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">getSlotSubject</span><span style="color:#ABB2BF">(), </span><span style="color:#E06C75">target</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#61AFEF">    setInlineStyles</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">target</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">toSubject</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#E5C07B">    target</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">opacity</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> '1'</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E5C07B">    startSlot</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">hide</span><span style="color:#ABB2BF">();</span></span>
+<span class="line"><span style="color:#ABB2BF">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> animateDirect</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">subject</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75;font-style:italic">target</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
 <span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> (</span><span style="color:#E5C07B">startSlot</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">isShowing</span><span style="color:#ABB2BF">()) {</span></span>
-<span class="line"><span style="color:#E5C07B">      startSlot</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">hide</span><span style="color:#ABB2BF">();</span></span>
-<span class="line"><span style="color:#E5C07B">      target</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">style</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">opacity</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> '1'</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#61AFEF">      swapSlotForTarget</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">target</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">    // stop current animation; motion one will update target's inline styles</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">    // to mid-animation values</span></span>
+<span class="line"><span style="color:#C678DD">    if</span><span style="color:#ABB2BF"> (</span><span style="color:#E5C07B">currentAnim</span><span style="color:#ABB2BF">?.</span><span style="color:#E06C75">currentTime</span><span style="color:#56B6C2"> &#x26;&#x26;</span><span style="color:#E5C07B"> currentAnim</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTime</span><span style="color:#56B6C2"> &#x3C;</span><span style="color:#D19A66"> 1</span><span style="color:#ABB2BF">) {</span></span>
+<span class="line"><span style="color:#E5C07B">      currentAnim</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">stop</span><span style="color:#ABB2BF">();</span></span>
 <span class="line"><span style="color:#ABB2BF">    }</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#C678DD">    const</span><span style="color:#ABB2BF"> { </span><span style="color:#E5C07B">toSubject</span><span style="color:#ABB2BF"> } </span><span style="color:#56B6C2">=</span><span style="color:#61AFEF"> getProjection</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">subject</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">target</span><span style="color:#ABB2BF">, { </span><span style="color:#E06C75">log</span><span style="color:#ABB2BF"> }) </span><span style="color:#C678DD">as</span><span style="color:#E5C07B"> PartialProjectionResults</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#C678DD">    delete</span><span style="color:#E5C07B"> toSubject</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">borderStyle</span><span style="color:#ABB2BF">; </span><span style="color:#7F848E;font-style:italic">// preserve target border style</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#61AFEF">    setInlineStyles</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">target</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">toSubject</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#E06C75">    currentAnim</span><span style="color:#56B6C2"> =</span><span style="color:#61AFEF"> animate</span><span style="color:#ABB2BF">(</span></span>
+<span class="line"><span style="color:#E06C75">      target</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#ABB2BF">      { ...</span><span style="color:#E06C75">toSubject</span><span style="color:#ABB2BF"> },</span></span>
+<span class="line"><span style="color:#ABB2BF">      {</span></span>
+<span class="line"><span style="color:#E06C75">        duration</span><span style="color:#ABB2BF">: </span><span style="color:#D19A66">0.4</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#E06C75">        easing</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'ease-out'</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#ABB2BF">      },</span></span>
+<span class="line"><span style="color:#ABB2BF">    );</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#C678DD">  function</span><span style="color:#61AFEF"> subjectClickHandler</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">subject</span><span style="color:#ABB2BF">: </span><span style="color:#E5C07B">HTMLElement</span><span style="color:#ABB2BF">): </span><span style="color:#E5C07B">void</span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#61AFEF">    match</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">subject</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">target</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#61AFEF">    animateDirect</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">subject</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">target</span><span style="color:#ABB2BF">);</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"><span style="color:#ABB2BF">&#x3C;/</span><span style="color:#E06C75">script</span><span style="color:#ABB2BF">></span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"size-container"</span><span style="color:#ABB2BF">></span></span>
-<span class="line"><span style="color:#ABB2BF">  &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"subject-container"</span><span style="color:#ABB2BF">></span></span>
+<span class="line"><span style="color:#ABB2BF">  &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"subject-flex"</span><span style="color:#ABB2BF">></span></span>
 <span class="line"><span style="color:#ABB2BF">    &#x3C;</span><span style="color:#E06C75">button</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"demo-subject"</span><span style="color:#C678DD"> on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">click</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#61AFEF"> subjectClickHandler</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">)</span><span style="color:#C678DD">}</span><span style="color:#ABB2BF"> /></span></span>
 <span class="line"><span style="color:#ABB2BF">    &#x3C;</span><span style="color:#E06C75">button</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"demo-subject rotated"</span><span style="color:#C678DD"> on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">click</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#61AFEF"> subjectClickHandler</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">)</span><span style="color:#C678DD">}</span><span style="color:#ABB2BF"> /></span></span>
 <span class="line"><span style="color:#ABB2BF">    &#x3C;</span><span style="color:#E06C75">button</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"demo-subject parent"</span><span style="color:#C678DD"> on</span><span style="color:#ABB2BF">:</span><span style="color:#E5C07B">click</span><span style="color:#ABB2BF">=</span><span style="color:#C678DD">{</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">e</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">=></span><span style="color:#61AFEF"> subjectClickHandler</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">e</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">currentTarget</span><span style="color:#ABB2BF">)</span><span style="color:#C678DD">}</span><span style="color:#ABB2BF">></span></span>
@@ -225,7 +106,7 @@ export const MatchCodeHL = `<pre class="shiki one-dark-pro" style="background-co
 <span class="line"><span style="color:#ABB2BF">    container-type: size;</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#D19A66">  .subject-container</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#D19A66">  .subject-flex</span><span style="color:#ABB2BF"> {</span></span>
 <span class="line"><span style="color:#ABB2BF">    width: </span><span style="color:#D19A66">100</span><span style="color:#E06C75">%</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#ABB2BF">    height: </span><span style="color:#D19A66">100</span><span style="color:#E06C75">%</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"></span>
@@ -264,4 +145,5 @@ export const MatchCodeHL = `<pre class="shiki one-dark-pro" style="background-co
 <span class="line"><span style="color:#ABB2BF">      height: </span><span style="color:#D19A66">10.75</span><span style="color:#E06C75">cqw</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#ABB2BF">    }</span></span>
 <span class="line"><span style="color:#ABB2BF">  }</span></span>
-<span class="line"><span style="color:#ABB2BF">&#x3C;/</span><span style="color:#E06C75">style</span><span style="color:#ABB2BF">></span></span></code></pre>`;
+<span class="line"><span style="color:#ABB2BF">&#x3C;/</span><span style="color:#E06C75">style</span><span style="color:#ABB2BF">></span></span>
+<span class="line"></span></code></pre>

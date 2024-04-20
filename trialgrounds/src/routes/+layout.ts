@@ -2,7 +2,7 @@ import { allOptionNames, forPlaywrightOptionNames } from '$lib/optionNames.js';
 import type { Options } from '$lib/options';
 
 /** @type {import('./$types').LayoutLoad} */
-export async function load({ params, url }) {
+export async function load({ params, url, data }) {
   const trialNames = url.searchParams.get('trialNames')?.split(',') ?? [];
   const forPlaywright = url.searchParams.has('forPlaywright');
 
@@ -21,5 +21,6 @@ export async function load({ params, url }) {
     trialNames,
     forPlaywright,
     options,
+    ...data,
   };
 }
