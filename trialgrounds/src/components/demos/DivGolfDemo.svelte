@@ -1,8 +1,7 @@
 <script lang="ts">
   import { onDestroy, onMount, tick } from 'svelte';
   import { mat4, quat, vec3 } from 'gl-matrix';
-  import { getActualClientRect } from 'actual-client-rect';
-  import { getProjection, setInlineStyles } from 'projectrix';
+  import { getProjection, measureSubject, setInlineStyles, type Measurement } from 'projectrix';
   import anime from 'animejs';
   import type { Writable } from 'svelte/store';
   import type { Options } from '$lib/options';
@@ -189,11 +188,13 @@
   }
 
   function attemptAllgoals(): void {
-    goals.forEach((goal) => attemptGoalHit(goal, false));
+    const subject = measureSubject(currentTarget!);
+    goals.forEach((goal) => attemptGoalHit(goal, subject, false));
   }
 
-  function attemptGoalHit(goal: HTMLElement, goalClicked = true): void {
-    const hit = checkIfTolerancesHit(goal);
+  function attemptGoalHit(goal: HTMLElement, subject?: Measurement, goalClicked = true): void {
+    subject = subject ?? measureSubject(currentTarget!);
+    const hit = checkIfTolerancesHit(goal, subject);
 
     if (hit) {
       currentModifier = null;
@@ -207,8 +208,8 @@
   const distanceTolerancePx = 10;
   const rotationToleranceDeg = 8;
 
-  function checkIfTolerancesHit(goal: HTMLElement): boolean {
-    const { toSubject, toTargetOrigin } = getProjection(goal, currentTarget!, {
+  function checkIfTolerancesHit(goal: HTMLElement, subject: Measurement): boolean {
+    const { toSubject, toTargetOrigin } = getProjection(subject, goal, {
       transformType: 'transformMat4',
     });
 
