@@ -189,7 +189,12 @@
 
   function attemptAllgoals(): void {
     const subject = measureSubject(currentTarget!);
-    goals.forEach((goal) => attemptGoalHit(goal, subject, false));
+
+    // schedule the bulk of the goal checking work till after
+    // the next animation frame to minimize hiccups
+    requestAnimationFrame(() => {
+      goals.forEach((goal) => attemptGoalHit(goal, subject, false));
+    });
   }
 
   function attemptGoalHit(goal: HTMLElement, subject?: Measurement, goalClicked = true): void {
