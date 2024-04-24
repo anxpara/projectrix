@@ -617,6 +617,8 @@
     width: calc(620 / $pxem * 1em);
     height: calc(270 / $pxem * 1em);
     transform-origin: top left;
+
+    will-change: transform;
   }
 
   @container (max-width: 613px) {
@@ -661,6 +663,8 @@
     width: calc(150 / $pxem * 1em);
     height: calc(150 / $pxem * 1em);
     border: dashed 3px darkmagenta;
+
+    will-change: transform;
   }
   .modifier:focus-visible {
     outline: solid 2px white;
@@ -723,6 +727,10 @@
     top: calc(11 / $pxem * 1em);
     left: calc(551 / $pxem * 1em);
     transform: rotate(9deg);
+  }
+
+  .pulse-container {
+    will-change: transform;
   }
 
   .pulse-template {
