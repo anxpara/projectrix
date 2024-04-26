@@ -439,8 +439,8 @@ function getProjectionToTargetOrigin(
 
 function getSharedTransformOrigin(acr: ActualClientRect): string {
   const originVec3 = convertComputedTransformOriginToVec3(acr.transformOrigin);
-  const originXPercent = (originVec3[0] / acr.basis.width) * 100;
-  const originYPercent = (originVec3[1] / acr.basis.height) * 100;
+  const originXPercent = acr.basis.width ? (originVec3[0] / acr.basis.width) * 100 : 0;
+  const originYPercent = acr.basis.height ? (originVec3[1] / acr.basis.height) * 100 : 0;
   return `${originXPercent}% ${originYPercent}% ${originVec3[2]}px`;
 }
 
