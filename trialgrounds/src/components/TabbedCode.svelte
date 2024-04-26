@@ -1,144 +1,127 @@
 <script lang="ts">
   import type { Demo } from '$lib/demos/demos';
-  import { tick } from 'svelte';
-  import { fade } from 'svelte/transition';
   import { createTabs, melt } from '@melt-ui/svelte';
-  import {
-    getProjection,
-    setInlineStyles,
-    clearInlineStyles,
-    type PartialProjectionResults,
-  } from 'projectrix';
-  import anime from 'animejs';
+  import { getProjection, setInlineStyles, clearInlineStyles } from 'projectrix';
+  import { animate } from 'motion';
   import { codesByDemoName } from '$lib/demos/codesByDemoName';
 
   export let demo: Demo;
-  const usageFigureTitle = `${demo.name} demo usage`;
-  const codeTitle = `${cap(demo.name)}Demo.svelte`;
-  const codeFigureTitle = `${demo.name} demo svelte component file`;
 
-  let tabsByTabId: Record<string, HTMLElement> = {};
-  let tabBgsByTabId: Record<string, HTMLElement> = {};
-  let currentTabBg: HTMLElement | undefined = undefined;
-
-  let figuresByTabId: Record<string, HTMLElement | undefined> = {};
-  let figureBg: HTMLElement;
-
-  const highlightsByTabId: Record<string, string> = {
-    'tab-usage': codesByDemoName.get(demo.name)!.usageHL,
-    'tab-code': codesByDemoName.get(demo.name)!.codeHL,
+  type Tab = {
+    id: string;
+    title: string;
+    figureTitle: string;
+    code: string;
+    highlightedCode: string;
+    tabBg?: HTMLElement;
+    figure?: HTMLElement;
   };
+
+  const tabs: Tab[] = [
+    {
+      id: 'tab-usage',
+      title: 'Usage',
+      figureTitle: `${demo.name} demo usage`,
+      code: codesByDemoName.get(demo.name)!.usage,
+      highlightedCode: codesByDemoName.get(demo.name)!.usageHL,
+    },
+    {
+      id: 'tab-code',
+      title: `${cap(demo.name)}Demo.svelte`,
+      figureTitle: `${demo.name} demo svelte component file`,
+      code: codesByDemoName.get(demo.name)!.code,
+      highlightedCode: codesByDemoName.get(demo.name)!.codeHL,
+    },
+  ];
+
+  const tabsById: Record<string, Tab> = {};
+  tabs.forEach((tab) => {
+    tabsById[tab.id] = tab;
+  });
+
+  let currentTab: Tab | undefined = undefined;
+  let contentContainer: HTMLElement;
 
   const {
     elements: { root, list, content, trigger },
     states: { value },
   } = createTabs({
-    defaultValue: 'tab-usage',
+    defaultValue: tabs[0].id,
   });
 
-  const tabs = [
-    { id: 'tab-usage', title: 'Usage' },
-    { id: 'tab-code', title: codeTitle },
-  ];
-
-  value.subscribe(async (value: string) => {
-    await tick();
-
-    flipTabBg(value);
-    animateFigureBg(value);
-    currentTabBg = tabBgsByTabId[value];
+  value.subscribe(async (nextTabId: string) => {
+    requestAnimationFrame(() => {
+      flipTab(nextTabId);
+      animateContentHeight(nextTabId);
+      currentTab = tabsById[nextTabId];
+    });
   });
 
-  function flipTabBg(toTabId: string, skipAnimation = false): void {
-    const tabBg = tabBgsByTabId[toTabId];
-    if (!tabBg || !currentTabBg || skipAnimation) return;
+  function flipTab(toTabId: string, skipAnimation = false): void {
+    const tabBg = tabsById[toTabId].tabBg;
+    if (!tabBg || !currentTab?.tabBg || skipAnimation) return;
 
-    const { toSubject, toTargetOrigin } = getProjection(currentTabBg, tabBg, {
-      transformType: 'matrix3d',
-    }) as PartialProjectionResults;
-    delete toSubject.borderWidth; // avoid anime border shorthand bug
-    delete toTargetOrigin.borderWidth;
+    const { toSubject, toTargetOrigin } = getProjection(currentTab.tabBg, tabBg);
 
     setInlineStyles(tabBg, toSubject);
-    anime({
-      targets: tabBg,
-      duration: 200,
-      easing: 'easeOutQuad',
-
-      ...toTargetOrigin,
-
-      complete: () => clearInlineStyles(tabBg, toTargetOrigin),
-    });
+    animate(
+      tabBg,
+      {
+        ...toTargetOrigin,
+      },
+      {
+        duration: 0.2,
+        easing: 'ease-out',
+      },
+    ).finished.then(() => clearInlineStyles(tabBg));
   }
 
-  function animateFigureBg(toTabId: string, skipAnimation = false): void {
-    const figure = figuresByTabId[toTabId];
+  function animateContentHeight(toTabId: string, skipAnimation = false): void {
+    const figure = tabsById[toTabId].figure;
     if (!figure) return;
 
-    const { toSubject } = getProjection(figure, figureBg, {
-      transformType: 'matrix3d',
-      useBorder: 'target', // keep figureBg's stylized left border
-    }) as PartialProjectionResults;
-    delete toSubject.width; // keep figureBg's 100% width
+    const height = getComputedStyle(figure).height;
 
-    if (skipAnimation) {
-      setInlineStyles(figureBg, toSubject);
-    } else {
-      anime({
-        targets: figureBg,
-        duration: 300,
-        easing: 'easeInOutQuad',
-
-        ...toSubject,
-      });
-    }
+    animate(
+      contentContainer,
+      {
+        height,
+      },
+      {
+        duration: skipAnimation ? 0 : 0.3,
+        easing: 'ease-in-out',
+      },
+    );
   }
 
   function cap(word: string): string {
-    const newWord = word[0].toUpperCase() + word.substring(1);
-    return newWord;
+    return word[0].toUpperCase() + word.substring(1);
   }
 </script>
 
 <div use:melt={$root} class="tabbed-code-root">
   <div use:melt={$list} class="tab-list" aria-label="view usage or full code">
     {#each tabs as tab}
-      <button
-        bind:this={tabsByTabId[tab.id]}
-        use:melt={$trigger(tab.id)}
-        class="tab"
-        class:selected={$value === tab.id}
-      >
+      <button use:melt={$trigger(tab.id)} class="tab" class:selected={$value === tab.id}>
         <div class="tab-decor tab-border" class:selected={$value === tab.id}></div>
-        <div bind:this={tabBgsByTabId[tab.id]} class="tab-decor tab-bg"></div>
+        <div bind:this={tab.tabBg} class="tab-decor tab-bg"></div>
         {tab.title}
       </button>
     {/each}
   </div>
-  <div bind:this={figureBg} class="figure-bg"></div>
-  {#if $value === 'tab-usage'}
-    <figure
-      bind:this={figuresByTabId['tab-usage']}
-      use:melt={$content('tab-usage')}
-      transition:fade={{ duration: 100 }}
-      title={usageFigureTitle}
-      class="tab-figure"
-    >
-      {@html highlightsByTabId['tab-usage']}
-    </figure>
-  {/if}
-  {#if $value === 'tab-code'}
-    <figure
-      bind:this={figuresByTabId['tab-code']}
-      use:melt={$content('tab-code')}
-      transition:fade={{ duration: 100 }}
-      title={codeFigureTitle}
-      class="tab-figure"
-    >
-      {@html highlightsByTabId['tab-code']}
-    </figure>
-  {/if}
-  <br />
+  <div bind:this={contentContainer} class="content-container">
+    {#each tabs as tab}
+      <figure
+        bind:this={tab.figure}
+        use:melt={$content(tab.id)}
+        title={tab.figureTitle}
+        class="tab-figure"
+        class:showTab={$value === tab.id}
+      >
+        {@html tab.highlightedCode}
+      </figure>
+    {/each}
+  </div>
 </div>
 
 <style lang="scss">
@@ -147,6 +130,7 @@
   .tabbed-code-root {
     position: relative;
     width: min(700px, 100%);
+    will-change: transform;
   }
 
   .tab-list {
@@ -227,47 +211,39 @@
     }
   }
 
-  .figure-bg {
-    position: absolute;
-    margin-bottom: 2em;
-    z-index: -1;
+  .content-container {
+    position: relative;
 
-    height: 0;
     width: 100%;
     border-left: solid 1px coral;
 
     background: hsla(16, 100%, 58%, 0.06);
-  }
 
-  figure {
-    position: absolute;
-    margin: 0;
-    margin-bottom: 2em;
+    overflow: hidden;
 
-    width: 100%;
+    figure {
+      display: block !important;
 
-    pre {
-      background: transparent;
+      position: absolute;
+      top: 0;
+
+      width: 100%;
+      margin: 0;
+
+      pointer-events: none;
+      opacity: 0;
+      transition: 0.1s linear opacity;
+
+      :global(pre.shiki) {
+        margin: 0;
+        background-color: transparent !important;
+      }
     }
-  }
+    figure.showTab {
+      position: relative;
 
-  :global(pre.shiki) {
-    margin: 0;
-    background-color: transparent !important;
-  }
-
-  .summary {
-    position: absolute;
-    bottom: 0;
-
-    width: 100%;
-
-    display: grid;
-    justify-content: center;
-
-    p {
-      font-size: 1.8em;
-      padding-inline: 1em;
+      pointer-events: all;
+      opacity: 1;
     }
   }
 </style>
