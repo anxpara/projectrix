@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Trial, TrialControls } from '$lib/trials';
+  import type { Trial, TrialControls } from '$lib/trials/trials';
 
   export let trial: Trial;
   export let hideSubject: boolean | undefined = undefined;

@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { trialNames } from '../src/lib/trialNames';
+import { trialNames } from '../src/lib/trials/trialNames';
 
 test.describe.configure({ mode: 'parallel' });
 

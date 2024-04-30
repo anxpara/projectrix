@@ -1,5 +1,5 @@
 import anime from 'animejs';
-import type { Trial, TrialAnimationOptions } from './trials';
+import type { Trial, TrialAnimationOptions } from '../trials';
 import {
   clearInlineStyles,
   getProjection,
@@ -10,7 +10,7 @@ import {
 } from 'projectrix';
 import { animate } from 'motion';
 import { mat4 } from 'gl-matrix';
-import type { Options } from './options';
+import type { Options } from '../options';
 
 // needs refactoring
 export function animateTrial(

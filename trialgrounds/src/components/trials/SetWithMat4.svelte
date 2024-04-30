@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Options } from '$lib/options';
-  import type { Trial, TrialControls } from '$lib/trials';
+  import type { Trial, TrialControls } from '$lib/trials/trials';
   import type { ProjectionOptions } from 'projectrix';
 
   export let trial: Trial;

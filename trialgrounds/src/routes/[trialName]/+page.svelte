@@ -1,13 +1,13 @@
 <script lang="ts">
   import { page } from '$app/stores';
   import { getContext, onDestroy, onMount, tick } from 'svelte';
-  import { trialsByName } from '../../lib/trials';
-  import type { TrialName } from '../../lib/trialNames';
+  import { trialsByName } from '../../lib/trials/trials';
+  import type { TrialName } from '../../lib/trials/trialNames';
   import OriginMarker from '../../components/OriginMarker.svelte';
-  import { animateTrial } from '$lib/animateTrial';
+  import { animateTrial } from '$lib/trials/animateTrial';
   import anime from 'animejs';
   import type { Writable } from 'svelte/store';
-  import { showDefaultSubject } from '$lib/showDefaultSubject';
+  import { showDefaultSubject } from '$lib/trials/showDefaultSubject';
   import type { Options } from '$lib/options';
 
   let options = getContext<Writable<Options>>('options');

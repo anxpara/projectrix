@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { allTrials, getTrials, type Trial } from '../lib/trials';
+  import { allTrials, getTrials, type Trial } from '../lib/trials/trials';
   import { getContext, onDestroy, onMount, tick } from 'svelte';
   import { page } from '$app/stores';
   import OriginMarker from '../components/OriginMarker.svelte';
-  import { animateTrial, animateTrialReturn } from '$lib/animateTrial';
+  import { animateTrial, animateTrialReturn } from '$lib/trials/animateTrial';
   import anime from 'animejs';
-  import { showDefaultSubject } from '$lib/showDefaultSubject';
+  import { showDefaultSubject } from '$lib/trials/showDefaultSubject';
   import type { Writable } from 'svelte/store';
   import type { Options } from '$lib/options';
 

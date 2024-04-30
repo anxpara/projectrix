@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { showDefaultSubject } from '$lib/showDefaultSubject';
+  import { showDefaultSubject } from '$lib/trials/showDefaultSubject';
   import { writable } from 'svelte/store';
   import { setContext } from 'svelte';
 

@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Options } from '$lib/options';
-  import type { Trial, TrialAnimationOptions, TrialControls } from '$lib/trials';
+  import type { Trial, TrialAnimationOptions, TrialControls } from '$lib/trials/trials';
   import {
     clearInlineStyles,
     getProjection,
