@@ -1,5 +1,5 @@
 import anime from 'animejs';
-import type { Trial, TrialAnimationOptions } from '../trials';
+import type { Trial, TrialAnimationOptions } from './trials';
 import {
   clearInlineStyles,
   getProjection,
