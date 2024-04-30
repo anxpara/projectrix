@@ -19,25 +19,24 @@ export function animateTrial(
   trialOptions: Options,
   animationOptions?: TrialAnimationOptions,
 ): void {
+  const trialControls = trial.trialComponent!.getTrialControls();
   trialOptions = {
     ...trialOptions,
-    ...trial.trialComponent?.getTrialControls().getTrialOptionOverrides?.call(null),
+    ...trialControls.getTrialOptionOverrides?.call(null),
   };
 
   const duration = animationOptions?.duration ?? 1000;
 
   // allow trial to override the animation
-  const playCustomAnimation = trial.trialComponent!.getTrialControls().playCustomAnimation;
+  const playCustomAnimation = trialControls.playCustomAnimation;
   if (playCustomAnimation) {
     playCustomAnimation(defaultSubject, trialOptions, animationOptions);
     return;
   }
 
-  const target = trial.trialComponent!.getTrialControls().getTargetElement();
-  const subjectEl =
-    trial.trialComponent!.getTrialControls().getSubjectElement?.call(null) ?? defaultSubject;
-  let options: ProjectionOptions =
-    trial.trialComponent!.getTrialControls().getProjectionOptions?.call(null) ?? {};
+  const target = trialControls.getTargetElement();
+  const subjectEl = trialControls.getSubjectElement?.call(null) ?? defaultSubject;
+  let options: ProjectionOptions = trialControls.getProjectionOptions?.call(null) ?? {};
   options = {
     ...options,
     transformType: options.transformType ?? 'transform',
@@ -54,7 +53,7 @@ export function animateTrial(
 
   // mark target origin
   if (!trialOptions.toTargetOrigin || !trialOptions.skipAnimation) {
-    trial.originMarker?.markOrigin(trial.trialComponent!.getTrialControls().getTargetElement());
+    trial.originMarker?.markOrigin(trialControls.getTargetElement());
   } else {
     trial.originMarker?.unmark();
   }
@@ -192,12 +191,13 @@ export function animateTrial(
 }
 
 export function animateTrialReturn(trial: Trial, trialOptions: Options, duration = 500): void {
+  const trialControls = trial.trialComponent!.getTrialControls();
   trialOptions = {
     ...trialOptions,
-    ...trial.trialComponent?.getTrialControls().getTrialOptionOverrides?.call(null),
+    ...trialControls.getTrialOptionOverrides?.call(null),
   };
 
-  const target = trial.trialComponent!.getTrialControls().getTargetElement();
+  const target = trialControls.getTargetElement();
   if (trialOptions.skipAnimation) {
     clearInlineStyles(target);
     trial.originMarker?.unmark();
@@ -205,8 +205,7 @@ export function animateTrialReturn(trial: Trial, trialOptions: Options, duration
   }
   if (trialOptions.toTargetOrigin || !trial.toTargetOrigin) return;
 
-  const options: ProjectionOptions =
-    trial.trialComponent!.getTrialControls().getProjectionOptions?.call(null) ?? {};
+  const options: ProjectionOptions = trialControls.getProjectionOptions?.call(null) ?? {};
   options.transformType = options.transformType ?? 'transform';
 
   if (options.transformType === 'transformMat4') {

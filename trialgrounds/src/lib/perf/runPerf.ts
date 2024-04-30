@@ -5,17 +5,18 @@ import { browser } from '$app/environment';
 
 export function runPerf(perf: Perf, options: Options): void {
   if (!browser) return;
+  const perfControls = perf.perfComponent!.getPerfControls();
 
   perf.durationMs.set(PerfInProgress);
 
-  const subject = perf.perfComponent!.getPerfControls().getSubjectElement();
-  const target = perf.perfComponent!.getPerfControls().getTargetElement();
+  const subject = perfControls.getSubjectElement();
+  const target = perfControls.getTargetElement();
 
   clearInlineStyles(target);
 
   requestAnimationFrame(() => {
     const startMs = Date.now();
-    const { toSubject, toTargetOrigin } = getProjection(subject, target, { log: options.log });
+    const { toSubject } = getProjection(subject, target, { log: options.log });
     perf.durationMs.set(Date.now() - startMs);
 
     setInlineStyles(target, toSubject);
