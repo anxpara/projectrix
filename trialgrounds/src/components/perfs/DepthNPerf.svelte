@@ -1,12 +1,8 @@
 <script lang="ts">
-  import type { Options } from '$lib/options';
-  import type { Perf, PerfControls } from '$lib/perf/perfs';
+  import type { PerfControls } from '$lib/perf/perfs';
   import { onMount } from 'svelte';
-  import type { Writable } from 'svelte/store';
 
-  export let perf: Perf;
   export let n: number;
-  export let options: Writable<Options>;
 
   let subjectContainerTemplate: HTMLElement;
   let targetContainerTemplate: HTMLElement;

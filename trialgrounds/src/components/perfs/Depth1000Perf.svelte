@@ -1,11 +1,6 @@
 <script lang="ts">
-  import type { Options } from '$lib/options';
-  import type { Writable } from 'svelte/store';
-  import type { Perf, PerfControls } from '$lib/perf/perfs';
+  import type { PerfControls } from '$lib/perf/perfs';
   import DepthNPerf from './DepthNPerf.svelte';
-
-  export let perf: Perf;
-  export let options: Writable<Options>;
 
   let depthNPerf: DepthNPerf;
 
@@ -14,4 +9,4 @@
   }
 </script>
 
-<DepthNPerf bind:this={depthNPerf} {perf} n={1000} {options}></DepthNPerf>
+<DepthNPerf bind:this={depthNPerf} n={1000}></DepthNPerf>
