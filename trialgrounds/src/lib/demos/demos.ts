@@ -37,7 +37,7 @@ export const allDemos: Demo[] = [
     name: DemoName.DivGolf,
     demoType: DivGolfDemo,
     summary:
-      'click modifier divs or num keys 1-3 to match the green div to a red goal. click current modifier to attempt goal',
+      'Click moving divs (or num keys 1-3) to align green div within 10px & 8° of a red goal. Click current moving div to attempt goal.',
   },
   {
     name: DemoName.FlipCoexist,
