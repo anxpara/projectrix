@@ -10,13 +10,13 @@
 $ npm install projectrix --save
 ```
 ###### Dom Projection (noun): The calculation of an element's position, size, and shape on a web page in relation to an element elsewhere in the DOM hierarchy.
-###### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Projection (noun): The set of styles that will make a target element align with a subject. "Animate the target to the projection of the subject onto the target."
+###### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Projection (noun): The set of styles that will make a target element align with a subject element. "Animate the target to the subject's projection."
 
 # Summary
 
 Dom projection has many uses, such as view transitions, FLIP animations, UI walkthroughs, css-oriented puzzle games, and art. However, implementations of this tricky math technique are usually hidden behind apis that prescribe a specific use-case or technology.
 
-Projectrix provides **getProjection()**, a pure function that returns the styles needed to align a target element to a subject, as well as the styles needed to align it to its original state. Use the projected styles however you want; if animation is your goal, the projection can be spread directly into Anime.js, Motion One, or your preferred animation engine.
+Projectrix provides **getProjection()**, a pure function that returns the styles needed to align a target element to a subject element, as well as the styles needed to align the target back to its original state. Use the projected styles however you want; if animation is your goal, the projection can be spread directly into Anime.js, Motion One, or your preferred animation engine.
 
 Also provided: 
 * **measureSubject()**, a pure function that records a subject's position and shape in case the subject and target cannot coexist (e.g. a FLIP animation where the subject is the target's past)
@@ -179,7 +179,7 @@ export type PartialProjectionResults = {
 export function measureSubject(subject: HTMLElement): Measurement;
 
 export type Measurement = {
-  acr: ActualClientRect; // from getActualClientRect
+  acr: ActualClientRect; // from github.com/anxpara/getActualClientRect
   border: BorderMeasurement;
 };
 export type BorderMeasurement = { /* style, top, right, bottom, left, radius */ };
@@ -223,7 +223,6 @@ All contributions are greatly appreciated!
 
 - Feedback, feature requests, and help requests can be posted to the [Projectrix Discord](https://discord.gg/YxVAUFqW4e)
 - If you find a bug, please [file an issue](https://github.com/anxpara/projectrix/issues)
-- [Join my Patreon](https://www.patreon.com/anxpara)
 
 
 <3 anxpara
