@@ -1,7 +1,7 @@
 <!-- prettier-ignore-start -->
 
 <div align="center">
-    <img width="300px" src="https://raw.githubusercontent.com/anxpara/projectrix/main/assets/logo/projectrix-logo-temp.png?token=GHSAT0AAAAAACLAVS4PT3YKMJNN3RVVPUGEZPFWKHQ"/>
+    <img width="300px" src="https://raw.githubusercontent.com/anxpara/projectrix/main/assets/logo/projectrix-logo-temp.png"/>
     <h1>Projectrix</h1>
     <h3 align="center">minimalist dom projection library in js/ts | alpha</h3>
 </div>
