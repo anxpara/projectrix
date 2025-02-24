@@ -41,10 +41,10 @@ export const allPerfs: Perf[] = [
     perfType: Depth100Perf,
     durationMs: writable(undefined),
   },
-  {
-    name: PerfName.Depth1000,
-    perfType: Depth1000Perf,
-    durationMs: writable(undefined),
-  },
+  // {
+  //   name: PerfName.Depth1000,
+  //   perfType: Depth1000Perf,
+  //   durationMs: writable(undefined),
+  // },
 ];
 export const perfsByName = new Map<PerfName, Perf>(allPerfs.map((perf) => [perf.name, perf]));
