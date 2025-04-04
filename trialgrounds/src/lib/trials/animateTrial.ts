@@ -1,4 +1,4 @@
-import anime from 'animejs';
+import { animate, utils } from 'animejs';
 import type { Trial, TrialAnimationOptions } from './trials';
 import {
   clearInlineStyles,
@@ -8,7 +8,7 @@ import {
   measureSubject,
   type Measurement,
 } from 'projectrix';
-import { animate } from 'motion';
+import { animate as animateMotion } from 'motion';
 import { mat4 } from 'gl-matrix';
 import type { Options } from '../options';
 
@@ -44,7 +44,7 @@ export function animateTrial(
   };
 
   // reset target
-  anime.remove(target);
+  utils.remove(target);
   if (trial.animation?.currentTime && trial.animation.currentTime < 1) {
     trial.animation.stop();
     trial.animation = undefined;
@@ -86,39 +86,37 @@ export function animateTrial(
   // animate
   if (options.transformType === 'matrix3d') {
     if (trialOptions.toTargetOrigin) {
-      anime.set(target, {
+      utils.set(target, {
         ...toSubject,
 
         pointerEvents: 'none',
       });
 
-      anime({
-        targets: target,
+      animate(target, {
         duration: trialOptions.skipAnimation ? 0 : duration,
-        easing: 'easeInOutQuad',
+        ease: 'inOutQuad',
 
         ...toTargetOrigin,
 
-        complete: () => {
+        onComplete: () => {
           trial.originMarker?.unmark();
-          anime.set(target, {
+          utils.set(target, {
             pointerEvents: 'all',
           });
           animationOptions?.complete?.call(null, trialOptions);
         },
       });
     } else {
-      anime.set(target, {
+      utils.set(target, {
         ...toTargetOrigin,
 
         borderStyle: toSubject.borderStyle,
         pointerEvents: 'none',
       });
 
-      anime({
-        targets: target,
+      animate(target, {
         duration: trialOptions.skipAnimation ? 0 : duration,
-        easing: 'easeInOutQuad',
+        ease: 'inOutQuad',
 
         ...toSubject,
 
@@ -129,7 +127,7 @@ export function animateTrial(
     }
   } else if (options.transformType === 'transform') {
     if (trialOptions.toTargetOrigin) {
-      animate(
+      animateMotion(
         target,
         {
           ...toSubject,
@@ -140,7 +138,7 @@ export function animateTrial(
         },
       );
 
-      trial.animation = animate(
+      trial.animation = animateMotion(
         target,
         {
           ...toTargetOrigin,
@@ -153,13 +151,13 @@ export function animateTrial(
 
       trial.animation.finished.then(() => {
         trial.originMarker?.unmark();
-        anime.set(target, {
+        utils.set(target, {
           pointerEvents: 'all',
         });
         animationOptions?.complete?.call(null, trialOptions);
       });
     } else {
-      animate(
+      animateMotion(
         target,
         {
           ...toTargetOrigin,
@@ -172,7 +170,7 @@ export function animateTrial(
         },
       );
 
-      trial.animation = animate(
+      trial.animation = animateMotion(
         target,
         {
           ...toSubject,
@@ -214,16 +212,15 @@ export function animateTrialReturn(trial: Trial, trialOptions: Options, duration
   }
 
   if (options.transformType === 'matrix3d') {
-    anime.remove(target);
-    anime({
-      targets: target,
+    utils.remove(target);
+    animate(target, {
       duration: trialOptions.skipAnimation ? 0 : duration,
-      easing: 'easeInOutQuad',
+      ease: 'inOutQuad',
 
       ...trial.toTargetOrigin,
 
       complete: () => {
-        anime.set(target, {
+        utils.set(target, {
           pointerEvents: 'all',
         });
 
@@ -238,7 +235,7 @@ export function animateTrialReturn(trial: Trial, trialOptions: Options, duration
       trial.animation = undefined;
     }
 
-    trial.animation = animate(
+    trial.animation = animateMotion(
       target,
       {
         ...trial.toTargetOrigin,
@@ -250,7 +247,7 @@ export function animateTrialReturn(trial: Trial, trialOptions: Options, duration
     );
 
     trial.animation.finished.then(() => {
-      anime.set(target, {
+      utils.set(target, {
         pointerEvents: 'all',
       });
 

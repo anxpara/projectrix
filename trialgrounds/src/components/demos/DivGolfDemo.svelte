@@ -1,8 +1,8 @@
 <script lang="ts">
   import { onDestroy, onMount, tick } from 'svelte';
   import { mat4, quat, vec3 } from 'gl-matrix';
-  import { getProjection, measureSubject, setInlineStyles, type Measurement } from 'projectrix';
-  import anime from 'animejs';
+  import { getProjection, measureSubject, setInlineStyles, type Measurement, type PartialProjectionResults } from 'projectrix';
+  import { animate, utils, type JSAnimation } from 'animejs';
   import type { Writable } from 'svelte/store';
   import type { Options } from '$lib/options';
 
@@ -27,7 +27,7 @@
 
   let currentTarget: HTMLElement | null;
   let currentModifier: HTMLElement | null;
-  let hitAnim: anime.AnimeInstance | undefined;
+  let hitAnim: JSAnimation | undefined;
 
   let startTime = 0;
   let timer = 0;
@@ -115,41 +115,38 @@
   }
 
   function startModifiers(): void {
-    anime.set(spinnerModifier, {
+    utils.set(spinnerModifier, {
       rotate: '0deg',
     });
-    anime({
-      targets: spinnerModifier,
+    animate(spinnerModifier, {
       duration: 3000,
-      easing: 'linear',
+      ease: 'linear',
       loop: true,
 
       rotate: '-360deg',
     });
 
-    anime.set(slider1Modifier, {
+    utils.set(slider1Modifier, {
       rotate: '-45deg',
       translateX: '0px',
     });
-    anime.set(slider2Modifier, {
+    utils.set(slider2Modifier, {
       rotate: '225deg',
       translateX: '0px',
     });
     const sliderAnimParams = {
-      easing: 'linear',
+      ease: 'linear',
       loop: true,
-      direction: 'alternate',
+      alternate: true,
 
       translateX: '170px',
     };
-    anime({
-      targets: slider1Modifier,
+    animate(slider1Modifier, {
       duration: 1400,
 
       ...sliderAnimParams,
     });
-    anime({
-      targets: slider2Modifier,
+    animate(slider2Modifier, {
       duration: 700,
 
       ...sliderAnimParams,
@@ -173,7 +170,8 @@
   // match modifier's target to current target's projection
   function moveToModifier(modifier: HTMLElement): void {
     const nextTarget = modifier.firstElementChild as HTMLElement;
-    const { toSubject } = getProjection(currentTarget!, nextTarget, { log });
+    const { toSubject } = getProjection(currentTarget!, nextTarget, { log }) as PartialProjectionResults;
+    delete toSubject.borderStyle;
     setInlineStyles(nextTarget, toSubject);
     setCurrentTarget(nextTarget);
     currentModifier = modifier;
@@ -260,15 +258,14 @@
     setCurrentTarget(hitTarget);
 
     // animate hit target rest of way to goal
-    hitAnim = anime({
-      targets: hitTarget,
+    hitAnim = animate(hitTarget, {
       duration: 300,
-      easing: 'easeOutQuad',
+      ease: 'outQuad',
 
       // anime.js takes matrix3d
       ...getProjection(goal, hitTarget, { transformType: 'matrix3d', log }).toSubject,
 
-      complete: () => {
+      onComplete: () => {
         styleGoalCompleted(goal);
 
         animateClonedpulse(hitTarget);
@@ -282,10 +279,9 @@
 
   function animateMiss(goal: HTMLElement): void {
     goal.style.backgroundColor = 'rgba(255, 0, 0, 1)';
-    anime({
-      targets: goal,
+    animate(goal, {
       duration: 300,
-      easing: 'easeOutQuad',
+      ease: 'outQuad',
 
       backgroundColor: 'rgba(255, 0, 0, 0)',
     });
@@ -299,15 +295,14 @@
     setInlineStyles(pulseClone, toSubject);
     pulseClone.style.opacity = '1';
 
-    anime({
-      targets: pulseClone,
+    animate(pulseClone, {
       duration: 300,
-      easing: 'easeOutQuad',
+      easing: 'outQuad',
 
       outlineOffset: '18px',
       outlineColor: 'rgba(50, 205, 50, 0)',
 
-      complete: () => {
+      onComplete: () => {
         pulseClone.remove();
       },
     });
