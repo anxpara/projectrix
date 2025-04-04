@@ -5,7 +5,7 @@
   import type { TrialName } from '../../lib/trials/trialNames';
   import OriginMarker from '../../components/OriginMarker.svelte';
   import { animateTrial } from '$lib/trials/animateTrial';
-  import anime from 'animejs';
+  import { utils } from 'animejs';
   import type { Writable } from 'svelte/store';
   import { showDefaultSubject } from '$lib/trials/showDefaultSubject';
   import type { Options } from '$lib/options';
@@ -29,8 +29,8 @@
       throw new Error('trial component failed to load');
     }
 
-    animate();
-    animateInterval = setInterval(animate, 2000);
+    startAnimation();
+    animateInterval = setInterval(startAnimation, 2000);
   });
 
   onDestroy(() => {
@@ -43,10 +43,10 @@
     if (!target) {
       return;
     }
-    anime.remove(target);
+    utils.remove(target);
   });
 
-  function animate(): void {
+  function startAnimation(): void {
     if ($options.projectOnce && projected) {
       return;
     }
