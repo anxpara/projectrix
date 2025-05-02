@@ -1,7 +1,7 @@
 import { getProjection, setInlineStyles, clearInlineStyles } from 'projectrix';
 import { animate } from 'motion';
 
-function flipCoexist(subject: HTMLElement, target: HTMLElement): void {
+function fauxFlip(subject: HTMLElement, target: HTMLElement): void {
   const { toSubject, toTargetOrigin } = getProjection(subject, target);
 
   // set target to subject's projection

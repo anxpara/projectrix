@@ -5,7 +5,7 @@ import AnimateDemo from '../../components/demos/AnimateDemo.svelte';
 import FlipDemo from '../../components/demos/FlipDemo.svelte';
 import DivGolfDemo from '../../components/demos/DivGolfDemo.svelte';
 import CssIsAwesomeDemo from '../../components/demos/CssIsAwesomeDemo.svelte';
-import FlipCoexistDemo from '../../components/demos/FlipCoexistDemo.svelte';
+import FauxFlipDemo from '../../components/demos/FauxFlipDemo.svelte';
 
 export type DemoComponent = SvelteComponent;
 
@@ -40,9 +40,9 @@ export const allDemos: Demo[] = [
       'Click moving divs (or num keys 1-3) to align green div within 10px & 8° of a red goal. Click current moving div to attempt goal.',
   },
   {
-    name: DemoName.FlipCoexist,
-    demoType: FlipCoexistDemo,
-    summary: 'flip using coexisting target children',
+    name: DemoName.FauxFlip,
+    demoType: FauxFlipDemo,
+    summary: 'flip without append or RAF by toggling the opacities of coexisting targets',
   },
   {
     name: DemoName.CssIsAwesome,
