@@ -1,25 +1,23 @@
 <script lang="ts">
+  import { setInlineStyles, getProjection, clearInlineStyles } from 'projectrix';
+  import { waapi, type WAAPIAnimation } from 'animejs';
   import { onMount, onDestroy, tick } from 'svelte';
   import type { Writable } from 'svelte/store';
   import type { Options } from '$lib/options';
-  import { getProjection, setInlineStyles, clearInlineStyles } from 'projectrix';
-  import { animate, type AnimationControls, type AnimationOptionsWithOverrides } from 'motion';
 
   // options are part of demos infrastructure
   export let options: Writable<Options>;
   $: log = $options.log;
 
   let leftOuter: HTMLElement;
-  let rightOuter: HTMLElement;
-
   let leftInner: HTMLElement;
-  let rightInner: HTMLElement;
-
   let leftTarget: HTMLElement;
+  let rightOuter: HTMLElement;
+  let rightInner: HTMLElement;
   let rightTarget: HTMLElement;
 
   type Side = 'left' | 'right';
-  let currentSide: Side = 'left';
+  const InitialSide = 'left';
   function isLeft(side: Side): boolean {
     return side === 'left';
   }
@@ -27,115 +25,123 @@
     return isLeft(side) ? 'right' : 'left';
   }
 
-  let currentAnim: AnimationControls | undefined = undefined;
+  let currentAnim: WAAPIAnimation | undefined = undefined;
 
-  const ToNeutralDurationS = 2;
-  const ToFlipAnglesDurationS = 2;
-  const FlipDurationS = 0.75;
+  const ToNeutralDurationMs = 2000;
+  const ToFlipAnglesDurationMs = 2000;
+  const FlipDurationMs = 750;
 
   onMount(async () => {
     await tick();
-    toNeutral();
+    toNeutralForSide(InitialSide);
   });
 
   onDestroy(() => {
-    currentAnim?.pause();
-    currentAnim = undefined;
+    currentAnim?.cancel();
   });
 
-  function toNeutral(): void {
-    currentAnim = animate(
-      [leftOuter, rightOuter],
-      { transform: 'rotateY(0deg)' },
-      { duration: ToNeutralDurationS, easing: 'linear' },
-    );
+  function toNeutralForSide(side: Side): void {
+    raiseInnerForSide(side, ToNeutralDurationMs);
 
-    raiseCurrentSideInner(ToNeutralDurationS);
+    // using waapi so initial transforms from stylesheet are respected
+    currentAnim = waapi.animate([leftOuter, rightOuter], {
+      transform: 'rotateY(0deg)',
 
-    currentAnim.finished.then(() => {
-      toFlipAnglesForCurrentSide();
+      duration: ToNeutralDurationMs,
+      ease: 'linear',
+
+      onComplete: () => toFlipAnglesForSide(side),
     });
   }
 
-  function toFlipAnglesForCurrentSide(): void {
-    // switch outers' pivot sides
-    leftOuter.style.transformOrigin = otherSide(currentSide);
-    rightOuter.style.transformOrigin = currentSide;
+  function toFlipAnglesForSide(side: Side): void {
+    lowerInnerForSide(side, ToFlipAnglesDurationMs);
 
-    currentAnim = animate(
-      leftOuter,
-      { transform: isLeft(currentSide) ? 'rotateY(-66deg)' : 'rotateY(66deg)' },
-      { duration: ToFlipAnglesDurationS, easing: 'linear' },
-    );
-    animate(
-      rightOuter,
-      { transform: isLeft(currentSide) ? 'rotateY(66deg)' : 'rotateY(-66deg)' },
-      { duration: ToFlipAnglesDurationS, easing: 'linear' },
-    );
+    // switch which side the outer divs pivot on
+    leftOuter.style.transformOrigin = otherSide(side);
+    rightOuter.style.transformOrigin = side;
 
-    lowerCurrentSideInner(ToFlipAnglesDurationS);
+    waapi.animate(leftOuter, {
+      transform: isLeft(side) ? 'rotateY(-66deg)' : 'rotateY(66deg)',
 
-    currentAnim.finished.then(() => {
-      flipFromCurrentSide();
+      duration: ToFlipAnglesDurationMs,
+      ease: 'linear',
+    });
+    currentAnim = waapi.animate(rightOuter, {
+      transform: isLeft(side) ? 'rotateY(66deg)' : 'rotateY(-66deg)',
+
+      duration: ToFlipAnglesDurationMs,
+      ease: 'linear',
+
+      onComplete: () => flipFromSide(side),
     });
   }
 
-  function flipFromCurrentSide(): void {
-    const subject = isLeft(currentSide) ? leftTarget : rightTarget;
-    const target = isLeft(currentSide) ? rightTarget : leftTarget;
-    const { toSubject, toTargetOrigin } = getProjection(subject, target, {
-      log,
-    });
+  function flipFromSide(side: Side): void {
+    const currentTarget = isLeft(side) ? leftTarget : rightTarget;
+    const nextTarget = isLeft(side) ? rightTarget : leftTarget;
 
-    setInlineStyles(target, toSubject);
-    subject.style.opacity = '0';
-    target.style.opacity = '1';
-
-    currentAnim = animate(
-      target,
-      { ...toTargetOrigin },
-      { duration: FlipDurationS, easing: 'ease-in-out' },
-    );
-
-    currentAnim.finished.then(() => {
-      clearInlineStyles(target);
-      currentSide = otherSide(currentSide);
-      toNeutral();
+    currentAnim = fauxFlip(currentTarget, nextTarget);
+    currentAnim.then(() => {
+      toNeutralForSide(otherSide(side));
     });
   }
 
-  function raiseCurrentSideInner(durationS: number): void {
-    const inner = isLeft(currentSide) ? leftInner : rightInner;
-    const target = isLeft(currentSide) ? leftTarget : rightTarget;
+  function fauxFlip(currentTarget: HTMLElement, nextTarget: HTMLElement): WAAPIAnimation {
+    const { toSubject, toTargetOrigin } = getProjection(currentTarget, nextTarget, { log });
 
-    const animOptions: AnimationOptionsWithOverrides = {
-      delay: durationS * 0.25,
-      duration: durationS * 0.5,
-      easing: 'linear',
+    setInlineStyles(nextTarget, toSubject);
+    currentTarget.style.opacity = '0';
+    nextTarget.style.opacity = '1';
+
+    return waapi.animate(nextTarget, {
+      ...toTargetOrigin,
+
+      duration: FlipDurationMs,
+      ease: 'inOutQuad',
+
+      onComplete: () => {
+        clearInlineStyles(nextTarget);
+      },
+    });
+  }
+
+  function raiseInnerForSide(side: Side, durationMs: number): void {
+    const inner = isLeft(side) ? leftInner : rightInner;
+    const target = isLeft(side) ? leftTarget : rightTarget;
+
+    const animParams = {
+      delay: durationMs * 0.25,
+      duration: durationMs * 0.5,
+      ease: 'linear',
     };
-    animate(inner, { transform: 'rotateX(47deg)' }, animOptions);
-    animate(
-      target,
-      { transform: 'translateY(1em) rotateX(314deg) rotateY(360deg) translateY(-4em)' },
-      animOptions,
-    );
+    waapi.animate(inner, {
+      transform: 'rotateX(47deg)',
+      ...animParams,
+    });
+    waapi.animate(target, {
+      transform: 'translateY(1em) rotateX(314deg) rotateY(360deg) translateY(-4em)',
+      ...animParams,
+    });
   }
 
-  function lowerCurrentSideInner(durationS: number): void {
-    const inner = isLeft(currentSide) ? leftInner : rightInner;
-    const target = isLeft(currentSide) ? leftTarget : rightTarget;
+  function lowerInnerForSide(side: Side, durationMs: number): void {
+    const inner = isLeft(side) ? leftInner : rightInner;
+    const target = isLeft(side) ? leftTarget : rightTarget;
 
-    const animOptions: AnimationOptionsWithOverrides = {
-      delay: durationS * 0.25,
-      duration: durationS * 0.75,
-      easing: 'linear',
+    const animParams = {
+      delay: durationMs * 0.25,
+      duration: durationMs * 0.75,
+      ease: 'linear',
     };
-    animate(inner, { transform: 'rotateX(80deg)' }, animOptions);
-    animate(
-      target,
-      { transform: 'translateY(-4em) rotateX(280deg) rotateY(360deg) translateY(-4em)' },
-      animOptions,
-    );
+    waapi.animate(inner, {
+      transform: 'rotateX(80deg)',
+      ...animParams,
+    });
+    waapi.animate(target, {
+      transform: 'translateY(-4em) rotateX(280deg) rotateY(360deg) translateY(-4em)',
+      ...animParams,
+    });
   }
 </script>
 

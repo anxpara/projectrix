@@ -1,19 +1,20 @@
 <script lang="ts">
-  import { measureSubject, getProjection, clearInlineStyles } from 'projectrix';
+  import { getProjection, clearInlineStyles } from 'projectrix';
   import { animate, utils, type JSAnimation } from 'animejs';
   import { onDestroy, onMount, tick } from 'svelte';
   import type { Writable } from 'svelte/store';
-  import type { Options } from '$lib/options';
   import type DemoStartSlot from '../DemoStartSlot.svelte';
+  import type { Options } from '$lib/options';
 
   // start slot and options are part of demos infrastructure
   export let startSlot: DemoStartSlot;
   export let options: Writable<Options>;
   $: log = $options.log;
 
-  let target: HTMLElement;
   let leftParent: HTMLElement;
+  let leftChildTarget: HTMLElement;
   let rightParent: HTMLElement;
+  let rightChildTarget: HTMLElement;
 
   let currentAnim: JSAnimation | undefined;
   let currentTimeout: NodeJS.Timeout | undefined;
@@ -23,7 +24,9 @@
     startSlot.show();
 
     currentTimeout = setTimeout(() => {
-      flipTargetToNextParent(target, rightParent);
+      const currentTarget: HTMLElement = startSlot.getSlotSubject();
+      flipToNextTarget(currentTarget, rightChildTarget);
+      startSlot.hide();
     }, 1000);
   });
 
@@ -32,47 +35,40 @@
     clearTimeout(currentTimeout);
   });
 
-  function swapSlotForTarget(target: HTMLElement): void {
-    startSlot.hide();
-    target.style.opacity = '1';
+  function flipToNextTarget(currentTarget: HTMLElement, nextTarget: HTMLElement): void {
+    currentAnim = fauxFlip(currentTarget, nextTarget);
+    currentAnim.then(() => {
+      currentAnim = animateParent(getNextParent(nextTarget));
+      currentAnim.then(() => {
+        currentTimeout = setTimeout(() => {
+          currentTarget = nextTarget;
+          flipToNextTarget(currentTarget, getNextTarget(currentTarget));
+        }, 1000);
+      });
+    });
   }
 
-  function flipTargetToNextParent(target: HTMLElement, nextParent: HTMLElement): void {
-    let subjectEl = startSlot.isShowing() ? startSlot.getSlotSubject() : target;
-    const subject = measureSubject(subjectEl);
+  function fauxFlip(currentTarget: HTMLElement, nextTarget: HTMLElement): JSAnimation {
+    const { toSubject, toTargetOrigin } = getProjection(currentTarget, nextTarget, { log });
 
-    nextParent.append(target);
+    utils.set(nextTarget, toSubject);
+    currentTarget.style.opacity = '0';
+    nextTarget.style.opacity = '1';
 
-    requestAnimationFrame(() => {
-      if (startSlot.isShowing()) swapSlotForTarget(target);
+    return animate(nextTarget, {
+      ...toTargetOrigin,
 
-      const { toSubject, toTargetOrigin } = getProjection(subject, target, { log });
+      duration: 1000,
+      ease: 'outQuad',
 
-      utils.set(target, toSubject);
-
-      currentAnim = animate(target, {
-        ...toTargetOrigin,
-
-        duration: 1000,
-        easing: 'outQuad',
-
-        onComplete: () => {
-          clearInlineStyles(target);
-
-          animateParent(nextParent).then(() => {
-            currentTimeout = setTimeout(() => {
-              flipTargetToNextParent(target, getNextParent(nextParent));
-            }, 1000);
-          });
-        },
-      });
+      onComplete: () => clearInlineStyles(nextTarget),
     });
   }
 
   function animateParent(parent: HTMLElement): JSAnimation {
     const dir = parent === rightParent ? -1 : 1;
 
-    currentAnim = animate(parent, {
+    return animate(parent, {
       transform: [
         'skew(' + 15 * dir + 'deg)',
         'skew(' + 15 * dir + 'deg) rotate(' + -20 * dir + 'deg)',
@@ -83,22 +79,26 @@
       duration: 1000,
       ease: 'inOutQuad',
     });
-
-    return currentAnim;
   }
 
-  function getNextParent(currentParent: HTMLElement): HTMLElement {
-    return currentParent === rightParent ? leftParent : rightParent;
+  function getNextParent(nextTarget: HTMLElement): HTMLElement {
+    return nextTarget === rightChildTarget ? rightParent : leftParent;
+  }
+
+  function getNextTarget(currentTarget: HTMLElement): HTMLElement {
+    return currentTarget === rightChildTarget ? leftChildTarget : rightChildTarget;
   }
 </script>
 
 <div class="size-container">
   <div class="parents-container">
     <div bind:this={leftParent} class="parent left">
-      <div bind:this={target} class="demo-target child" />
+      <div bind:this={leftChildTarget} class="demo-target child" />
     </div>
 
-    <div bind:this={rightParent} class="parent right"></div>
+    <div bind:this={rightParent} class="parent right">
+      <div bind:this={rightChildTarget} class="demo-target child" />
+    </div>
   </div>
 </div>
 

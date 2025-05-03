@@ -1,24 +1,14 @@
-import { getProjection, type PartialProjection } from 'projectrix';
-import { animate, type AnimationControls } from 'motion';
+import { getProjection, type PartialProjectionResults } from 'projectrix';
+import { animate } from 'animejs';
 
-let currentAnim: AnimationControls | undefined;
+function animateTargetToSubject(target: HTMLElement, subject: HTMLElement): void {
+  const { toSubject } = getProjection(subject, target) as PartialProjectionResults;
+  delete toSubject.borderStyle; // preserve target's border style
 
-function animateDirect(subject: HTMLElement, target: HTMLElement): void {
-  // stop current animation; motion one will update target's inline
-  // styles to mid-animation values
-  if (currentAnim?.currentTime && currentAnim.currentTime < 1) {
-    currentAnim.stop();
-  }
+  animate(target, {
+    ...toSubject,
 
-  const toSubject = getProjection(subject, target).toSubject as PartialProjection;
-  delete toSubject.borderStyle; // preserve target border style
-
-  currentAnim = animate(
-    target,
-    { ...toSubject },
-    {
-      duration: 0.4,
-      easing: 'ease-out',
-    },
-  );
+    duration: 400,
+    ease: 'outQuad',
+  });
 }

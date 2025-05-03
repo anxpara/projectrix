@@ -9,102 +9,79 @@
 ```bash
 $ npm install projectrix --save
 ```
-###### Dom Projection (noun): The calculation of an element's position, size, and shape on a web page in relation to an element elsewhere in the DOM hierarchy.
-###### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Projection (noun): The set of styles that will make a target element align with a subject element. "Animate the target to the subject's projection."
+
+###### Dom Projection (noun): The calculation of an element's position, size, and transform on a web page in relation to an element elsewhere in the DOM hierarchy.
+###### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Projection (noun): The set of styles that will make a target element align with a subject. "Animate the target to the subject's projection."
 
 # Summary
 
-Dom projection has many uses, such as view transitions, FLIP animations, UI walkthroughs, css-oriented puzzle games, and art. However, implementations of this tricky math technique are usually hidden behind apis that prescribe a specific use-case or technology.
+Dom projection has many uses, such as view transitions, FLIP animations, css puzzle games, and art. However, implementations of this tricky math technique are usually hidden behind apis that prescribe a specific use-case or technology.
 
-Projectrix provides **getProjection()**, a pure function that returns the styles needed to align a target element to a subject element, as well as the styles needed to align the target back to its original state. Use the projected styles however you want; if animation is your goal, the projection can be spread directly into Anime.js, Motion One, or your preferred animation engine.
+Projectrix provides **getProjection()**, which returns the styles needed to align a target element with a subject, as well as the styles needed to align it with its original state. Use the projected styles however you want; if animation is your goal, the projections can be spread directly into Anime.js, Motion, or your preferred animation engine.
 
-Also provided: 
-* **measureSubject()**, a pure function that records a subject's position and shape in case the subject and target cannot coexist (e.g. a FLIP animation where the subject is the target's past)
-* **setInlineStyles()**, a convenient function that sets a target to match a projection
-* **clearInlineStyles()**, a function that clears the styles from setInlineStyles
+Also provided...
+* **measureSubject()**: calculates a subject's position in case the subject and target cannot coexist (e.g. a FLIP animation where the subject is the target's past)
+* **setInlineStyles()**: sets a target to match a projection
+* **clearInlineStyles()**: clears the projection styles from setInlineStyles
 
 # Usage examples
 ###### See all demos here: https://tg.projectrix.dev/demos
-## FLIP target between parents using Motion One
+## Animate target directly to subject using Anime.js
 
 ```ts
-import { getProjection, measureSubject, setInlineStyles, clearInlineStyles } from 'projectrix';
-import { animate } from 'motion';
+import { getProjection, type PartialProjectionResults } from 'projectrix';
+import { animate } from 'animejs';
 
-function flip(target: HTMLElement, nextParent: HTMLElement): void {
-  const subject = measureSubject(target);
+function animateTargetToSubject(target: HTMLElement, subject: HTMLElement): void {
+  const { toSubject } = getProjection(subject, target) as PartialProjectionResults;
+  delete toSubject.borderStyle; // preserve target's border style
 
-  nextParent.append(target);
+  animate(target, {
+    ...toSubject,
 
-  requestAnimationFrame(() => {
-    const { toSubject, toTargetOrigin } = getProjection(subject, target);
-
-    // set target to subject's projection
-    setInlineStyles(target, toSubject);
-
-    // FLIP back to origin
-    const flipAnimation = animate(
-      target,
-      { ...toTargetOrigin },
-      {
-        duration: 1,
-        easing: 'ease-out',
-      },
-    );
-
-    // clear inline styles once they're redundant
-    flipAnimation.finished.then(() => clearInlineStyles(target, toTargetOrigin));
+    duration: 400,
+    ease: 'outQuad',
   });
-}
-```
-
-https://github.com/anxpara/projectrix/assets/90604943/ccbe959b-1fe4-43bd-b4fd-8b24cc55b0d4
-
-## Animate target directly to subject using Motion One
-
-```ts
-import { getProjection, type PartialProjection } from 'projectrix';
-import { animate, type AnimationControls } from 'motion';
-
-let currentAnim: AnimationControls | undefined;
-
-function animateDirect(subject: HTMLElement, target: HTMLElement): void {
-  // stop current animation; motion one will update target's inline
-  // styles to mid-animation values
-  if (currentAnim?.currentTime && currentAnim.currentTime < 1) {
-    currentAnim.stop();
-  }
-
-  const toSubject = getProjection(subject, target).toSubject as PartialProjection;
-  delete toSubject.borderStyle; // preserve target border style
-
-  currentAnim = animate(
-    target,
-    { ...toSubject },
-    {
-      duration: 0.4,
-      easing: 'ease-out',
-    },
-  );
 }
 ```
 
 https://github.com/anxpara/projectrix/assets/90604943/37132aed-57eb-43ee-8bec-18fcb1a9d0f7
 
-## Match target to subject
+## FLIP target between parents using Anime.js
 
 ```ts
-import { getProjection, setInlineStyles, type PartialProjectionResults } from 'projectrix';
+// don't combine projectrix's setInlineStyles with animejs' animate; use utils.set
+import { measureSubject, getProjection, clearInlineStyles } from 'projectrix';
+import { animate, utils } from 'animejs';
 
-function match(subject: HTMLElement, target: HTMLElement): void {
-  const { toSubject } = getProjection(subject, target) as PartialProjectionResults;
-  delete toSubject.borderStyle; // preserve target border style
-  
-  setInlineStyles(target, toSubject);
+// the F.L.I.P. technique inverts a direct animation: measure the element's first position,
+// apply a dom change to it, then play the animation from its first position to its last
+function flipTargetToNextParent(target: HTMLElement, nextParent: HTMLElement): void {
+  const firstPosition = measureSubject(target);
+
+  nextParent.append(target);
+
+  // RAF waits for pending dom changes to be rendered
+  requestAnimationFrame(() => {
+    // set target to the projection of its first position
+    const { toSubject, toTargetOrigin } = getProjection(firstPosition, target);
+    utils.set(target, toSubject);
+
+    // animate target to its last position, i.e. its current origin
+    animate(target, {
+      ...toTargetOrigin,
+      
+      duration: 1000,
+      ease: 'outQuad',
+
+      // clear inline styles from the projection once they're redundant
+      onComplete: () => clearInlineStyles(target),
+    });
+  });
 }
 ```
 
-https://github.com/anxpara/projectrix/assets/90604943/36f594b9-303e-4fae-ba5c-84ed3a6b3290
+https://github.com/anxpara/projectrix/assets/90604943/ccbe959b-1fe4-43bd-b4fd-8b24cc55b0d4
 
 # API / Types / Documentation
 
@@ -144,7 +121,7 @@ export type ProjectionOptions = {
 
   // designates which element's border width, radius, and style to match.
   // projected width and height are auto-adjusted if the target has content-box sizing.
-  // zero means 0px border width and radius
+  // zero means override with 0px border width and radius
   useBorder?: BorderSource; // (default = 'subject')
 
   log?: boolean; // (default = false)
@@ -152,8 +129,8 @@ export type ProjectionOptions = {
 
 /**
  * when a subject is projected onto a target, you get two Projections. 'toSubject' contains the set of styles that--when applied
- * to the target element--will make the target visually align to the subject. the styles in 'toTargetOrigin' will make
- * the target align to its original state
+ * to the target element--will make the target align with the subject. the styles in 'toTargetOrigin' will make
+ * the target align with its original state
  */
 export type ProjectionResults = {
   toSubject: Projection;
@@ -179,10 +156,10 @@ export type PartialProjectionResults = {
 export function measureSubject(subject: HTMLElement): Measurement;
 
 export type Measurement = {
-  acr: ActualClientRect; // from github.com/anxpara/getActualClientRect
+  acr: ActualClientRect; // from https://github.com/anxpara/getActualClientRect
   border: BorderMeasurement;
 };
-export type BorderMeasurement = { /* style, top, right, bottom, left, radius */ };
+export type BorderMeasurement = { /* style, top, right, bottom, left, and radius properties */ };
 ```
 #### setInlineStyles(), clearInlineStyles()
 ```ts
@@ -214,16 +191,15 @@ export function clearInlineStyles(target: HTMLElement, partialProjection?: Parti
   - some engines might animate perspective incorrectly in particular scenarios
 - Targeting an element with an ["internal" display value](https://developer.mozilla.org/en-US/docs/Web/CSS/display#internal), or any value that causes the element to control its own size, will lead to undefined behavior, since the projected width and height will be ignored:
   - display: inline | table | inline-table | table-row | table-column | table-cell | table-row-group | table-column-group | table-header-group | table-footer-group | ruby-base | ruby-text | ruby-base-container | ruby-text-container | run-in
-- performance has not yet been profiled
+- Performance (e.g. as dom depth increases) has not yet been optimized; will focus on that next, but probably not very soon
 - SVGs are not yet officially supported, but might happen to work in certain scenarios
 
 # Contribute
 
 All contributions are greatly appreciated!
 
-- Feedback, feature requests, and help requests can be posted to the [Projectrix Discord](https://discord.gg/YxVAUFqW4e)
 - If you find a bug, please [file an issue](https://github.com/anxpara/projectrix/issues)
-
+- Feedback and help requests can be posted in the [Projectrix Discord](https://discord.gg/YxVAUFqW4e)
 
 <3 anxpara
 

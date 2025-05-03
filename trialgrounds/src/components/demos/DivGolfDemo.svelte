@@ -1,8 +1,14 @@
 <script lang="ts">
-  import { onDestroy, onMount, tick } from 'svelte';
-  import { mat4, quat, vec3 } from 'gl-matrix';
-  import { getProjection, measureSubject, setInlineStyles, type Measurement, type PartialProjectionResults } from 'projectrix';
+  import {
+    measureSubject,
+    setInlineStyles,
+    getProjection,
+    type Measurement,
+    type PartialProjectionResults,
+  } from 'projectrix';
   import { animate, utils, type JSAnimation } from 'animejs';
+  import { mat4, quat, vec3 } from 'gl-matrix';
+  import { onDestroy, onMount, tick } from 'svelte';
   import type { Writable } from 'svelte/store';
   import type { Options } from '$lib/options';
 
@@ -119,11 +125,11 @@
       rotate: '0deg',
     });
     animate(spinnerModifier, {
+      rotate: '-360deg',
+
       duration: 3000,
       ease: 'linear',
       loop: true,
-
-      rotate: '-360deg',
     });
 
     utils.set(slider1Modifier, {
@@ -135,21 +141,19 @@
       translateX: '0px',
     });
     const sliderAnimParams = {
+      translateX: '170px',
+
       ease: 'linear',
       loop: true,
       alternate: true,
-
-      translateX: '170px',
     };
     animate(slider1Modifier, {
-      duration: 1400,
-
       ...sliderAnimParams,
+      duration: 1400,
     });
     animate(slider2Modifier, {
-      duration: 700,
-
       ...sliderAnimParams,
+      duration: 700,
     });
   }
 
@@ -164,16 +168,23 @@
       return;
     }
 
-    moveToModifier(modifier);
+    moveTargetToModifier(currentTarget, modifier);
   }
 
-  // match modifier's target to current target's projection
-  function moveToModifier(modifier: HTMLElement): void {
+  function moveTargetToModifier(target: HTMLElement, modifier: HTMLElement): void {
     const nextTarget = modifier.firstElementChild as HTMLElement;
-    const { toSubject } = getProjection(currentTarget!, nextTarget, { log }) as PartialProjectionResults;
+    const { toSubject } = getProjection(target, nextTarget, {
+      log,
+    }) as PartialProjectionResults;
     delete toSubject.borderStyle;
+
     setInlineStyles(nextTarget, toSubject);
+
+    setCurrentModifier(modifier);
     setCurrentTarget(nextTarget);
+  }
+
+  function setCurrentModifier(modifier: HTMLElement): void {
     currentModifier = modifier;
   }
 
@@ -254,16 +265,15 @@
   function animateHit(goal: HTMLElement): void {
     // match hit target to current target
     const { toSubject } = getProjection(currentTarget!, hitTarget, { log });
-    setInlineStyles(hitTarget, toSubject);
+    utils.set(hitTarget, toSubject);
     setCurrentTarget(hitTarget);
 
     // animate hit target rest of way to goal
     hitAnim = animate(hitTarget, {
+      ...getProjection(goal, hitTarget, { log }).toSubject,
+
       duration: 300,
       ease: 'outQuad',
-
-      // anime.js takes matrix3d
-      ...getProjection(goal, hitTarget, { transformType: 'matrix3d', log }).toSubject,
 
       onComplete: () => {
         styleGoalCompleted(goal);
@@ -280,10 +290,10 @@
   function animateMiss(goal: HTMLElement): void {
     goal.style.backgroundColor = 'rgba(255, 0, 0, 1)';
     animate(goal, {
+      backgroundColor: 'rgba(255, 0, 0, 0)',
+
       duration: 300,
       ease: 'outQuad',
-
-      backgroundColor: 'rgba(255, 0, 0, 0)',
     });
   }
 
@@ -292,15 +302,15 @@
     pulseContainer.append(pulseClone);
 
     const { toSubject } = getProjection(subject, pulseClone, { log });
-    setInlineStyles(pulseClone, toSubject);
+    utils.set(pulseClone, toSubject);
     pulseClone.style.opacity = '1';
 
     animate(pulseClone, {
-      duration: 300,
-      easing: 'outQuad',
-
       outlineOffset: '18px',
       outlineColor: 'rgba(50, 205, 50, 0)',
+
+      duration: 300,
+      easing: 'outQuad',
 
       onComplete: () => {
         pulseClone.remove();
