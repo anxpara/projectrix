@@ -1,9 +1,9 @@
 <script lang="ts">
-  import type { Options } from '$lib/options';
-  import { getProjection, setInlineStyles, type PartialProjectionResults } from 'projectrix';
+  import { setInlineStyles, getProjection } from 'projectrix';
   import { onMount, tick } from 'svelte';
   import type { Writable } from 'svelte/store';
   import type DemoStartSlot from '../DemoStartSlot.svelte';
+  import type { Options } from '$lib/options';
 
   // start slot and options are part of demos infrastructure
   export let startSlot: DemoStartSlot;
@@ -17,20 +17,18 @@
     startSlot.show();
   });
 
-  function match(subject: HTMLElement, target: HTMLElement): void {
-    if (startSlot.isShowing()) {
-      startSlot.hide();
-      target.style.opacity = '1';
-    }
+  function swapSlotForTarget(target: HTMLElement): void {
+    startSlot.hide();
+    target.style.opacity = '1';
+  }
 
-    const { toSubject } = getProjection(subject, target, { log }) as PartialProjectionResults;
-    delete toSubject.borderStyle; // preserve target border style
-
-    setInlineStyles(target, toSubject);
+  function match(target: HTMLElement, subject: HTMLElement): void {
+    setInlineStyles(target, getProjection(subject, target, { log }).toSubject);
   }
 
   function subjectClickHandler(subject: HTMLElement): void {
-    match(subject, target);
+    if (startSlot.isShowing()) swapSlotForTarget(target);
+    match(target, subject);
   }
 </script>
 
@@ -62,13 +60,8 @@
   }
 
   .demo-target {
-    // any positioning works with Projectrix
-    position: absolute;
-
-    // last i checked, safari webkit can't handle non-integer borders
-    // on transformed elements, so i always recommend pixels for borders
+    position: absolute; // any positioning works with Projectrix
     border: solid 3px limegreen;
-
     opacity: 0;
     pointer-events: none;
   }
@@ -102,6 +95,7 @@
   }
 
   .rotated {
+    border-style: solid;
     transform: rotate(45deg);
   }
 
@@ -109,6 +103,7 @@
     width: 21cqw;
     height: 21cqw;
     border-color: darkmagenta;
+    border-style: dashed;
 
     transform: skew(-15deg);
 
@@ -119,6 +114,7 @@
 
       width: 10.75cqw;
       height: 10.75cqw;
+      border-style: dotted;
     }
   }
 </style>

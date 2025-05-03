@@ -1,26 +1,23 @@
-import { getProjection, setInlineStyles, clearInlineStyles } from 'projectrix';
-import { animate } from 'motion';
+// setInlineStyles and animejs' utils.set can both be used with waapi.animate
+import { setInlineStyles, getProjection, clearInlineStyles } from 'projectrix';
+import { waapi } from 'animejs';
 
-let currentSide: 'left' | 'right' = 'left';
+function fauxFlip(currentTarget: HTMLElement, nextTarget: HTMLElement): void {
+  const { toSubject, toTargetOrigin } = getProjection(currentTarget, nextTarget);
 
-function flipFromCurrentSide(): void {
-  const subject = currentSide === 'left' ? leftTarget : rightTarget;
-  const target = currentSide === 'left' ? rightTarget : leftTarget;
-  const { toSubject, toTargetOrigin } = getProjection(subject, target);
+  // set nextTarget to currentTarget's projection
+  setInlineStyles(nextTarget, toSubject);
+  currentTarget.style.opacity = '0';
+  nextTarget.style.opacity = '1';
 
-  setInlineStyles(target, toSubject);
-  subject.style.opacity = '0';
-  target.style.opacity = '1';
+  // FLIP nextTarget back to its origin
+  waapi.animate(nextTarget, {
+    ...toTargetOrigin,
 
-  const flipAnim = animate(
-    target,
-    { ...toTargetOrigin },
-    { duration: 0.75, easing: 'ease-in-out' },
-  );
+    duration: 2000,
+    ease: 'inOutQuad',
 
-  flipAnim.finished.then(() => {
-    clearInlineStyles(target);
-    currentSide = otherSide(currentSide);
-    toNeutral();
+    // clear inline styles from the projection once they're redundant
+    onComplete: () => clearInlineStyles(nextTarget),
   });
 }

@@ -1,10 +1,10 @@
 <script lang="ts">
+  import { getProjection, clearInlineStyles } from 'projectrix';
+  import { animate, utils, type JSAnimation } from 'animejs';
   import { onDestroy, onMount, tick } from 'svelte';
-  import { getProjection, clearInlineStyles, setInlineStyles } from 'projectrix';
-  import { animate, type AnimationControls } from 'motion';
   import type { Writable } from 'svelte/store';
-  import type { Options } from '$lib/options';
   import type DemoStartSlot from '../DemoStartSlot.svelte';
+  import type { Options } from '$lib/options';
 
   // start slot and options are part of demos infrastructure
   export let startSlot: DemoStartSlot;
@@ -12,12 +12,11 @@
   $: log = $options.log;
 
   let leftParent: HTMLElement;
-  let rightParent: HTMLElement;
   let leftChildTarget: HTMLElement;
+  let rightParent: HTMLElement;
   let rightChildTarget: HTMLElement;
 
-  let currentTarget: HTMLElement | undefined;
-  let currentAnim: AnimationControls | undefined;
+  let currentAnim: JSAnimation | undefined;
   let currentTimeout: NodeJS.Timeout | undefined;
 
   onMount(async () => {
@@ -25,87 +24,69 @@
     startSlot.show();
 
     currentTimeout = setTimeout(() => {
+      const currentTarget: HTMLElement = startSlot.getSlotSubject();
+      flipToNextTarget(currentTarget, rightChildTarget);
       startSlot.hide();
-      currentTarget = startSlot.getSlotSubject();
-      flipToRightTarget();
     }, 1000);
   });
 
   onDestroy(() => {
-    currentTarget = undefined;
-
-    currentAnim?.stop();
-    currentAnim = undefined;
-
+    currentAnim?.cancel();
     clearTimeout(currentTimeout);
-    currentTimeout = undefined;
   });
 
-  function flipToLeftTarget(): void {
-    flipToTarget(leftChildTarget, leftParent, 1, flipToRightTarget);
-  }
-
-  function flipToRightTarget(): void {
-    flipToTarget(rightChildTarget, rightParent, -1, flipToLeftTarget);
-  }
-
-  function flipToTarget(
-    nextTarget: HTMLElement,
-    nextParent: HTMLElement,
-    dir: number,
-    nextFlip: () => void,
-  ): void {
-    if (!currentTarget) return;
-
-    const { toSubject, toTargetOrigin } = getProjection(currentTarget, nextTarget, { log });
-
-    // set next target to current target's projection
-    setInlineStyles(nextTarget, toSubject);
-    nextTarget.style.opacity = '1';
-    currentTarget.style.opacity = '0';
-    currentTarget = nextTarget;
-
-    // FLIP next target back to its origin
-    currentAnim = animate(
-      nextTarget,
-      {
-        ...toTargetOrigin,
-      },
-      {
-        duration: 1,
-        easing: 'ease-out',
-      },
-    );
-
-    currentAnim.finished.then(() => {
-      clearInlineStyles(nextTarget);
-
-      playParentAnimation(nextParent, dir).finished.then(() => {
+  function flipToNextTarget(currentTarget: HTMLElement, nextTarget: HTMLElement): void {
+    currentAnim = fauxFlip(currentTarget, nextTarget);
+    currentAnim.then(() => {
+      currentAnim = animateParent(getNextParent(nextTarget));
+      currentAnim.then(() => {
         currentTimeout = setTimeout(() => {
-          nextFlip();
+          currentTarget = nextTarget;
+          flipToNextTarget(currentTarget, getNextTarget(currentTarget));
         }, 1000);
       });
     });
   }
 
-  function playParentAnimation(parent: HTMLElement, dir: number): AnimationControls {
-    currentAnim = animate(
-      parent,
-      {
-        transform: [
-          'skew(' + 15 * dir + 'deg)',
-          'skew(' + 15 * dir + 'deg) rotate(' + -20 * dir + 'deg)',
-          'skew(' + 15 * dir + 'deg) rotate(' + 20 * dir + 'deg)',
-          'skew(' + 15 * dir + 'deg)',
-        ],
-      },
-      {
-        duration: 1,
-        easing: 'ease-in-out',
-      },
-    );
+  function fauxFlip(currentTarget: HTMLElement, nextTarget: HTMLElement): JSAnimation {
+    const { toSubject, toTargetOrigin } = getProjection(currentTarget, nextTarget, { log });
 
-    return currentAnim;
+    utils.set(nextTarget, toSubject);
+    currentTarget.style.opacity = '0';
+    nextTarget.style.opacity = '1';
+
+    return animate(nextTarget, {
+      ...toTargetOrigin,
+
+      duration: 1000,
+      ease: 'outQuad',
+
+      onComplete: () => clearInlineStyles(nextTarget),
+    });
+  }
+
+  function animateParent(parent: HTMLElement): JSAnimation {
+    const dir = parent === rightParent ? -1 : 1;
+
+    return animate(parent, {
+      transform: [
+        'skew(' + 15 * dir + 'deg)',
+        'skew(' + 15 * dir + 'deg) rotate(' + -20 * dir + 'deg)',
+        'skew(' + 15 * dir + 'deg) rotate(' + 20 * dir + 'deg)',
+        'skew(' + 15 * dir + 'deg)',
+      ],
+
+      duration: 1000,
+      ease: 'inOutQuad',
+    });
+  }
+
+  function getNextParent(nextTarget: HTMLElement): HTMLElement {
+    return nextTarget === rightChildTarget ? rightParent : leftParent;
+  }
+
+  function getNextTarget(currentTarget: HTMLElement): HTMLElement {
+    return currentTarget === rightChildTarget ? leftChildTarget : rightChildTarget;
   }
 </script>
 
@@ -156,9 +137,6 @@
 
       width: 10.75cqw;
       height: 10.75cqw;
-
-      // last i checked, safari webkit can't handle non-integer borders
-      // on transformed elements, so i always recommend pixels for borders
       border: solid 3px limegreen;
 
       opacity: 0;

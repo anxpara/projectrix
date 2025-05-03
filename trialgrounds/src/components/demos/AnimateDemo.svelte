@@ -1,10 +1,10 @@
 <script lang="ts">
-  import type { Options } from '$lib/options';
-  import { animate, type AnimationControls } from 'motion';
-  import { getProjection, setInlineStyles, type PartialProjectionResults } from 'projectrix';
+  import { setInlineStyles, getProjection, type PartialProjectionResults } from 'projectrix';
+  import { animate } from 'animejs';
   import { onMount, tick } from 'svelte';
   import type { Writable } from 'svelte/store';
   import type DemoStartSlot from '../DemoStartSlot.svelte';
+  import type { Options } from '$lib/options';
 
   // start slot and options are part of demos infrastructure
   export let startSlot: DemoStartSlot;
@@ -13,8 +13,6 @@
 
   let target: HTMLElement;
 
-  let currentAnim: AnimationControls | undefined;
-
   onMount(async () => {
     await tick();
     startSlot.show();
@@ -22,39 +20,27 @@
 
   function swapSlotForTarget(target: HTMLElement): void {
     const { toSubject } = getProjection(startSlot.getSlotSubject(), target);
-
     setInlineStyles(target, toSubject);
-    target.style.opacity = '1';
 
     startSlot.hide();
+    target.style.opacity = '1';
   }
 
-  function animateDirect(subject: HTMLElement, target: HTMLElement): void {
-    if (startSlot.isShowing()) {
-      swapSlotForTarget(target);
-    }
-
-    // stop current animation; motion one will update target's inline styles
-    // to mid-animation values
-    if (currentAnim?.currentTime && currentAnim.currentTime < 1) {
-      currentAnim.stop();
-    }
-
+  function animateTargetToSubject(target: HTMLElement, subject: HTMLElement): void {
     const { toSubject } = getProjection(subject, target, { log }) as PartialProjectionResults;
-    delete toSubject.borderStyle; // preserve target border style
+    delete toSubject.borderStyle;
 
-    currentAnim = animate(
-      target,
-      { ...toSubject },
-      {
-        duration: 0.4,
-        easing: 'ease-out',
-      },
-    );
+    animate(target, {
+      ...toSubject,
+
+      duration: 400,
+      ease: 'outQuad',
+    });
   }
 
   function subjectClickHandler(subject: HTMLElement): void {
-    animateDirect(subject, target);
+    if (startSlot.isShowing()) swapSlotForTarget(target);
+    animateTargetToSubject(target, subject);
   }
 </script>
 
@@ -86,11 +72,7 @@
   }
 
   .demo-target {
-    // any positioning works with Projectrix
-    position: absolute;
-
-    // last i checked, safari webkit can't handle non-integer borders
-    // on transformed elements, so i always recommend pixels for borders
+    position: absolute; // any positioning works with Projectrix
     border: solid 3px limegreen;
 
     opacity: 0;

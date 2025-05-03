@@ -1,24 +1,23 @@
-import { getProjection, setInlineStyles, clearInlineStyles } from 'projectrix';
-import { animate } from 'motion';
+// don't combine projectrix's setInlineStyles with animejs' animate; use utils.set
+import { getProjection, clearInlineStyles } from 'projectrix';
+import { animate, utils } from 'animejs';
 
-function fauxFlip(subject: HTMLElement, target: HTMLElement): void {
-  const { toSubject, toTargetOrigin } = getProjection(subject, target);
+function fauxFlip(currentTarget: HTMLElement, nextTarget: HTMLElement): void {
+  const { toSubject, toTargetOrigin } = getProjection(currentTarget, nextTarget);
 
-  // set target to subject's projection
-  setInlineStyles(target, toSubject);
-  target.style.opacity = '1';
-  subject.style.opacity = '0';
+  // set nextTarget to currentTarget's projection
+  utils.set(nextTarget, toSubject);
+  currentTarget.style.opacity = '0';
+  nextTarget.style.opacity = '1';
 
-  // FLIP back to origin
-  const flipAnimation = animate(
-    target,
-    { ...toTargetOrigin },
-    {
-      duration: 1,
-      easing: 'ease-out',
-    },
-  );
+  // FLIP nextTarget back to its origin
+  animate(nextTarget, {
+    ...toTargetOrigin,
 
-  // clear inline styles once they're redundant
-  flipAnimation.finished.then(() => clearInlineStyles(target, toTargetOrigin));
+    duration: 1000,
+    ease: 'outQuad',
+
+    // clear inline styles from the projection once they're redundant
+    onComplete: () => clearInlineStyles(nextTarget),
+  });
 }
