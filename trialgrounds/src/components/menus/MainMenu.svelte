@@ -33,10 +33,11 @@
       aria-label={$open ? 'close menu' : 'open menu'}
       class="material-symbols-outlined menu-button"
     >
+      <div class="button-decor button-bg"></div>
       {#if $open}
-        unfold_less
+        close_small
       {:else}
-        unfold_more
+        arrow_drop_down
       {/if}
     </button>
   </div>
@@ -99,7 +100,8 @@
     margin-top: 1em;
     border-radius: 0.3em;
     padding: 0.5em;
-    gap: 0.5em;
+    padding-right: 1em;
+    gap: 0.8em;
 
     background: hsla(225, 32%, 10%, 0.8);
     cursor: pointer;
@@ -115,12 +117,15 @@
   }
 
   .menu-button {
+    position: relative;
+    top: 0.05em;
+    z-index: 1;
+
     font-size: 1.8em;
     width: 0.8em;
     height: 1.1em;
     line-height: 1.1em;
     border: none;
-    border-radius: 0.15em;
     padding: 0;
 
     display: flex;
@@ -129,13 +134,30 @@
 
     font-weight: 500;
     color: #111521;
-    background: coral;
+    background: transparent;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
+
+    .button-bg {
+      position: absolute;
+      left: 0.01em;
+      z-index: -1;
+
+      width: 100%;
+      height: 100%;
+
+      background: coral;
+      transform: skew(-34deg);
+      -webkit-tap-highlight-color: transparent;
+    }
   }
-  .menu-header:hover {
-    .menu-button {
-      background-color: rgb(223, 109, 68);
+  @media (hover: hover) {
+    .menu-header:hover {
+      .menu-button {
+        .button-bg {
+          background: rgb(223, 109, 68);
+        }
+      }
     }
   }
 
