@@ -14,7 +14,7 @@
   const {
     elements: { root, content, trigger },
     states: { open },
-  } = createCollapsible();
+  } = createCollapsible({ forceVisible: true });
 
   afterNavigate((navigation) => {
     if (navigation.from?.route.id === navigation.to?.route.id) return;
@@ -27,38 +27,35 @@
 </script>
 
 <div use:melt={$root} class="centerer">
-  <div use:melt={$trigger} class="menu-header">
-    <h1 class="title">Projectrix Trialgrounds</h1>
-    <button
-      aria-label={$open ? 'close menu' : 'open menu'}
-      class="material-symbols-outlined menu-button"
+  <div class="sizer">
+    <div use:melt={$trigger} class="menu-header" class:open={$open}>
+      <div class="button-decor menu-header-bg" class:open={$open}></div>
+      <h1 class="title">Projectrix Trialgrounds</h1>
+      <button
+        aria-label={$open ? 'close menu' : 'open menu'}
+        class="material-symbols-outlined menu-button"
+      >
+        <div class="button-decor button-bg" class:open={$open}></div>
+        {#if $open}
+          <span style="font-size: .8em;">close_small</span>
+        {:else}
+          arrow_drop_down
+        {/if}
+      </button>
+    </div>
+    <div
+      use:melt={$content}
+      transition:fade={{ duration: 100 }}
+      class="menus-container"
+      class:open={$open}
     >
-      <div class="button-decor button-bg"></div>
-      {#if $open}
-        close_small
-      {:else}
-        arrow_drop_down
-      {/if}
-    </button>
-  </div>
-  {#if $open}
-    <div use:melt={$content} transition:fade={{ duration: 100 }} class="menus-container">
       <nav aria-labelledby="navTitle">
-        <p id="navTitle">directory</p>
-        <ul>
-          <li>
-            <a href="/{$pageUrl.search}">all trials</a>
-          </li>
-          <li>
-            <a href="/perf{$pageUrl.search}">all perfs</a>
-          </li>
-          <li>
-            <a href="/demos{$pageUrl.search}">all demos</a>
-          </li>
-        </ul>
+        <a href="/{$pageUrl.search}">Trials</a>&nbsp;|&nbsp;<a href="/demos{$pageUrl.search}"
+          >Demos</a
+        >&nbsp;|&nbsp;<a href="/perf{$pageUrl.search}">Perf</a>
       </nav>
       <div role="menu" aria-labelledby="menuTitle">
-        <p id="menuTitle">options</p>
+        <p id="menuTitle" class="menu-title">options:</p>
         <div class="option-groups">
           <fieldset aria-label="common options">
             {#each sharedOptionNames as name}
@@ -73,39 +70,60 @@
         </div>
       </div>
     </div>
-  {/if}
+  </div>
 </div>
 
 <style lang="scss">
   .centerer {
     position: relative;
     width: 100%;
+    height: 4em;
     z-index: 3;
 
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
 
+    container-type: inline-size;
+
     pointer-events: none;
-    * > * {
-      pointer-events: all;
-    }
   }
 
   .menu-header {
     all: unset;
 
-    display: flex;
+    font-size: clamp(0.5em, 1em, 3.7cqw);
+    position: relative;
     margin-top: 1em;
     border-radius: 0.3em;
     padding: 0.5em;
-    padding-right: 1em;
+    padding-inline: 1.2em;
+
+    display: flex;
+    justify-content: center;
     gap: 0.8em;
 
-    background: hsla(225, 32%, 10%, 0.8);
+    pointer-events: all;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
+
+    .menu-header-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: -1;
+
+      background: hsla(225, 32%, 10%, 0.8);
+      transform: skew(-31deg);
+    }
+    .menu-header-bg.open {
+      background: coral;
+    }
+  }
+  .menu-header.open {
+    color: #111521;
   }
 
   .title {
@@ -150,60 +168,70 @@
       transform: skew(-34deg);
       -webkit-tap-highlight-color: transparent;
     }
+    .button-bg.open {
+      background: rgb(223, 109, 68);
+    }
   }
   @media (hover: hover) {
     .menu-header:hover {
       .menu-button {
         .button-bg {
-          background: rgb(223, 109, 68);
+          background: rgb(170, 84, 53);
+        }
+        .button-bg.open {
+          background: rgb(177, 88, 56);
         }
       }
     }
   }
 
   .menus-container {
-    position: absolute;
-    top: 100%;
+    position: relative;
+    top: -1px;
+    transform: translateX(clamp(-3.219cqw, -0.87em, 0em));
     z-index: 1;
 
-    width: fit-content;
-    border-radius: 0.3em;
-    padding-inline: 0.5em;
-    padding-bottom: 0.7em;
+    width: auto;
+    border: solid 2px;
+    border-top: 1px;
+    padding: 1em;
 
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     flex-wrap: wrap;
-    justify-content: center;
+    align-items: center;
     gap: 0 2em;
 
+    opacity: 0;
     color: coral;
-    background: hsla(225, 32%, 10%, 0.9);
-    border: solid 2px;
+    background: hsla(225, 32%, 10%, 0.93);
 
     will-change: transform;
+
+    pointer-events: none;
+  }
+  .menus-container.open {
+    opacity: 1;
+    pointer-events: all;
   }
 
   nav {
+    font-size: 1.5em;
+    padding-bottom: 0.1em;
+
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
+  }
 
-    ul {
-      margin-block: 0;
-      padding-left: 1em;
-
-      li {
-        margin-bottom: 0.6em;
-        font-weight: 600;
-      }
-    }
+  .menu-title {
+    margin-bottom: 0.5em;
   }
 
   .option-groups {
     display: flex;
     gap: 1.2em;
-    padding-left: 1.2em;
+    padding-left: 2em;
 
     fieldset {
       all: unset;
