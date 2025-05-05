@@ -50,21 +50,12 @@
       class:open={$open}
     >
       <nav aria-labelledby="navTitle">
-        <p id="navTitle">directory</p>
-        <ul>
-          <li>
-            <a href="/{$pageUrl.search}">all trials</a>
-          </li>
-          <li>
-            <a href="/perf{$pageUrl.search}">all perfs</a>
-          </li>
-          <li>
-            <a href="/demos{$pageUrl.search}">all demos</a>
-          </li>
-        </ul>
+        <a href="/{$pageUrl.search}">Trials</a>&nbsp;|&nbsp;<a href="/demos{$pageUrl.search}"
+          >Demos</a
+        >&nbsp;|&nbsp;<a href="/perf{$pageUrl.search}">Perf</a>
       </nav>
       <div role="menu" aria-labelledby="menuTitle">
-        <p id="menuTitle">options</p>
+        <p id="menuTitle" class="menu-title">options:</p>
         <div class="option-groups">
           <fieldset aria-label="common options">
             {#each sharedOptionNames as name}
@@ -106,7 +97,7 @@
     margin-top: 1em;
     border-radius: 0.3em;
     padding: 0.5em;
-    padding-right: 1em;
+    padding-inline: 1.2em;
 
     display: flex;
     justify-content: center;
@@ -203,18 +194,17 @@
     width: auto;
     border: solid 2px;
     border-top: 1px;
-    padding-inline: 0.5em;
-    padding-bottom: 0.7em;
+    padding: 1em;
 
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     flex-wrap: wrap;
-    justify-content: center;
+    align-items: center;
     gap: 0 2em;
 
     opacity: 0;
     color: coral;
-    background: hsla(225, 32%, 10%, 0.9);
+    background: hsla(225, 32%, 10%, 0.93);
 
     will-change: transform;
 
@@ -226,25 +216,22 @@
   }
 
   nav {
+    font-size: 1.5em;
+    padding-bottom: 0.1em;
+
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
+  }
 
-    ul {
-      margin-block: 0;
-      padding-left: 1em;
-
-      li {
-        margin-bottom: 0.6em;
-        font-weight: 600;
-      }
-    }
+  .menu-title {
+    margin-bottom: 0.5em;
   }
 
   .option-groups {
     display: flex;
     gap: 1.2em;
-    padding-left: 1.2em;
+    padding-left: 2em;
 
     fieldset {
       all: unset;
