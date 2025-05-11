@@ -43,6 +43,7 @@
   "dependencies": {
     "actual-client-rect": "^0.2.2",
     "animejs": "^4.0.0",
+    "eventery": "^0.0.4",
     "motion": "^10.17.0"
   }
 }

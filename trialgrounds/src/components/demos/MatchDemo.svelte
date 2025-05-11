@@ -26,21 +26,19 @@
     setInlineStyles(target, getProjection(subject, target, { log }).toSubject);
   }
 
-  function subjectClickHandler(subject: HTMLElement): void {
+  function subjectClickHandler(e: MouseEvent): void {
     if (startSlot.isShowing()) swapSlotForTarget(target);
+    const subject = e.target as HTMLElement;
     match(target, subject);
   }
 </script>
 
 <div class="size-container">
   <div class="subject-flex">
-    <button class="demo-subject" on:click={(e) => subjectClickHandler(e.currentTarget)} />
-    <button class="demo-subject rotated" on:click={(e) => subjectClickHandler(e.currentTarget)} />
-    <button class="demo-subject parent" on:click={(e) => subjectClickHandler(e.currentTarget)}>
-      <button
-        class="demo-subject child"
-        on:click|stopPropagation={(e) => subjectClickHandler(e.currentTarget)}
-      />
+    <button class="demo-subject" on:click={subjectClickHandler} />
+    <button class="demo-subject rotated" on:click={subjectClickHandler} />
+    <button class="demo-subject parent" on:click={subjectClickHandler}>
+      <button class="demo-subject child" />
     </button>
   </div>
 </div>

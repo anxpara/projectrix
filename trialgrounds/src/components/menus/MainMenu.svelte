@@ -1,61 +1,215 @@
 <script lang="ts">
-  import { createCollapsible, melt } from '@melt-ui/svelte';
   import OptionCheckbox from '../melt/OptionCheckbox.svelte';
-  import { sharedOptionNames, trialOptionNames } from '$lib/optionNames';
-  import type { Readable } from 'svelte/store';
-  import { getContext } from 'svelte';
+  import { getContext, onMount } from 'svelte';
+  import { derived, writable, type Readable } from 'svelte/store';
   import { afterNavigate } from '$app/navigation';
-  import { fade } from 'svelte/transition';
+  import { browser } from '$app/environment';
+  import { isHoverDevice } from '$lib/stores/isHoverDevice';
+  import { addChangeEmitsToReadable } from '$lib/stores/addChangeEmitsToStore';
+  import { sharedOptionNames, trialOptionNames } from '$lib/optionNames';
+  import { clearInlineStyles, getProjection } from 'projectrix';
+  import { animate, JSAnimation, utils } from 'animejs';
+
+  let root: HTMLElement;
+  let header: HTMLElement;
+  let headerBg: HTMLElement;
+  let buttonBg: HTMLElement;
+  let menuContent: HTMLElement;
+
+  let currentHeaderAnim: JSAnimation | undefined = undefined;
+  let currentButtonAnim: JSAnimation | undefined = undefined;
+  let currentContentAnim: JSAnimation | undefined = undefined;
 
   const pageUrl = getContext<Readable<URL>>('pageUrl');
+  $: viewingTrials = !$pageUrl.pathname.includes('demos') && !$pageUrl.pathname.includes('perf');
 
-  $: viewingTrials = !$pageUrl.pathname.includes('demos');
+  const overHeader = writable<boolean>(false);
+  const overContent = writable<boolean>(false);
+  const toggledOpen = writable<boolean>(false);
+  const menuOpen = addChangeEmitsToReadable<boolean>(
+    derived(
+      [overHeader, overContent, toggledOpen],
+      ([isOverHeader, isOverContent, isToggledOpen]) => {
+        return isOverHeader || isOverContent || isToggledOpen;
+      },
+    ),
+    false,
+  );
+  menuOpen.changes.subscribe(async (isOpen) => {
+    if (!browser) return;
+    requestAnimationFrame(() => animateMenu(isOpen));
+  });
+  $: inert = $menuOpen ? null : true;
 
-  const {
-    elements: { root, content, trigger },
-    states: { open },
-  } = createCollapsible({ forceVisible: true });
+  onMount(() => {
+    document.addEventListener('click', handleDocumentClick);
+  });
 
   afterNavigate((navigation) => {
-    if (navigation.from?.route.id === navigation.to?.route.id) return;
+    if (
+      navigation.from?.route.id === navigation.to?.route.id &&
+      navigation.from?.url.search != navigation.to?.url.search
+    ) {
+      return;
+    }
     closeMenu();
   });
 
   function closeMenu(): void {
-    $open = false;
+    $overHeader = false;
+    $overContent = false;
+    $toggledOpen = false;
+  }
+
+  function animateMenu(isOpen: boolean): void {
+    animateHeader(isOpen);
+    flipButton(isOpen);
+    animateContent(isOpen);
+  }
+
+  function animateHeader(isOpen: boolean): void {
+    currentHeaderAnim?.pause();
+
+    const from = isOpen ? '#ff7f50' : '#111521';
+    const to = isOpen ? '#111521' : '#ff7f50';
+
+    utils.set(header, { color: from });
+    currentHeaderAnim = animate(header, {
+      color: to,
+
+      duration: 200,
+      ease: isOpen ? 'inQuad' : 'inExpo',
+
+      onComplete: () => {
+        header.style.color = '';
+      },
+    });
+  }
+
+  function flipButton(isOpen: boolean): void {
+    currentButtonAnim?.pause();
+
+    const subject = isOpen ? buttonBg : headerBg;
+    const target = isOpen ? headerBg : buttonBg;
+    const { toSubject, toTargetOrigin } = getProjection(subject, target);
+
+    utils.set(target, toSubject);
+    currentButtonAnim = animate(target, {
+      ...toTargetOrigin,
+
+      duration: 200,
+      ease: 'inExpo',
+
+      onComplete: () => {
+        clearInlineStyles(target);
+      },
+    });
+  }
+
+  function animateContent(isOpen: boolean): void {
+    currentContentAnim?.pause();
+
+    if (!isOpen) {
+      menuContent.style.opacity = '';
+      return;
+    }
+
+    utils.set(menuContent, { opacity: 0, borderColor: '#ff7f5000' });
+    currentContentAnim = animate(menuContent, {
+      opacity: { to: 1, ease: 'inExpo' },
+      borderColor: { to: '#ff7f50ff', ease: 'inQuad' },
+
+      duration: 200,
+
+      onComplete: () => {
+        menuContent.style.opacity = '';
+        menuContent.style.borderColor = '';
+      },
+    });
+  }
+
+  function handleMouseEnterHeader(e: MouseEvent): void {
+    if (!$isHoverDevice) return;
+    $overHeader = true;
+  }
+  function handleMouseLeaveHeader(e: MouseEvent): void {
+    if (!$isHoverDevice) return;
+    setTimeout(() => {
+      $overHeader = false;
+      if (!$overContent) $toggledOpen = false;
+    }, 1);
+  }
+  function handleClickHeader(e: MouseEvent): void {
+    $toggledOpen = !$menuOpen;
+    $overContent = false;
+    $overHeader = false;
+  }
+
+  function handleMouseEnterContent(e: MouseEvent): void {
+    if (!$isHoverDevice) return;
+    $overContent = true;
+  }
+  function handleMouseLeaveContent(e: MouseEvent): void {
+    if (!$isHoverDevice) return;
+    setTimeout(() => {
+      $overContent = false;
+      if (!$overHeader) $toggledOpen = false;
+    }, 1);
+  }
+
+  function handleDocumentClick(e: MouseEvent): void {
+    const target = e.target as HTMLElement;
+    if (!$menuOpen || root.isSameNode(target) || root.contains(target)) return;
+    closeMenu();
   }
 </script>
 
-<div use:melt={$root} class="centerer">
+<div bind:this={root} class="centerer">
   <div class="sizer">
-    <div use:melt={$trigger} class="menu-header" class:open={$open}>
-      <div class="button-decor menu-header-bg" class:open={$open}></div>
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <!-- svelte-ignore a11y-no-static-element-interactions -->
+    <div
+      bind:this={header}
+      class="menu-header"
+      class:open={$menuOpen}
+      on:mouseenter={handleMouseEnterHeader}
+      on:mouseleave={handleMouseLeaveHeader}
+      on:click={handleClickHeader}
+    >
+      <div bind:this={headerBg} class="menu-header-bg" class:open={$menuOpen}></div>
       <h1 class="title">Projectrix Trialgrounds</h1>
-      <button
-        aria-label={$open ? 'close menu' : 'open menu'}
-        class="material-symbols-outlined menu-button"
-      >
-        <div class="button-decor button-bg" class:open={$open}></div>
-        {#if $open}
+      <div class="material-symbols-outlined menu-button-base">
+        <button
+          bind:this={buttonBg}
+          aria-label={$menuOpen ? 'close menu' : 'open menu'}
+          class="menu-button"
+          class:open={$menuOpen}
+        >
+        </button>
+        {#if $toggledOpen}
           <span style="font-size: .8em;">close_small</span>
         {:else}
           arrow_drop_down
         {/if}
-      </button>
+      </div>
     </div>
-    <div
-      use:melt={$content}
-      transition:fade={{ duration: 100 }}
+
+    <dialog
+      bind:this={menuContent}
       class="menus-container"
-      class:open={$open}
+      class:open={$menuOpen}
+      aria-label="main menu"
+      {inert}
+      on:mouseenter={handleMouseEnterContent}
+      on:mouseleave={handleMouseLeaveContent}
     >
-      <nav aria-labelledby="navTitle">
+      <nav>
         <a href="/{$pageUrl.search}">Trials</a>&nbsp;|&nbsp;<a href="/demos{$pageUrl.search}"
           >Demos</a
         >&nbsp;|&nbsp;<a href="/perf{$pageUrl.search}">Perf</a>
       </nav>
       <div role="menu" aria-labelledby="menuTitle">
-        <p id="menuTitle" class="menu-title">options:</p>
+        <p id="menuTitle" class="menu-title">Options:</p>
         <div class="option-groups">
           <fieldset aria-label="common options">
             {#each sharedOptionNames as name}
@@ -69,7 +223,7 @@
           </fieldset>
         </div>
       </div>
-    </div>
+    </dialog>
   </div>
 </div>
 
@@ -106,6 +260,9 @@
     pointer-events: all;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 
     .menu-header-bg {
       position: absolute;
@@ -127,6 +284,7 @@
   }
 
   .title {
+    z-index: 2;
     margin: 0;
     line-height: 1.3em;
 
@@ -134,7 +292,7 @@
     text-align: center;
   }
 
-  .menu-button {
+  .menu-button-base {
     position: relative;
     top: 0.05em;
     z-index: 1;
@@ -143,8 +301,6 @@
     width: 0.8em;
     height: 1.1em;
     line-height: 1.1em;
-    border: none;
-    padding: 0;
 
     display: flex;
     justify-content: center;
@@ -152,36 +308,21 @@
 
     font-weight: 500;
     color: #111521;
-    background: transparent;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
 
-    .button-bg {
+    .menu-button {
       position: absolute;
-      left: 0.01em;
       z-index: -1;
-
       width: 100%;
       height: 100%;
 
+      border: none;
+      padding: 0;
+
       background: coral;
-      transform: skew(-34deg);
+      transform: skew(-31deg);
+
+      cursor: pointer;
       -webkit-tap-highlight-color: transparent;
-    }
-    .button-bg.open {
-      background: rgb(223, 109, 68);
-    }
-  }
-  @media (hover: hover) {
-    .menu-header:hover {
-      .menu-button {
-        .button-bg {
-          background: rgb(170, 84, 53);
-        }
-        .button-bg.open {
-          background: rgb(177, 88, 56);
-        }
-      }
     }
   }
 
@@ -209,6 +350,10 @@
     will-change: transform;
 
     pointer-events: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
   .menus-container.open {
     opacity: 1;
