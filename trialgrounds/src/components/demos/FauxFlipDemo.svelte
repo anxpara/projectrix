@@ -7,14 +7,18 @@
   import type { Options } from '$lib/options';
 
   // start slot and options are part of demos infrastructure
-  export let startSlot: DemoStartSlot;
-  export let options: Writable<Options>;
-  $: log = $options.log;
+  interface Props {
+    startSlot: DemoStartSlot;
+    options: Writable<Options>;
+  }
 
-  let leftParent: HTMLElement;
-  let leftChildTarget: HTMLElement;
-  let rightParent: HTMLElement;
-  let rightChildTarget: HTMLElement;
+  let { startSlot, options }: Props = $props();
+  let log = $derived($options.log);
+
+  let leftParent: HTMLElement = $state();
+  let leftChildTarget: HTMLElement = $state();
+  let rightParent: HTMLElement = $state();
+  let rightChildTarget: HTMLElement = $state();
 
   let currentAnim: JSAnimation | undefined;
   let currentTimeout: NodeJS.Timeout | undefined;
@@ -93,11 +97,11 @@
 <div class="size-container">
   <div class="parents-container">
     <div bind:this={leftParent} class="parent left">
-      <div bind:this={leftChildTarget} class="demo-target child" />
+      <div bind:this={leftChildTarget} class="demo-target child"></div>
     </div>
 
     <div bind:this={rightParent} class="parent right">
-      <div bind:this={rightChildTarget} class="demo-target child" />
+      <div bind:this={rightChildTarget} class="demo-target child"></div>
     </div>
   </div>
 </div>

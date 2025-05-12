@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { page } from '$app/stores';
+  import { page } from '$app/state';
   import PerfCard from '../../components/PerfCard.svelte';
   import { allPerfs } from '$lib/perf/perfs';
   import { getContext, onMount, tick } from 'svelte';
@@ -35,7 +35,7 @@
 <div class="centerer">
   <div class="all-perfs-container">
     {#each allPerfs as perf}
-      <PerfCard {perf} href={`/perf/${perf.name}${$page.url.search}`} />
+      <PerfCard {perf} href={`/perf/${perf.name}${page.url.search}`} />
     {/each}
   </div>
 </div>

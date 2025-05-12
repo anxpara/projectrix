@@ -5,10 +5,14 @@
   import { getContext } from 'svelte';
   import type { Writable } from 'svelte/store';
 
-  export let perf: Perf;
-  export let href: string;
+  interface Props {
+    perf: Perf;
+    href: string;
+  }
 
-  $: durationMs = perf.durationMs;
+  let { perf = $bindable(), href }: Props = $props();
+
+  let durationMs = $derived(perf.durationMs);
 
   const options = getContext<Writable<Options>>('options');
 </script>
@@ -20,7 +24,7 @@
   </a>
 
   <div class="perf-container prevent-select">
-    <svelte:component this={perf.perfType} bind:this={perf.perfComponent} {perf} {options} />
+    <perf.perfType bind:this={perf.perfComponent} {perf} {options} />
 
     <div class="duration-container">
       {#if !$durationMs || $durationMs === PerfInProgress}
@@ -31,7 +35,7 @@
     </div>
 
     <div class="rerun-container">
-      <button on:click={() => runPerf(perf, $options)}
+      <button onclick={() => runPerf(perf, $options)}
         ><span class="material-symbols-outlined"> replay </span></button
       >
     </div>

@@ -1,7 +1,9 @@
 <script lang="ts">
+  import { run } from 'svelte/legacy';
+
   import { allTrials, getTrials, type Trial } from '../lib/trials/trials';
   import { getContext, onDestroy, onMount, tick } from 'svelte';
-  import { page } from '$app/stores';
+  import { page } from '$app/state';
   import OriginMarker from '../components/OriginMarker.svelte';
   import { animateTrial, animateTrialReturn } from '$lib/trials/animateTrial';
   import { utils } from 'animejs';
@@ -9,11 +11,15 @@
   import type { Writable } from 'svelte/store';
   import type { Options } from '$lib/options';
 
-  export let data;
+  interface Props {
+    data: any;
+  }
+
+  let { data }: Props = $props();
 
   let options = getContext<Writable<Options>>('options');
 
-  const trials = getCurrentTrials(data.trialNames);
+  const trials = $state(getCurrentTrials(data.trialNames));
   function getCurrentTrials(trialNames: string[]): Trial[] {
     return trialNames.length ? getTrials(trialNames) : allTrials;
   }
@@ -21,11 +27,9 @@
   let trialsLoaded = false;
   let autoSelectIndex: number = -1;
   let autoSelectInterval: NodeJS.Timeout | undefined = undefined;
-  let currentTrial: Trial | undefined = undefined;
-  $: trialSubject = currentTrial?.trialComponent?.getTrialControls().getSubjectElement?.call(null);
-  $: updateShowDefaultSubject(!trialSubject);
+  let currentTrial: Trial | undefined = $state(undefined);
 
-  let defaultSubject: HTMLElement;
+  let defaultSubject: HTMLElement = $state();
 
   onMount(async () => {
     await tick();
@@ -105,6 +109,10 @@
   function updateShowDefaultSubject(showDefault: boolean): void {
     $showDefaultSubject = showDefault;
   }
+  let trialSubject = $derived(currentTrial?.trialComponent?.getTrialControls().getSubjectElement?.call(null));
+  run(() => {
+    updateShowDefaultSubject(!trialSubject);
+  });
 </script>
 
 <svelte:head>
@@ -122,13 +130,12 @@
 <div class="all-trials-container">
   {#each trials as trial}
     <a
-      href="/{trial.name}{$page.url.search}"
-      on:mouseenter={() => hoverTrial(trial)}
-      on:focus={() => hoverTrial(trial)}
+      href="/{trial.name}{page.url.search}"
+      onmouseenter={() => hoverTrial(trial)}
+      onfocus={() => hoverTrial(trial)}
     >
       <OriginMarker bind:this={trial.originMarker} />
-      <svelte:component
-        this={trial.trialType}
+      <trial.trialType
         bind:this={trial.trialComponent}
         {trial}
         hideSubject={currentTrial !== trial || !trialSubject}

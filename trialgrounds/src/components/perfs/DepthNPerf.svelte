@@ -2,14 +2,18 @@
   import type { PerfControls } from '$lib/perf/perfs';
   import { onMount } from 'svelte';
 
-  export let n: number;
+  interface Props {
+    n: number;
+  }
 
-  let subjectContainerTemplate: HTMLElement;
-  let targetContainerTemplate: HTMLElement;
-  let baseSubjectContainer: HTMLElement;
-  let baseTargetContainer: HTMLElement;
-  let target: HTMLElement;
-  let subject: HTMLElement;
+  let { n }: Props = $props();
+
+  let subjectContainerTemplate: HTMLElement = $state();
+  let targetContainerTemplate: HTMLElement = $state();
+  let baseSubjectContainer: HTMLElement = $state();
+  let baseTargetContainer: HTMLElement = $state();
+  let target: HTMLElement = $state();
+  let subject: HTMLElement = $state();
 
   onMount(() => {
     reset();

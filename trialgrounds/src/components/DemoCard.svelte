@@ -5,20 +5,24 @@
   import type { Writable } from 'svelte/store';
   import DemoStartSlot from './DemoStartSlot.svelte';
 
-  export let demo: Demo;
-  export let href: string;
+  interface Props {
+    demo: Demo;
+    href: string;
+  }
+
+  let { demo = $bindable(), href }: Props = $props();
 
   const options = getContext<Writable<Options>>('options');
 
-  let startSlot: DemoStartSlot;
+  let startSlot: DemoStartSlot = $state();
 </script>
 
 <div class="demo-card">
   <a {href} class="title-link">
-    <div class="corner left" />
+    <div class="corner left"></div>
     <div class="title">
       <div class="corner-right-container">
-        <div class="corner right" />
+        <div class="corner right"></div>
       </div>
 
       <DemoStartSlot bind:this={startSlot}></DemoStartSlot>
@@ -28,7 +32,7 @@
   </a>
 
   <div class="demo-container prevent-select disable-touch-zoom">
-    <svelte:component this={demo.demoType} bind:this={demo.demoComponent} {startSlot} {options} />
+    <demo.demoType bind:this={demo.demoComponent} {startSlot} {options} />
   </div>
 
   <div class="summary">

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { page } from '$app/stores';
+  import { page } from '$app/state';
   import type { PerfName } from '$lib/perf/perfNames';
   import { perfsByName } from '$lib/perf/perfs';
   import { getContext, onMount, tick } from 'svelte';
@@ -10,7 +10,7 @@
 
   let options = getContext<Writable<Options>>('options');
 
-  $: perf = perfsByName.get($page.params.perfName as PerfName)!;
+  let perf = $derived(perfsByName.get(page.params.perfName as PerfName)!);
 
   onMount(async () => {
     await tick();
@@ -23,7 +23,7 @@
 </svelte:head>
 
 <div class="lone-perf-container">
-  <PerfCard {perf} href={`/perfs/${perf.name}${$page.url.search}`}></PerfCard>
+  <PerfCard {perf} href={`/perfs/${perf.name}${page.url.search}`}></PerfCard>
 </div>
 
 <style lang="scss">

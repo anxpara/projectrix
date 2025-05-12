@@ -5,7 +5,11 @@
   import { animate } from 'motion';
   import { codesByDemoName } from '$lib/demos/codesByDemoName';
 
-  export let demo: Demo;
+  interface Props {
+    demo: Demo;
+  }
+
+  let { demo }: Props = $props();
 
   type Tab = {
     id: string;
@@ -17,7 +21,7 @@
     figure?: HTMLElement;
   };
 
-  const tabs: Tab[] = [
+  const tabs: Tab[] = $state([
     {
       id: 'tab-usage',
       title: 'Usage',
@@ -32,7 +36,7 @@
       code: codesByDemoName.get(demo.name)!.code,
       highlightedCode: codesByDemoName.get(demo.name)!.codeHL,
     },
-  ];
+  ]);
 
   const tabsById: Record<string, Tab> = {};
   tabs.forEach((tab) => {
@@ -40,7 +44,7 @@
   });
 
   let currentTab: Tab | undefined = undefined;
-  let contentContainer: HTMLElement;
+  let contentContainer: HTMLElement = $state();
 
   const {
     elements: { root, list, content, trigger },

@@ -1,15 +1,19 @@
 <script lang="ts">
   import type { Trial, TrialControls } from '$lib/trials/trials';
 
-  export let trial: Trial;
-  export let hideSubject: boolean | undefined = undefined;
+  interface Props {
+    trial: Trial;
+    hideSubject?: boolean | undefined;
+  }
 
-  let targetElement: HTMLElement;
+  let { trial, hideSubject = undefined }: Props = $props();
+
+  let targetElement: HTMLElement = $state();
   function getTargetElement(): HTMLElement {
     return targetElement;
   }
 
-  let subjectElement: HTMLElement;
+  let subjectElement: HTMLElement = $state();
   function getSubjectElement(): HTMLElement {
     return subjectElement;
   }

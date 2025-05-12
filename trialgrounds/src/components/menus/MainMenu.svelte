@@ -10,18 +10,18 @@
   import { clearInlineStyles, getProjection } from 'projectrix';
   import { animate, JSAnimation, utils } from 'animejs';
 
-  let root: HTMLElement;
-  let header: HTMLElement;
-  let headerBg: HTMLElement;
-  let buttonBg: HTMLElement;
-  let menuContent: HTMLElement;
+  let root: HTMLElement = $state();
+  let header: HTMLElement = $state();
+  let headerBg: HTMLElement = $state();
+  let buttonBg: HTMLElement = $state();
+  let menuContent: HTMLElement = $state();
 
   let currentHeaderAnim: JSAnimation | undefined = undefined;
   let currentButtonAnim: JSAnimation | undefined = undefined;
   let currentContentAnim: JSAnimation | undefined = undefined;
 
   const pageUrl = getContext<Readable<URL>>('pageUrl');
-  $: viewingTrials = !$pageUrl.pathname.includes('demos') && !$pageUrl.pathname.includes('perf');
+  let viewingTrials = $derived(!$pageUrl.pathname.includes('demos') && !$pageUrl.pathname.includes('perf'));
 
   const overHeader = writable<boolean>(false);
   const overContent = writable<boolean>(false);
@@ -39,7 +39,7 @@
     if (!browser) return;
     requestAnimationFrame(() => animateMenu(isOpen));
   });
-  $: inert = $menuOpen ? null : true;
+  let inert = $derived($menuOpen ? null : true);
 
   onMount(() => {
     document.addEventListener('click', handleDocumentClick);
@@ -166,15 +166,15 @@
 
 <div bind:this={root} class="centerer">
   <div class="sizer">
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <!-- svelte-ignore a11y-no-static-element-interactions -->
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div
       bind:this={header}
       class="menu-header"
       class:open={$menuOpen}
-      on:mouseenter={handleMouseEnterHeader}
-      on:mouseleave={handleMouseLeaveHeader}
-      on:click={handleClickHeader}
+      onmouseenter={handleMouseEnterHeader}
+      onmouseleave={handleMouseLeaveHeader}
+      onclick={handleClickHeader}
     >
       <div bind:this={headerBg} class="menu-header-bg" class:open={$menuOpen}></div>
       <h1 class="title">Projectrix Trialgrounds</h1>
@@ -200,8 +200,8 @@
       class:open={$menuOpen}
       aria-label="main menu"
       {inert}
-      on:mouseenter={handleMouseEnterContent}
-      on:mouseleave={handleMouseLeaveContent}
+      onmouseenter={handleMouseEnterContent}
+      onmouseleave={handleMouseLeaveContent}
     >
       <nav>
         <a href="/{$pageUrl.search}">Trials</a>&nbsp;|&nbsp;<a href="/demos{$pageUrl.search}"

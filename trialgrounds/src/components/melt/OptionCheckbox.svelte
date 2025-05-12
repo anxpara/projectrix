@@ -4,8 +4,12 @@
   import { getContext } from 'svelte';
   import type { Writable } from 'svelte/store';
 
-  export let name: string;
-  export let irrelevant: boolean = false;
+  interface Props {
+    name: string;
+    irrelevant?: boolean;
+  }
+
+  let { name, irrelevant = false }: Props = $props();
 
   const options = getContext<Writable<Options>>('options');
 

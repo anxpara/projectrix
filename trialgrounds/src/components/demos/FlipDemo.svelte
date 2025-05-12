@@ -7,13 +7,17 @@
   import type DemoStartSlot from '../DemoStartSlot.svelte';
 
   // start slot and options are part of demos infrastructure
-  export let startSlot: DemoStartSlot;
-  export let options: Writable<Options>;
-  $: log = $options.log;
+  interface Props {
+    startSlot: DemoStartSlot;
+    options: Writable<Options>;
+  }
 
-  let target: HTMLElement;
-  let leftParent: HTMLElement;
-  let rightParent: HTMLElement;
+  let { startSlot, options }: Props = $props();
+  let log = $derived($options.log);
+
+  let target: HTMLElement = $state();
+  let leftParent: HTMLElement = $state();
+  let rightParent: HTMLElement = $state();
 
   let currentAnim: JSAnimation | undefined;
   let currentTimeout: NodeJS.Timeout | undefined;
@@ -95,7 +99,7 @@
 <div class="size-container">
   <div class="parents-container">
     <div bind:this={leftParent} class="parent left">
-      <div bind:this={target} class="demo-target child" />
+      <div bind:this={target} class="demo-target child"></div>
     </div>
 
     <div bind:this={rightParent} class="parent right"></div>

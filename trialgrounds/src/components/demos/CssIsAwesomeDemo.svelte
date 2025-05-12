@@ -6,15 +6,19 @@
   import type { Options } from '$lib/options';
 
   // options are part of demos infrastructure
-  export let options: Writable<Options>;
-  $: log = $options.log;
+  interface Props {
+    options: Writable<Options>;
+  }
 
-  let leftOuter: HTMLElement;
-  let leftInner: HTMLElement;
-  let leftTarget: HTMLElement;
-  let rightOuter: HTMLElement;
-  let rightInner: HTMLElement;
-  let rightTarget: HTMLElement;
+  let { options }: Props = $props();
+  let log = $derived($options.log);
+
+  let leftOuter: HTMLElement = $state();
+  let leftInner: HTMLElement = $state();
+  let leftTarget: HTMLElement = $state();
+  let rightOuter: HTMLElement = $state();
+  let rightInner: HTMLElement = $state();
+  let rightTarget: HTMLElement = $state();
 
   type Side = 'left' | 'right';
   const InitialSide = 'left';

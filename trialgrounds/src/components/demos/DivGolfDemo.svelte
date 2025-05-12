@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { preventDefault } from 'svelte/legacy';
+
   import {
     measureSubject,
     setInlineStyles,
@@ -13,35 +15,39 @@
   import type { Options } from '$lib/options';
 
   // options are part of demos infrastructure
-  export let options: Writable<Options>;
-  $: log = $options.log;
+  interface Props {
+    options: Writable<Options>;
+  }
+
+  let { options }: Props = $props();
+  let log = $derived($options.log);
 
   const NumGoals = 5;
-  let goals: HTMLElement[] = [];
+  let goals: HTMLElement[] = $state([]);
 
-  let startTarget: HTMLElement;
-  let hitTarget: HTMLElement;
+  let startTarget: HTMLElement = $state();
+  let hitTarget: HTMLElement = $state();
 
-  let spinnerModifier: HTMLElement;
-  let slider1Modifier: HTMLElement;
-  let slider2Modifier: HTMLElement;
+  let spinnerModifier: HTMLElement = $state();
+  let slider1Modifier: HTMLElement = $state();
+  let slider2Modifier: HTMLElement = $state();
 
-  let pulseContainer: HTMLElement;
-  let pulseTemplate: HTMLElement;
+  let pulseContainer: HTMLElement = $state();
+  let pulseTemplate: HTMLElement = $state();
 
   /* game state */
 
   let currentTarget: HTMLElement | null;
-  let currentModifier: HTMLElement | null;
+  let currentModifier: HTMLElement | null = $state();
   let hitAnim: JSAnimation | undefined;
 
   let startTime = 0;
-  let timer = 0;
+  let timer = $state(0);
   let timerInterval: NodeJS.Timeout | undefined;
 
-  let moves = 0;
+  let moves = $state(0);
   const goalsCompleted = new Set<HTMLElement>();
-  let courseCompleted = false;
+  let courseCompleted = $state(false);
 
   onMount(async () => {
     await tick();
@@ -423,8 +429,8 @@
 
 <!-- prettier-ignore -->
 <svelte:window 
-  on:keyup={(e) => handleWindowKeyUp(e.key)} 
-  on:keydown={(e) => handleWindowKeyDown(e.key)}
+  onkeyup={(e) => handleWindowKeyUp(e.key)} 
+  onkeydown={(e) => handleWindowKeyDown(e.key)}
 />
 
 <div class="centerer prevent-select disable-touch-zoom">
@@ -433,97 +439,97 @@
       <button
         bind:this={goals[0]}
         class="modifier goal goal-0"
-        on:mousedown={handleGoalTap}
-        on:touchstart|preventDefault={handleGoalTap}
-        on:keydown={handleGoalKeyDown}
+        onmousedown={handleGoalTap}
+        ontouchstart={preventDefault(handleGoalTap)}
+        onkeydown={handleGoalKeyDown}
       >
-        <div class="golf-target child-target" />
+        <div class="golf-target child-target"></div>
       </button>
 
       <button
         bind:this={goals[1]}
         class="modifier goal goal-1"
-        on:mousedown={handleGoalTap}
-        on:touchstart|preventDefault={handleGoalTap}
-        on:keydown={handleGoalKeyDown}
+        onmousedown={handleGoalTap}
+        ontouchstart={preventDefault(handleGoalTap)}
+        onkeydown={handleGoalKeyDown}
       >
-        <div class="golf-target child-target" />
+        <div class="golf-target child-target"></div>
       </button>
 
       <button
         bind:this={goals[2]}
         class="modifier goal goal-2"
-        on:mousedown={handleGoalTap}
-        on:touchstart|preventDefault={handleGoalTap}
-        on:keydown={handleGoalKeyDown}
+        onmousedown={handleGoalTap}
+        ontouchstart={preventDefault(handleGoalTap)}
+        onkeydown={handleGoalKeyDown}
       >
-        <div class="golf-target child-target" />
+        <div class="golf-target child-target"></div>
       </button>
 
       <button
         bind:this={goals[3]}
         class="modifier goal goal-3"
-        on:mousedown={handleGoalTap}
-        on:touchstart|preventDefault={handleGoalTap}
-        on:keydown={handleGoalKeyDown}
+        onmousedown={handleGoalTap}
+        ontouchstart={preventDefault(handleGoalTap)}
+        onkeydown={handleGoalKeyDown}
       >
-        <div class="golf-target child-target" />
+        <div class="golf-target child-target"></div>
       </button>
 
       <button
         bind:this={goals[4]}
         class="modifier goal goal-4"
-        on:mousedown={handleGoalTap}
-        on:touchstart|preventDefault={handleGoalTap}
-        on:keydown={handleGoalKeyDown}
+        onmousedown={handleGoalTap}
+        ontouchstart={preventDefault(handleGoalTap)}
+        onkeydown={handleGoalKeyDown}
       >
-        <div class="golf-target child-target" />
+        <div class="golf-target child-target"></div>
       </button>
 
-      <div bind:this={startTarget} class="golf-target start-target" />
-      <div bind:this={hitTarget} class="golf-target hit-target" />
+      <div bind:this={startTarget} class="golf-target start-target"></div>
+      <div bind:this={hitTarget} class="golf-target hit-target"></div>
 
       <button
         bind:this={spinnerModifier}
         class="modifier spinner"
         class:current={spinnerModifier?.isSameNode(currentModifier)}
-        on:mousedown={handleModifierTap}
-        on:touchstart|preventDefault={handleModifierTap}
-        on:keydown={handleModifierKeyDown}
+        onmousedown={handleModifierTap}
+        ontouchstart={preventDefault(handleModifierTap)}
+        onkeydown={handleModifierKeyDown}
       >
-        <div class="golf-target child-target" />
+        <div class="golf-target child-target"></div>
       </button>
 
       <button
         bind:this={slider1Modifier}
         class="modifier slider1"
         class:current={slider1Modifier?.isSameNode(currentModifier)}
-        on:mousedown={handleModifierTap}
-        on:touchstart|preventDefault={handleModifierTap}
-        on:keydown={handleModifierKeyDown}
+        onmousedown={handleModifierTap}
+        ontouchstart={preventDefault(handleModifierTap)}
+        onkeydown={handleModifierKeyDown}
       >
-        <div class="golf-target child-target" />
+        <div class="golf-target child-target"></div>
       </button>
 
       <button
         bind:this={slider2Modifier}
         class="modifier slider2"
         class:current={slider2Modifier?.isSameNode(currentModifier)}
-        on:mousedown={handleModifierTap}
-        on:touchstart|preventDefault={handleModifierTap}
-        on:keydown={handleModifierKeyDown}
+        onmousedown={handleModifierTap}
+        ontouchstart={preventDefault(handleModifierTap)}
+        onkeydown={handleModifierKeyDown}
       >
-        <div class="golf-target child-target" />
+        <div class="golf-target child-target"></div>
       </button>
     </div>
   </div>
 </div>
 
 <div bind:this={pulseContainer} class="pulse-container">
-  <div bind:this={pulseTemplate} class="golf-target pulse-template" />
+  <div bind:this={pulseTemplate} class="golf-target pulse-template"></div>
 </div>
 
-<button class="restart" on:click={handleRestartClick}>
+<button class="restart" onclick={handleRestartClick}>
   <span class="material-symbols-outlined"> replay </span>
 </button>
 <div class="scores">
@@ -536,7 +542,7 @@
     <p>{timer}s</p>
   </div>
 
-  <button class="reset" on:click={handleResetClick}>
+  <button class="reset" onclick={handleResetClick}>
     <span class="material-symbols-outlined"> delete </span>
   </button>
 </div>

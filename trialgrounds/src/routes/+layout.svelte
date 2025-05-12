@@ -8,7 +8,12 @@
   import { browser } from '$app/environment';
   import MainMenu from '../components/menus/MainMenu.svelte';
 
-  export let data;
+  interface Props {
+    data: any;
+    children?: import('svelte').Snippet;
+  }
+
+  let { data, children }: Props = $props();
 
   const options = writable<Options>(data.options);
   setContext('options', options);
@@ -47,7 +52,7 @@
   <MainMenu></MainMenu>
 {/if}
 
-<slot />
+{@render children?.()}
 
 <style lang="scss">
 </style>

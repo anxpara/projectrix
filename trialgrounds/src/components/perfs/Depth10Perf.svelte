@@ -2,7 +2,7 @@
   import type { PerfControls } from '$lib/perf/perfs';
   import DepthNPerf from './DepthNPerf.svelte';
 
-  let depthNPerf: DepthNPerf;
+  let depthNPerf: DepthNPerf = $state();
 
   export function getPerfControls(): PerfControls {
     return depthNPerf.getPerfControls();

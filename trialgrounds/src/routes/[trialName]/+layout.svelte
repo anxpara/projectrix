@@ -2,6 +2,11 @@
   import { showDefaultSubject } from '$lib/trials/showDefaultSubject';
   import { writable } from 'svelte/store';
   import { setContext } from 'svelte';
+  interface Props {
+    children?: import('svelte').Snippet;
+  }
+
+  let { children }: Props = $props();
 
   const defaultSubject = writable<HTMLElement | undefined>(undefined);
   setContext('default-subject', defaultSubject);
@@ -15,4 +20,4 @@
   subject
 </div>
 
-<slot />
+{@render children?.()}

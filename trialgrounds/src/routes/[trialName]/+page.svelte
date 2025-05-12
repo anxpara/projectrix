@@ -1,5 +1,7 @@
 <script lang="ts">
-  import { page } from '$app/stores';
+  import { run } from 'svelte/legacy';
+
+  import { page } from '$app/state';
   import { getContext, onDestroy, onMount, tick } from 'svelte';
   import { trialsByName } from '../../lib/trials/trials';
   import type { TrialName } from '../../lib/trials/trialNames';
@@ -12,11 +14,6 @@
 
   let options = getContext<Writable<Options>>('options');
 
-  $: trial = trialsByName.get($page.params.trialName as TrialName)!;
-  $: trialSubject = trial.trialComponent?.getTrialControls
-    ?.call(null)
-    .getSubjectElement?.call(null);
-  $: updateShowDefaultSubject(!trialSubject);
   const defaultSubject = getContext<Writable<HTMLElement | undefined>>('default-subject');
 
   let animateInterval: NodeJS.Timeout | undefined = undefined;
@@ -57,6 +54,13 @@
   function updateShowDefaultSubject(showDefault: boolean): void {
     $showDefaultSubject = showDefault;
   }
+  let trial = $derived(trialsByName.get(page.params.trialName as TrialName)!);
+  let trialSubject = $derived(trial.trialComponent?.getTrialControls
+    ?.call(null)
+    .getSubjectElement?.call(null));
+  run(() => {
+    updateShowDefaultSubject(!trialSubject);
+  });
 </script>
 
 <svelte:head>
@@ -66,7 +70,7 @@
 <div class="lone-trial-container">
   {#if trial}
     <OriginMarker bind:this={trial.originMarker} />
-    <svelte:component this={trial.trialType} bind:this={trial.trialComponent} {trial} />
+    <trial.trialType bind:this={trial.trialComponent} {trial} />
   {/if}
 </div>
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-  let slotSubect: HTMLElement;
+  let slotSubect: HTMLElement = $state();
   let showing = false;
 
   export function show(): void {
@@ -21,7 +21,7 @@
   }
 </script>
 
-<div bind:this={slotSubect} class="corner right target-slot slot-1" />
+<div bind:this={slotSubect} class="corner right target-slot slot-1"></div>
 
 <style lang="scss">
   .corner {
