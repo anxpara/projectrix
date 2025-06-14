@@ -1,35 +1,35 @@
 <script lang="ts">
   import '../app.scss';
-  import { page } from '$app/stores';
-  import { derived, readable, writable } from 'svelte/store';
   import { getUrlForOptions, type Options } from '$lib/options';
-  import { setContext } from 'svelte';
+  import { setContext, type Snippet } from 'svelte';
   import { goto } from '$app/navigation';
   import { browser } from '$app/environment';
-  import MainMenu from '../components/menus/MainMenu.svelte';
+  import MainMenu from '$components/ui/MainMenu.svelte';
+  import { store, type Store } from '$lib/stores/Store';
+  import { page } from '$app/state';
+  import type { LayoutData } from './$types';
+  import { onStoreChange } from '$lib/stores/onStoreChange.svelte';
+  import { allTrials, type Trial } from '$lib/trials/trials.svelte';
 
   interface Props {
-    data: any;
-    children?: import('svelte').Snippet;
+    data: LayoutData;
+    children?: Snippet;
   }
-
   let { data, children }: Props = $props();
 
-  const options = writable<Options>(data.options);
-  setContext('options', options);
+  const optionsStore: Store<Options> = $state(store(data.options));
+  setContext('optionsStore', optionsStore);
+  onStoreChange(() => optionsStore, handleOptionsChanged);
 
-  const pageUrl = derived(page, (page) => {
-    return page.url;
-  });
-  setContext('pageUrl', pageUrl);
+  const currentTrialStore: Store<Trial> = $state(store(allTrials[0]));
+  setContext('currentTrialStore', currentTrialStore);
 
   if (browser) {
     window.addEventListener('popstate', handlePopstate);
-    options.subscribe(handleOptionsChanged);
   }
 
   function handlePopstate(): void {
-    setUrlToOptions($options);
+    setUrlToOptions(optionsStore.value);
   }
 
   function handleOptionsChanged(newOptions: Options): void {
@@ -39,7 +39,7 @@
   function setUrlToOptions(options: Options): void {
     if (!browser) return;
 
-    const currentParams = $page.url.searchParams;
+    const currentParams = page.url.searchParams;
     const nextUrl = getUrlForOptions(options, currentParams);
 
     setTimeout(() => {
@@ -48,7 +48,7 @@
   }
 </script>
 
-{#if !$options.hideUI}
+{#if !optionsStore.value.hideUI}
   <MainMenu></MainMenu>
 {/if}
 

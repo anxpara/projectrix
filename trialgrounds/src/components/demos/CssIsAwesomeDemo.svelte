@@ -1,24 +1,19 @@
 <script lang="ts">
   import { setInlineStyles, getProjection, clearInlineStyles } from 'projectrix';
   import { waapi, type WAAPIAnimation } from 'animejs';
-  import { onMount, onDestroy, tick } from 'svelte';
-  import type { Writable } from 'svelte/store';
-  import type { Options } from '$lib/options';
+  import { onDestroy, onMount, tick } from 'svelte';
+  import type { DemoProps } from '$lib/demos/demos.svelte';
 
   // options are part of demos infrastructure
-  interface Props {
-    options: Writable<Options>;
-  }
+  let { options }: DemoProps = $props();
+  const log = $derived(options.value.log);
 
-  let { options }: Props = $props();
-  let log = $derived($options.log);
-
-  let leftOuter: HTMLElement = $state();
-  let leftInner: HTMLElement = $state();
-  let leftTarget: HTMLElement = $state();
-  let rightOuter: HTMLElement = $state();
-  let rightInner: HTMLElement = $state();
-  let rightTarget: HTMLElement = $state();
+  let leftOuter = $state() as HTMLElement;
+  let leftInner = $state() as HTMLElement;
+  let leftTarget = $state() as HTMLElement;
+  let rightOuter = $state() as HTMLElement;
+  let rightInner = $state() as HTMLElement;
+  let rightTarget = $state() as HTMLElement;
 
   type Side = 'left' | 'right';
   const InitialSide = 'left';

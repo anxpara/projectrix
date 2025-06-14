@@ -1,36 +1,24 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import type { Trial, TrialControls } from '$lib/trials/trials';
+  import type { TrialProps } from '$lib/trials/trials.svelte';
 
-  interface Props {
-    trial: Trial;
-    hideSubject?: boolean | undefined;
+  let { trial, hideSubject }: TrialProps = $props();
+
+  let container = $state() as HTMLElement;
+
+  let subjectElement = $state() as HTMLElement;
+  export function getSubjectElement(): HTMLElement {
+    return subjectElement;
   }
 
-  let { trial, hideSubject = undefined }: Props = $props();
-
-  let container: HTMLElement = $state();
+  let targetElement = $state() as HTMLElement;
+  export function getTargetElement(): HTMLElement {
+    return targetElement;
+  }
 
   onMount(() => {
     container.scrollTop = 400;
   });
-
-  let subjectElement: HTMLElement = $state();
-  function getSubjectElement(): HTMLElement {
-    return subjectElement;
-  }
-
-  let targetElement: HTMLElement = $state();
-  function getTargetElement(): HTMLElement {
-    return targetElement;
-  }
-
-  export function getTrialControls(): TrialControls {
-    return {
-      getTargetElement,
-      getSubjectElement,
-    };
-  }
 </script>
 
 <div class="container-container">

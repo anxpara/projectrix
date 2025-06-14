@@ -1,5 +1,5 @@
-import { animate, utils } from 'animejs';
-import type { Trial, TrialAnimationOptions } from './trials';
+import { animate, JSAnimation, utils } from 'animejs';
+import type { Trial, TrialAnimationOptions } from './trials.svelte';
 import {
   clearInlineStyles,
   getProjection,
@@ -7,36 +7,34 @@ import {
   type ProjectionOptions,
   measureSubject,
   type Measurement,
+  type Projection,
 } from 'projectrix';
-import { animate as animateMotion } from 'motion';
 import { mat4 } from 'gl-matrix';
 import type { Options } from '../options';
 
-// needs refactoring
+// probably needs more refactoring
 export function animateTrial(
   trial: Trial,
   defaultSubject: HTMLElement,
   trialOptions: Options,
   animationOptions?: TrialAnimationOptions,
 ): void {
-  const trialControls = trial.trialComponent!.getTrialControls();
   trialOptions = {
     ...trialOptions,
-    ...trialControls.getTrialOptionOverrides?.call(null),
+    ...trial.instance!.getTrialOptionOverrides?.(),
   };
 
-  const duration = animationOptions?.duration ?? 1000;
-
   // allow trial to override the animation
-  const playCustomAnimation = trialControls.playCustomAnimation;
+  const playCustomAnimation = trial.instance!.playCustomAnimation;
   if (playCustomAnimation) {
     playCustomAnimation(defaultSubject, trialOptions, animationOptions);
     return;
   }
 
-  const target = trialControls.getTargetElement();
-  const subjectEl = trialControls.getSubjectElement?.call(null) ?? defaultSubject;
-  let options: ProjectionOptions = trialControls.getProjectionOptions?.call(null) ?? {};
+  const target = trial.instance!.getTargetElement();
+  const subjectEl = trial.instance!.getSubjectElement?.() ?? defaultSubject;
+
+  let options: ProjectionOptions = trial.instance!.getProjectionOptions?.() ?? {};
   options = {
     ...options,
     transformType: options.transformType ?? 'transform',
@@ -45,15 +43,11 @@ export function animateTrial(
 
   // reset target
   utils.remove(target);
-  if (trial.animation?.currentTime && trial.animation.currentTime < 1) {
-    trial.animation.stop();
-    trial.animation = undefined;
-  }
   clearInlineStyles(target);
 
   // mark target origin
   if (!trialOptions.toTargetOrigin || !trialOptions.skipAnimation) {
-    trial.originMarker?.markOrigin(trialControls.getTargetElement());
+    trial.originMarker?.markOrigin(trial.instance!.getTargetElement());
   } else {
     trial.originMarker?.unmark();
   }
@@ -67,7 +61,7 @@ export function animateTrial(
 
   if (trialOptions.skipAnimation) {
     setInlineStyles(target, trialOptions.toTargetOrigin ? toTargetOrigin : toSubject);
-    animationOptions?.complete?.call(null, trialOptions);
+    animationOptions?.complete?.(trialOptions);
     return;
   }
 
@@ -84,126 +78,81 @@ export function animateTrial(
   trial.toTargetOrigin = toTargetOrigin;
 
   // animate
-  if (options.transformType === 'matrix3d') {
-    if (trialOptions.toTargetOrigin) {
-      utils.set(target, {
-        ...toSubject,
-
-        pointerEvents: 'none',
-      });
-
-      animate(target, {
-        duration: trialOptions.skipAnimation ? 0 : duration,
-        ease: 'inOutQuad',
-
-        ...toTargetOrigin,
-
-        onComplete: () => {
-          trial.originMarker?.unmark();
-          utils.set(target, {
-            pointerEvents: 'all',
-          });
-          animationOptions?.complete?.call(null, trialOptions);
-        },
-      });
-    } else {
-      utils.set(target, {
-        ...toTargetOrigin,
-
-        borderStyle: toSubject.borderStyle,
-        pointerEvents: 'none',
-      });
-
-      animate(target, {
-        duration: trialOptions.skipAnimation ? 0 : duration,
-        ease: 'inOutQuad',
-
-        ...toSubject,
-
-        complete: () => {
-          animationOptions?.complete?.call(null, trialOptions);
-        },
-      });
-    }
-  } else if (options.transformType === 'transform') {
-    if (trialOptions.toTargetOrigin) {
-      animateMotion(
-        target,
-        {
-          ...toSubject,
-          pointerEvents: 'none',
-        },
-        {
-          duration: 0,
-        },
-      );
-
-      trial.animation = animateMotion(
-        target,
-        {
-          ...toTargetOrigin,
-        },
-        {
-          duration: trialOptions.skipAnimation ? 0 : duration / 1000,
-          easing: 'ease-in-out',
-        },
-      );
-
-      trial.animation.finished.then(() => {
-        trial.originMarker?.unmark();
-        utils.set(target, {
-          pointerEvents: 'all',
-        });
-        animationOptions?.complete?.call(null, trialOptions);
-      });
-    } else {
-      animateMotion(
-        target,
-        {
-          ...toTargetOrigin,
-
-          borderStyle: toSubject.borderStyle,
-          pointerEvents: 'none',
-        },
-        {
-          duration: 0,
-        },
-      );
-
-      trial.animation = animateMotion(
-        target,
-        {
-          ...toSubject,
-        },
-        {
-          duration: trialOptions.skipAnimation ? 0 : duration / 1000,
-          easing: 'ease-in-out',
-        },
-      );
-
-      trial.animation.finished.then(() => {
-        animationOptions?.complete?.call(null, trialOptions);
-      });
-    }
+  const durationMs = animationOptions?.duration ?? 1000;
+  if (trialOptions.toTargetOrigin) {
+    trial.animation = animateToTargetOrigin(target, toSubject, toTargetOrigin, durationMs, () => {
+      trial.originMarker?.unmark();
+      animationOptions?.complete?.(trialOptions);
+    });
+  } else {
+    trial.animation = animateToSubject(target, toSubject, toTargetOrigin, durationMs, () => {
+      animationOptions?.complete?.(trialOptions);
+    });
   }
 }
 
-export function animateTrialReturn(trial: Trial, trialOptions: Options, duration = 500): void {
-  const trialControls = trial.trialComponent!.getTrialControls();
+function animateToTargetOrigin(
+  target: HTMLElement,
+  toSubject: Projection,
+  toTargetOrigin: Projection,
+  duration: number,
+  onComplete: () => void,
+): JSAnimation {
+  utils.set(target, {
+    ...toSubject,
+    pointerEvents: 'none',
+  });
+
+  return animate(target, {
+    ...toTargetOrigin,
+    duration,
+    ease: 'inOutQuad',
+
+    onComplete: () => {
+      utils.set(target, {
+        pointerEvents: 'all',
+      });
+      onComplete();
+    },
+  });
+}
+
+function animateToSubject(
+  target: HTMLElement,
+  toSubject: Projection,
+  toTargetOrigin: Projection,
+  duration: number,
+  onComplete: () => void,
+): JSAnimation {
+  utils.set(target, {
+    ...toTargetOrigin,
+    borderStyle: toSubject.borderStyle,
+    pointerEvents: 'none',
+  });
+
+  return animate(target, {
+    ...toSubject,
+    duration,
+    ease: 'inOutQuad',
+
+    onComplete,
+  });
+}
+
+export function animateTrialReturn(trial: Trial, trialOptions: Options, durationMs = 500): void {
   trialOptions = {
     ...trialOptions,
-    ...trialControls.getTrialOptionOverrides?.call(null),
+    ...trial.instance!.getTrialOptionOverrides?.(),
   };
 
-  const target = trialControls.getTargetElement();
+  const target = trial.instance!.getTargetElement();
   if (trialOptions.skipAnimation) {
-    clearInlineStyles(target);
-    trial.originMarker?.unmark();
+    onReturnComplete(target, trial);
     return;
   }
   if (trialOptions.toTargetOrigin || !trial.toTargetOrigin) return;
 
-  const options: ProjectionOptions = trialControls.getProjectionOptions?.call(null) ?? {};
+  const options: ProjectionOptions = trial.instance!.getProjectionOptions?.() ?? {};
   options.transformType = options.transformType ?? 'transform';
 
   if (options.transformType === 'transformMat4') {
@@ -211,51 +160,40 @@ export function animateTrialReturn(trial: Trial, trialOptions: Options, duration
     options.transformType = 'matrix3d';
   }
 
-  if (options.transformType === 'matrix3d') {
-    utils.remove(target);
-    animate(target, {
-      duration: trialOptions.skipAnimation ? 0 : duration,
-      ease: 'inOutQuad',
+  trial.animation = animateReturn(target, trial.toTargetOrigin, durationMs, () => {
+    onReturnComplete(target, trial);
+  });
+}
 
-      ...trial.toTargetOrigin,
+function animateReturn(
+  target: HTMLElement,
+  toTargetOrigin: Projection,
+  duration: number,
+  onComplete: () => void,
+): JSAnimation {
+  utils.remove(target);
+  return animate(target, {
+    ...toTargetOrigin,
+    duration,
+    ease: 'inOutQuad',
 
-      complete: () => {
-        utils.set(target, {
-          pointerEvents: 'all',
-        });
+    onComplete,
+  });
+}
 
-        clearInlineStyles(target);
+function onReturnComplete(target: HTMLElement, trial: Trial): void {
+  utils.set(target, {
+    pointerEvents: 'all',
+  });
 
-        trial.originMarker?.unmark();
-      },
-    });
-  } else if (options.transformType === 'transform') {
-    if (trial.animation?.currentTime && trial.animation.currentTime < 1) {
-      trial.animation.stop();
-      trial.animation = undefined;
-    }
+  clearInlineStyles(target);
+  trial.originMarker?.unmark();
+}
 
-    trial.animation = animateMotion(
-      target,
-      {
-        ...trial.toTargetOrigin,
-      },
-      {
-        duration: trialOptions.skipAnimation ? 0 : duration / 1000,
-        easing: 'ease-in-out',
-      },
-    );
-
-    trial.animation.finished.then(() => {
-      utils.set(target, {
-        pointerEvents: 'all',
-      });
-
-      clearInlineStyles(target);
-
-      trial.originMarker?.unmark();
-    });
-  }
+export function stopTrial(trial: Trial): void {
+  const target = trial.instance?.getTargetElement();
+  if (!target) return;
+  utils.remove(target);
 }
 
 function convertMat4ToCssMatrix3dSubstring(mat: mat4): string {

@@ -1,45 +1,46 @@
 <script lang="ts">
-  import OptionCheckbox from '../melt/OptionCheckbox.svelte';
-  import { getContext, onMount } from 'svelte';
-  import { derived, writable, type Readable } from 'svelte/store';
+  import OptionCheckbox from './OptionCheckbox.svelte';
   import { afterNavigate } from '$app/navigation';
   import { browser } from '$app/environment';
-  import { isHoverDevice } from '$lib/stores/isHoverDevice';
-  import { addChangeEmitsToReadable } from '$lib/stores/addChangeEmitsToStore';
   import { sharedOptionNames, trialOptionNames } from '$lib/optionNames';
   import { clearInlineStyles, getProjection } from 'projectrix';
   import { animate, JSAnimation, utils } from 'animejs';
+  import { page } from '$app/state';
+  import { MediaQuery } from 'svelte/reactivity';
+  import { onDestroy, onMount } from 'svelte';
+  import { watch } from 'runed';
 
-  let root: HTMLElement = $state();
-  let header: HTMLElement = $state();
-  let headerBg: HTMLElement = $state();
-  let buttonBg: HTMLElement = $state();
-  let menuContent: HTMLElement = $state();
+  const isHoverDeviceMQ = new MediaQuery('(hover: hover)', true);
+
+  let root = $state() as HTMLElement;
+  let header = $state() as HTMLElement;
+  let headerBg = $state() as HTMLElement;
+  let buttonBg = $state() as HTMLElement;
+  let menuContent = $state() as HTMLElement;
 
   let currentHeaderAnim: JSAnimation | undefined = undefined;
   let currentButtonAnim: JSAnimation | undefined = undefined;
   let currentContentAnim: JSAnimation | undefined = undefined;
 
-  const pageUrl = getContext<Readable<URL>>('pageUrl');
-  let viewingTrials = $derived(!$pageUrl.pathname.includes('demos') && !$pageUrl.pathname.includes('perf'));
-
-  const overHeader = writable<boolean>(false);
-  const overContent = writable<boolean>(false);
-  const toggledOpen = writable<boolean>(false);
-  const menuOpen = addChangeEmitsToReadable<boolean>(
-    derived(
-      [overHeader, overContent, toggledOpen],
-      ([isOverHeader, isOverContent, isToggledOpen]) => {
-        return isOverHeader || isOverContent || isToggledOpen;
-      },
-    ),
-    false,
+  const pageUrl = $derived(page.url);
+  const viewingTrials = $derived(
+    !pageUrl.pathname.includes('demos') && !pageUrl.pathname.includes('perf'),
   );
-  menuOpen.changes.subscribe(async (isOpen) => {
-    if (!browser) return;
-    requestAnimationFrame(() => animateMenu(isOpen));
-  });
-  let inert = $derived($menuOpen ? null : true);
+
+  let overHeader = $state(false);
+  let overContent = $state(false);
+  let toggledOpen = $state(false);
+  const open: boolean = $derived(overHeader || overContent || toggledOpen);
+  const inert = $derived(open ? null : true);
+
+  watch(
+    () => open,
+    (isOpen, wasOpen) => {
+      if (!browser) return;
+      if (wasOpen === undefined || isOpen === wasOpen) return;
+      requestAnimationFrame(() => animateMenu(isOpen));
+    },
+  );
 
   onMount(() => {
     document.addEventListener('click', handleDocumentClick);
@@ -55,13 +56,20 @@
     closeMenu();
   });
 
+  onDestroy(() => {
+    currentHeaderAnim?.pause();
+    currentButtonAnim?.pause();
+    currentContentAnim?.pause();
+  });
+
   function closeMenu(): void {
-    $overHeader = false;
-    $overContent = false;
-    $toggledOpen = false;
+    overHeader = false;
+    overContent = false;
+    toggledOpen = false;
   }
 
   function animateMenu(isOpen: boolean): void {
+    if (!browser) return;
     animateHeader(isOpen);
     flipButton(isOpen);
     animateContent(isOpen);
@@ -129,37 +137,37 @@
   }
 
   function handleMouseEnterHeader(e: MouseEvent): void {
-    if (!$isHoverDevice) return;
-    $overHeader = true;
+    if (!isHoverDeviceMQ.current) return;
+    overHeader = true;
   }
   function handleMouseLeaveHeader(e: MouseEvent): void {
-    if (!$isHoverDevice) return;
+    if (!isHoverDeviceMQ.current) return;
     setTimeout(() => {
-      $overHeader = false;
-      if (!$overContent) $toggledOpen = false;
+      overHeader = false;
+      if (!overContent) toggledOpen = false;
     }, 1);
   }
   function handleClickHeader(e: MouseEvent): void {
-    $toggledOpen = !$menuOpen;
-    $overContent = false;
-    $overHeader = false;
+    toggledOpen = !open;
+    overContent = false;
+    overHeader = false;
   }
 
   function handleMouseEnterContent(e: MouseEvent): void {
-    if (!$isHoverDevice) return;
-    $overContent = true;
+    if (!isHoverDeviceMQ.current) return;
+    overContent = true;
   }
   function handleMouseLeaveContent(e: MouseEvent): void {
-    if (!$isHoverDevice) return;
+    if (!isHoverDeviceMQ.current) return;
     setTimeout(() => {
-      $overContent = false;
-      if (!$overHeader) $toggledOpen = false;
+      overContent = false;
+      if (!overHeader) toggledOpen = false;
     }, 1);
   }
 
   function handleDocumentClick(e: MouseEvent): void {
     const target = e.target as HTMLElement;
-    if (!$menuOpen || root.isSameNode(target) || root.contains(target)) return;
+    if (!open || root?.isSameNode(target) || root?.contains(target)) return;
     closeMenu();
   }
 </script>
@@ -171,22 +179,22 @@
     <div
       bind:this={header}
       class="menu-header"
-      class:open={$menuOpen}
+      class:open
       onmouseenter={handleMouseEnterHeader}
       onmouseleave={handleMouseLeaveHeader}
       onclick={handleClickHeader}
     >
-      <div bind:this={headerBg} class="menu-header-bg" class:open={$menuOpen}></div>
+      <div bind:this={headerBg} class="menu-header-bg" class:open></div>
       <h1 class="title">Projectrix Trialgrounds</h1>
       <div class="material-symbols-outlined menu-button-base">
         <button
           bind:this={buttonBg}
-          aria-label={$menuOpen ? 'close menu' : 'open menu'}
+          aria-label={open ? 'close menu' : 'open menu'}
           class="menu-button"
-          class:open={$menuOpen}
+          class:open
         >
         </button>
-        {#if $toggledOpen}
+        {#if toggledOpen}
           <span style="font-size: .8em;">close_small</span>
         {:else}
           arrow_drop_down
@@ -197,16 +205,15 @@
     <dialog
       bind:this={menuContent}
       class="menus-container"
-      class:open={$menuOpen}
+      class:open
       aria-label="main menu"
       {inert}
       onmouseenter={handleMouseEnterContent}
       onmouseleave={handleMouseLeaveContent}
     >
       <nav>
-        <a href="/{$pageUrl.search}">Trials</a>&nbsp;|&nbsp;<a href="/demos{$pageUrl.search}"
-          >Demos</a
-        >&nbsp;|&nbsp;<a href="/perf{$pageUrl.search}">Perf</a>
+        <a href="/{pageUrl.search}">Trials</a>&nbsp;|&nbsp;<a href="/demos{pageUrl.search}">Demos</a
+        >&nbsp;|&nbsp;<a href="/perf{pageUrl.search}">Perf</a>
       </nav>
       <div role="menu" aria-labelledby="menuTitle">
         <p id="menuTitle" class="menu-title">Options:</p>

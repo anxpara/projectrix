@@ -2,22 +2,15 @@
   import { measureSubject, getProjection, clearInlineStyles } from 'projectrix';
   import { animate, utils, type JSAnimation } from 'animejs';
   import { onDestroy, onMount, tick } from 'svelte';
-  import type { Writable } from 'svelte/store';
-  import type { Options } from '$lib/options';
-  import type DemoStartSlot from '../DemoStartSlot.svelte';
+  import { type DemoProps } from '$lib/demos/demos.svelte';
 
-  // start slot and options are part of demos infrastructure
-  interface Props {
-    startSlot: DemoStartSlot;
-    options: Writable<Options>;
-  }
+  // startSlot and options are part of demos infrastructure
+  let { startSlot, options }: DemoProps = $props();
+  const log = $derived(options.value.log);
 
-  let { startSlot, options }: Props = $props();
-  let log = $derived($options.log);
-
-  let target: HTMLElement = $state();
-  let leftParent: HTMLElement = $state();
-  let rightParent: HTMLElement = $state();
+  let target = $state() as HTMLElement;
+  let leftParent = $state() as HTMLElement;
+  let rightParent = $state() as HTMLElement;
 
   let currentAnim: JSAnimation | undefined;
   let currentTimeout: NodeJS.Timeout | undefined;

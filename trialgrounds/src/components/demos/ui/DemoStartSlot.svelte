@@ -1,5 +1,5 @@
 <script lang="ts">
-  let slotSubect: HTMLElement = $state();
+  let slotSubect: HTMLElement;
   let showing = false;
 
   export function show(): void {

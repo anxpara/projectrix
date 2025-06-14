@@ -1,9 +1,9 @@
-import type { ComponentType, SvelteComponent } from 'svelte';
+import type { Component } from 'svelte';
 import type { ProjectionOptions, Projection } from 'projectrix';
-import type { AnimationControls } from 'motion';
+import type { JSAnimation } from 'animejs';
 import type { Options } from '../options';
 import { TrialName as TrialName } from './trialNames';
-import type OriginMarker from '../../components/OriginMarker.svelte';
+import type OriginMarker from '../../components/trials/ui/OriginMarker.svelte';
 import Control from '../../components/trials/Control.svelte';
 import TargetInPadded from '../../components/trials/TargetInPadded.svelte';
 import TargetMargined from '../../components/trials/TargetMargined.svelte';
@@ -58,6 +58,11 @@ export type TrialAnimationOptions = {
   complete?: (trialOptions: Options) => void;
 };
 
+export interface TrialProps {
+  trial: Trial;
+  hideSubject?: boolean;
+}
+
 export interface TrialControls {
   getTargetElement: () => HTMLElement;
   getSubjectElement?: () => HTMLElement;
@@ -70,71 +75,67 @@ export interface TrialControls {
   ) => void;
 }
 
-export interface GetTrialControls {
-  getTrialControls: () => TrialControls;
-}
-
-export type TrialComponent = SvelteComponent & GetTrialControls;
+export type TrialComponent = Component<TrialProps, TrialControls>;
 
 export type Trial = {
   name: TrialName;
-  trialType: ComponentType<TrialComponent>;
-  trialComponent?: TrialComponent;
+  Component: TrialComponent;
+  instance?: ReturnType<TrialComponent>;
   originMarker?: OriginMarker;
   toTargetOrigin?: Projection;
-  animation?: AnimationControls;
+  animation?: JSAnimation;
 };
 
-export const allTrials: Trial[] = [
-  { name: TrialName.Control, trialType: Control },
-  { name: TrialName.UseSubjectBorder, trialType: UseSubjectBorder },
-  { name: TrialName.UseTargetBorder, trialType: UseTargetBorder },
-  { name: TrialName.UseZeroBorder, trialType: UseZeroBorder },
-  { name: TrialName.TargetSmaller, trialType: TargetSmaller },
-  { name: TrialName.TargetBigger, trialType: TargetBigger },
-  { name: TrialName.TargetPadded, trialType: TargetPadded },
-  { name: TrialName.TargetBorderBox, trialType: TargetBorderBox },
-  { name: TrialName.TargetInPadded, trialType: TargetInPadded },
-  { name: TrialName.TargetMargined, trialType: TargetMargined },
-  { name: TrialName.Target2ndChild, trialType: Target2ndChild },
-  { name: TrialName.TargetRelative, trialType: TargetRelative },
-  { name: TrialName.TargetAbsolute, trialType: TargetAbsolute },
-  { name: TrialName.TargetAbsoluteInTransform, trialType: TargetAbsoluteInTransform },
-  { name: TrialName.TargetDeepAbsolute, trialType: TargetDeepAbsolute },
-  { name: TrialName.TargetFixed, trialType: TargetFixed },
-  { name: TrialName.TargetFixedInTransform, trialType: TargetFixedInTransform },
-  { name: TrialName.TargetFixedInFilter, trialType: TargetFixedInFilter },
-  { name: TrialName.TargetRotated, trialType: TargetRotated },
-  { name: TrialName.TargetRotatedBigger, trialType: TargetRotatedBigger },
-  { name: TrialName.TargetInRotated, trialType: TargetInRotated },
-  { name: TrialName.TargetInRotatedBigger, trialType: TargetInRotatedBigger },
-  { name: TrialName.TargetInScroll, trialType: TargetInScroll },
-  { name: TrialName.TargetSticky, trialType: TargetSticky },
-  { name: TrialName.SubjectOrigin0, trialType: SubjectOrigin0 },
-  { name: TrialName.SubjectOrigin0Bigger, trialType: SubjectOrigin0Bigger },
-  { name: TrialName.TargetOrigin0, trialType: TargetOrigin0 },
-  { name: TrialName.TargetOrigin0Bigger, trialType: TargetOrigin0Bigger },
-  { name: TrialName.TargetInOrigin0, trialType: TargetInOrigin0 },
-  { name: TrialName.TargetInOrigin0Bigger, trialType: TargetInOrigin0Bigger },
-  { name: TrialName.TargetInPreserve3d, trialType: TargetInPreserve3d },
-  { name: TrialName.TwoContainersPreserve3d, trialType: TwoContainersPreserve3d },
-  { name: TrialName.OuterContainerPreserve3d, trialType: OuterContainerPreserve3d },
-  { name: TrialName.SubjectPerspective, trialType: SubjectPerspective },
-  { name: TrialName.TargetPerspective, trialType: TargetPerspective },
-  { name: TrialName.BothPerspective, trialType: BothPerspective },
-  { name: TrialName.PerspectiveOrigin, trialType: PerspectiveOrigin },
-  { name: TrialName.PerspectivePreserve3d, trialType: PerspectivePreserve3d },
-  { name: TrialName.UseMatrix3dType, trialType: UseMatrix3dType },
-  { name: TrialName.UseMat4Type, trialType: UseMat4Type },
-  { name: TrialName.SetWithMatrix3d, trialType: SetWithMatrix3 },
-  { name: TrialName.SetWithMat4, trialType: SetWithMat4 },
-  { name: TrialName.ClearWithMatrix3d, trialType: ClearWithMatrix3d },
-  { name: TrialName.ClearWithMat4, trialType: ClearWithMat4 },
-  { name: TrialName.MeasureSubject, trialType: MeasureSubject },
-  { name: TrialName.MeasureSubjectOrigin0, trialType: MeasureSubjectOrigin0 },
-  { name: TrialName.MeasureSubjectOriginOdd, trialType: MeasureSubjectOriginOdd },
-  { name: TrialName.MeasureSubjectSmaller, trialType: MeasureSubjectSmaller },
-];
+export const allTrials: Trial[] = $state([
+  { name: TrialName.Control, Component: Control },
+  { name: TrialName.UseSubjectBorder, Component: UseSubjectBorder },
+  { name: TrialName.UseTargetBorder, Component: UseTargetBorder },
+  { name: TrialName.UseZeroBorder, Component: UseZeroBorder },
+  { name: TrialName.TargetSmaller, Component: TargetSmaller },
+  { name: TrialName.TargetBigger, Component: TargetBigger },
+  { name: TrialName.TargetPadded, Component: TargetPadded },
+  { name: TrialName.TargetBorderBox, Component: TargetBorderBox },
+  { name: TrialName.TargetInPadded, Component: TargetInPadded },
+  { name: TrialName.TargetMargined, Component: TargetMargined },
+  { name: TrialName.Target2ndChild, Component: Target2ndChild },
+  { name: TrialName.TargetRelative, Component: TargetRelative },
+  { name: TrialName.TargetAbsolute, Component: TargetAbsolute },
+  { name: TrialName.TargetAbsoluteInTransform, Component: TargetAbsoluteInTransform },
+  { name: TrialName.TargetDeepAbsolute, Component: TargetDeepAbsolute },
+  { name: TrialName.TargetFixed, Component: TargetFixed },
+  { name: TrialName.TargetFixedInTransform, Component: TargetFixedInTransform },
+  { name: TrialName.TargetFixedInFilter, Component: TargetFixedInFilter },
+  { name: TrialName.TargetRotated, Component: TargetRotated },
+  { name: TrialName.TargetRotatedBigger, Component: TargetRotatedBigger },
+  { name: TrialName.TargetInRotated, Component: TargetInRotated },
+  { name: TrialName.TargetInRotatedBigger, Component: TargetInRotatedBigger },
+  { name: TrialName.TargetInScroll, Component: TargetInScroll },
+  { name: TrialName.TargetSticky, Component: TargetSticky },
+  { name: TrialName.SubjectOrigin0, Component: SubjectOrigin0 },
+  { name: TrialName.SubjectOrigin0Bigger, Component: SubjectOrigin0Bigger },
+  { name: TrialName.TargetOrigin0, Component: TargetOrigin0 },
+  { name: TrialName.TargetOrigin0Bigger, Component: TargetOrigin0Bigger },
+  { name: TrialName.TargetInOrigin0, Component: TargetInOrigin0 },
+  { name: TrialName.TargetInOrigin0Bigger, Component: TargetInOrigin0Bigger },
+  { name: TrialName.TargetInPreserve3d, Component: TargetInPreserve3d },
+  { name: TrialName.TwoContainersPreserve3d, Component: TwoContainersPreserve3d },
+  { name: TrialName.OuterContainerPreserve3d, Component: OuterContainerPreserve3d },
+  { name: TrialName.SubjectPerspective, Component: SubjectPerspective },
+  { name: TrialName.TargetPerspective, Component: TargetPerspective },
+  { name: TrialName.BothPerspective, Component: BothPerspective },
+  { name: TrialName.PerspectiveOrigin, Component: PerspectiveOrigin },
+  { name: TrialName.PerspectivePreserve3d, Component: PerspectivePreserve3d },
+  { name: TrialName.UseMatrix3dType, Component: UseMatrix3dType },
+  { name: TrialName.UseMat4Type, Component: UseMat4Type },
+  { name: TrialName.SetWithMatrix3d, Component: SetWithMatrix3 },
+  { name: TrialName.SetWithMat4, Component: SetWithMat4 },
+  { name: TrialName.ClearWithMatrix3d, Component: ClearWithMatrix3d },
+  { name: TrialName.ClearWithMat4, Component: ClearWithMat4 },
+  { name: TrialName.MeasureSubject, Component: MeasureSubject },
+  { name: TrialName.MeasureSubjectOrigin0, Component: MeasureSubjectOrigin0 },
+  { name: TrialName.MeasureSubjectOriginOdd, Component: MeasureSubjectOriginOdd },
+  { name: TrialName.MeasureSubjectSmaller, Component: MeasureSubjectSmaller },
+]);
 export const trialsByName = new Map<TrialName, Trial>(
   allTrials.map((trial) => [trial.name, trial]),
 );

@@ -1,20 +1,20 @@
 <script lang="ts">
   import { page } from '$app/state';
   import type { PerfName } from '$lib/perf/perfNames';
-  import { perfsByName } from '$lib/perf/perfs';
+  import { perfsByName } from '$lib/perf/perfs.svelte';
   import { getContext, onMount, tick } from 'svelte';
-  import PerfCard from '../../../components/PerfCard.svelte';
-  import type { Writable } from 'svelte/store';
+  import PerfCard from '$components/perfs/ui/PerfCard.svelte';
   import type { Options } from '$lib/options';
   import { runPerf } from '$lib/perf/runPerf';
+  import type { Store } from '$lib/stores/Store';
 
-  let options = getContext<Writable<Options>>('options');
+  let optionsStore: Store<Options> = getContext('optionsStore');
 
-  let perf = $derived(perfsByName.get(page.params.perfName as PerfName)!);
+  const perf = $derived(perfsByName.get(page.params.perfName as PerfName)!);
 
   onMount(async () => {
     await tick();
-    runPerf(perf, $options);
+    runPerf(perf, optionsStore.value);
   });
 </script>
 
@@ -23,7 +23,7 @@
 </svelte:head>
 
 <div class="lone-perf-container">
-  <PerfCard {perf} href={`/perfs/${perf.name}${page.url.search}`}></PerfCard>
+  <PerfCard perfName={perf.name} href={`/perfs/${perf.name}${page.url.search}`}></PerfCard>
 </div>
 
 <style lang="scss">

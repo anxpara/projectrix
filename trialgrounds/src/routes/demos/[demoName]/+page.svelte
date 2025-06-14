@@ -1,27 +1,26 @@
 <script lang="ts">
   import { page } from '$app/state';
   import type { DemoName } from '$lib/demos/demoNames';
-  import { demosByName } from '$lib/demos/demos';
   import { getContext } from 'svelte';
-  import DemoCard from '../../../components/DemoCard.svelte';
-  import TabbedCode from '../../../components/TabbedCode.svelte';
-  import type { Writable } from 'svelte/store';
   import type { Options } from '$lib/options';
+  import type { Store } from '$lib/stores/Store';
+  import TabbedCode from '$components/ui/TabbedCode.svelte';
+  import DemoCard from '$components/demos/ui/DemoCard.svelte';
 
-  let options = getContext<Writable<Options>>('options');
+  let optionsStore: Store<Options> = getContext('optionsStore');
+  const hideUI = $derived(optionsStore.value.hideUI);
 
-  let demo = $derived(demosByName.get(page.params.demoName as DemoName)!);
-  let hideUI = $derived($options.hideUI);
+  const demoName = $derived(page.params.demoName as DemoName);
 </script>
 
 <svelte:head>
-  <title>Projectrix Trialgrounds | {demo.name} demo</title>
+  <title>Projectrix Trialgrounds | {demoName} demo</title>
 </svelte:head>
 
 <div class="centerer" class:hideUI>
-  <DemoCard {demo} href={`/demos/${demo.name}${page.url.search}`}></DemoCard>
+  <DemoCard {demoName} href={`/demos/${demoName}${page.url.search}`}></DemoCard>
   {#if !hideUI}
-    <TabbedCode {demo}></TabbedCode>
+    <TabbedCode {demoName}></TabbedCode>
   {/if}
 </div>
 

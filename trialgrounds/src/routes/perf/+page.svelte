@@ -1,13 +1,13 @@
 <script lang="ts">
   import { page } from '$app/state';
-  import PerfCard from '../../components/PerfCard.svelte';
-  import { allPerfs } from '$lib/perf/perfs';
+  import PerfCard from '$components/perfs/ui/PerfCard.svelte';
+  import { allPerfs } from '$lib/perf/perfs.svelte';
   import { getContext, onMount, tick } from 'svelte';
   import { runPerf } from '$lib/perf/runPerf';
-  import type { Writable } from 'svelte/store';
   import type { Options } from '$lib/options';
+  import type { Store } from '$lib/stores/Store';
 
-  let options = getContext<Writable<Options>>('options');
+  let optionsStore: Store<Options> = getContext('optionsStore');
 
   onMount(async () => {
     await tick();
@@ -17,13 +17,13 @@
 
   function clearAllPerfs(): void {
     allPerfs.forEach((perf) => {
-      perf.durationMs.set(undefined);
+      perf.durationMs = undefined;
     });
   }
 
   function runAllPerfs(): void {
     allPerfs.forEach((perf) => {
-      runPerf(perf, $options);
+      runPerf(perf, optionsStore.value);
     });
   }
 </script>
@@ -35,7 +35,7 @@
 <div class="centerer">
   <div class="all-perfs-container">
     {#each allPerfs as perf}
-      <PerfCard {perf} href={`/perf/${perf.name}${page.url.search}`} />
+      <PerfCard perfName={perf.name} href={`/perf/${perf.name}${page.url.search}`} />
     {/each}
   </div>
 </div>

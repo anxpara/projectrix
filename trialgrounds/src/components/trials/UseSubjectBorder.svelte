@@ -1,35 +1,22 @@
 <script lang="ts">
-  import type { Trial, TrialControls } from '$lib/trials/trials';
+  import type { TrialProps } from '$lib/trials/trials.svelte';
   import type { ProjectionOptions } from 'projectrix';
 
-  interface Props {
-    trial: Trial;
-    hideSubject?: boolean | undefined;
-  }
+  let { trial, hideSubject }: TrialProps = $props();
 
-  let { trial, hideSubject = undefined }: Props = $props();
-
-  let subjectElement: HTMLElement = $state();
-  function getSubjectElement(): HTMLElement {
+  let subjectElement = $state() as HTMLElement;
+  export function getSubjectElement(): HTMLElement {
     return subjectElement;
   }
 
-  let targetElement: HTMLElement = $state();
-  function getTargetElement(): HTMLElement {
+  let targetElement = $state() as HTMLElement;
+  export function getTargetElement(): HTMLElement {
     return targetElement;
   }
 
-  function getProjectionOptions(): ProjectionOptions {
+  export function getProjectionOptions(): ProjectionOptions {
     return {
       useBorder: 'subject',
-    };
-  }
-
-  export function getTrialControls(): TrialControls {
-    return {
-      getTargetElement,
-      getSubjectElement,
-      getProjectionOptions,
     };
   }
 </script>

@@ -1,37 +1,24 @@
 <script lang="ts">
   import type { Options } from '$lib/options';
-  import type { Trial, TrialControls } from '$lib/trials/trials';
+  import type { TrialProps } from '$lib/trials/trials.svelte';
   import type { ProjectionOptions } from 'projectrix';
 
-  interface Props {
-    trial: Trial;
-    hideSubject?: boolean | undefined;
-  }
+  let { trial }: TrialProps = $props();
 
-  let { trial, hideSubject = undefined }: Props = $props();
-
-  let targetElement: HTMLElement = $state();
-  function getTargetElement(): HTMLElement {
+  let targetElement = $state() as HTMLElement;
+  export function getTargetElement(): HTMLElement {
     return targetElement;
   }
 
-  function getProjectionOptions(): ProjectionOptions {
+  export function getProjectionOptions(): ProjectionOptions {
     return {
       transformType: 'transformMat4',
     };
   }
 
-  function getTrialOptionOverrides(): Options {
+  export function getTrialOptionOverrides(): Options {
     return {
       skipAnimation: true,
-    };
-  }
-
-  export function getTrialControls(): TrialControls {
-    return {
-      getTargetElement,
-      getProjectionOptions,
-      getTrialOptionOverrides,
     };
   }
 </script>

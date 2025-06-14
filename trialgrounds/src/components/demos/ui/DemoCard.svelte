@@ -1,20 +1,21 @@
 <script lang="ts">
-  import type { Demo } from '$lib/demos/demos';
+  import { demosByName, type Demo } from '$lib/demos/demos.svelte';
   import type { Options } from '$lib/options';
   import { getContext } from 'svelte';
-  import type { Writable } from 'svelte/store';
   import DemoStartSlot from './DemoStartSlot.svelte';
+  import type { Store } from '$lib/stores/Store';
+  import type { DemoName } from '$lib/demos/demoNames';
 
   interface Props {
-    demo: Demo;
+    demoName: DemoName;
     href: string;
   }
+  let { demoName, href }: Props = $props();
+  const demo: Demo = demosByName.get(demoName)!;
 
-  let { demo = $bindable(), href }: Props = $props();
+  const optionsStore: Store<Options> = getContext('optionsStore');
 
-  const options = getContext<Writable<Options>>('options');
-
-  let startSlot: DemoStartSlot = $state();
+  let startSlot = $state() as DemoStartSlot;
 </script>
 
 <div class="demo-card">
@@ -32,7 +33,7 @@
   </a>
 
   <div class="demo-container prevent-select disable-touch-zoom">
-    <demo.demoType bind:this={demo.demoComponent} {startSlot} {options} />
+    <demo.Component bind:this={demo.instance} {startSlot} options={optionsStore} />
   </div>
 
   <div class="summary">

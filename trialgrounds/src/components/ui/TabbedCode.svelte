@@ -1,15 +1,16 @@
 <script lang="ts">
-  import type { Demo } from '$lib/demos/demos';
-  import { createTabs, melt } from '@melt-ui/svelte';
+  import { demosByName, type Demo } from '$lib/demos/demos.svelte';
   import { getProjection, setInlineStyles, clearInlineStyles } from 'projectrix';
   import { animate } from 'motion';
   import { codesByDemoName } from '$lib/demos/codesByDemoName';
+  import type { DemoName } from '$lib/demos/demoNames';
+  import { Tabs } from 'bits-ui';
 
   interface Props {
-    demo: Demo;
+    demoName: DemoName;
   }
-
-  let { demo }: Props = $props();
+  let { demoName }: Props = $props();
+  const demo: Demo = demosByName.get(demoName)!;
 
   type Tab = {
     id: string;
@@ -17,8 +18,8 @@
     figureTitle: string;
     code: string;
     highlightedCode: string;
-    tabBg?: HTMLElement;
-    figure?: HTMLElement;
+    tabBg: HTMLElement;
+    figure: HTMLElement;
   };
 
   const tabs: Tab[] = $state([
@@ -36,40 +37,35 @@
       code: codesByDemoName.get(demo.name)!.code,
       highlightedCode: codesByDemoName.get(demo.name)!.codeHL,
     },
-  ]);
+  ]) as Tab[];
 
   const tabsById: Record<string, Tab> = {};
   tabs.forEach((tab) => {
     tabsById[tab.id] = tab;
   });
 
-  let currentTab: Tab | undefined = undefined;
-  let contentContainer: HTMLElement = $state();
+  let currentTabId: string = $state(tabs[0].id);
+  let currentTab: Tab = tabs[0];
+  let contentContainer: HTMLElement;
 
-  const {
-    elements: { root, list, content, trigger },
-    states: { value },
-  } = createTabs({
-    defaultValue: tabs[0].id,
-  });
-
-  value.subscribe(async (nextTabId: string) => {
+  function onTabChange(newTabId: string): void {
     requestAnimationFrame(() => {
-      flipTab(nextTabId);
-      animateContentHeight(nextTabId);
-      currentTab = tabsById[nextTabId];
+      flipTab(newTabId, currentTab.id);
+      animateContentHeight(newTabId, currentTab.id);
+      currentTab = tabsById[newTabId];
     });
-  });
+  }
 
-  function flipTab(toTabId: string, skipAnimation = false): void {
-    const tabBg = tabsById[toTabId].tabBg;
-    if (!tabBg || !currentTab?.tabBg || skipAnimation) return;
+  function flipTab(newTabId: string, oldTabId: string, skipAnimation = false): void {
+    if (skipAnimation) return;
 
-    const { toSubject, toTargetOrigin } = getProjection(currentTab.tabBg, tabBg);
+    const oldTabBg = tabsById[oldTabId].tabBg;
+    const newTabBg = tabsById[newTabId].tabBg;
+    const { toSubject, toTargetOrigin } = getProjection(oldTabBg, newTabBg);
 
-    setInlineStyles(tabBg, toSubject);
+    setInlineStyles(newTabBg, toSubject);
     animate(
-      tabBg,
+      newTabBg,
       {
         ...toTargetOrigin,
       },
@@ -77,15 +73,11 @@
         duration: 0.2,
         easing: 'ease-out',
       },
-    ).finished.then(() => clearInlineStyles(tabBg));
+    ).finished.then(() => clearInlineStyles(newTabBg));
   }
 
-  function animateContentHeight(toTabId: string, skipAnimation = false): void {
-    const figure = tabsById[toTabId].figure;
-    if (!figure) return;
-
-    const height = getComputedStyle(figure).height;
-
+  function animateContentHeight(newTabId: string, _oldTabId: string, skipAnimation = false): void {
+    const height = getComputedStyle(tabsById[newTabId].figure).height;
     animate(
       contentContainer,
       {
@@ -103,30 +95,44 @@
   }
 </script>
 
-<div use:melt={$root} class="tabbed-code-root">
-  <div use:melt={$list} class="tab-list" aria-label="view usage or full code">
-    {#each tabs as tab}
-      <button use:melt={$trigger(tab.id)} class="tab" class:selected={$value === tab.id}>
-        <div class="tab-decor tab-border" class:selected={$value === tab.id}></div>
-        <div bind:this={tab.tabBg} class="tab-decor tab-bg"></div>
-        {tab.title}
-      </button>
-    {/each}
-  </div>
-  <div bind:this={contentContainer} class="content-container">
-    {#each tabs as tab}
-      <figure
-        bind:this={tab.figure}
-        use:melt={$content(tab.id)}
-        title={tab.figureTitle}
-        class="tab-figure"
-        class:showTab={$value === tab.id}
-      >
-        {@html tab.highlightedCode}
-      </figure>
-    {/each}
-  </div>
-</div>
+<Tabs.Root bind:value={currentTabId} onValueChange={onTabChange}>
+  {#snippet child({ props })}
+    <div {...props} class="tabbed-code-root">
+      <Tabs.List>
+        {#snippet child({ props })}
+          <div {...props} class="tab-list" aria-label="view usage or full code">
+            {#each tabs as tab}
+              <Tabs.Trigger value={tab.id}>
+                {#snippet child({ props })}
+                  <div {...props} class="tab" class:selected={currentTabId === tab.id}>
+                    <div
+                      class="tab-decor tab-border"
+                      class:selected={currentTabId === tab.id}
+                    ></div>
+                    <div bind:this={tab.tabBg} class="tab-decor tab-bg"></div>
+                    {tab.title}
+                  </div>
+                {/snippet}
+              </Tabs.Trigger>
+            {/each}
+          </div>
+        {/snippet}
+      </Tabs.List>
+      <div bind:this={contentContainer} class="content-container">
+        {#each tabs as tab}
+          <figure
+            bind:this={tab.figure}
+            title={tab.figureTitle}
+            class="tab-figure"
+            class:showTab={currentTabId === tab.id}
+          >
+            {@html tab.highlightedCode}
+          </figure>
+        {/each}
+      </div>
+    </div>
+  {/snippet}
+</Tabs.Root>
 
 <style lang="scss">
   $coralBezier: cubic-bezier(0.49, 0.74, 0, 0.76);

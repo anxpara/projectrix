@@ -1,22 +1,11 @@
 <script lang="ts">
-  import type { Trial, TrialControls } from '$lib/trials/trials';
+  import type { TrialProps } from '$lib/trials/trials.svelte';
 
-  interface Props {
-    trial: Trial;
-    hideSubject?: boolean | undefined;
-  }
+  let { trial }: TrialProps = $props();
 
-  let { trial, hideSubject = undefined }: Props = $props();
-
-  let targetElement: HTMLElement = $state();
-  function getTargetElement(): HTMLElement {
+  let targetElement = $state() as HTMLElement;
+  export function getTargetElement(): HTMLElement {
     return targetElement;
-  }
-
-  export function getTrialControls(): TrialControls {
-    return {
-      getTargetElement,
-    };
   }
 </script>
 

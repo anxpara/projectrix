@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Options } from '$lib/options';
-  import type { Trial, TrialAnimationOptions, TrialControls } from '$lib/trials/trials';
+  import type { TrialAnimationOptions, TrialProps } from '$lib/trials/trials.svelte';
   import {
     clearInlineStyles,
     getProjection,
@@ -8,19 +8,14 @@
     type PartialProjectionResults,
   } from 'projectrix';
 
-  interface Props {
-    trial: Trial;
-    hideSubject?: boolean | undefined;
-  }
+  let { trial }: TrialProps = $props();
 
-  let { trial, hideSubject = undefined }: Props = $props();
-
-  let targetElement: HTMLElement = $state();
-  function getTargetElement(): HTMLElement {
+  let targetElement = $state() as HTMLElement;
+  export function getTargetElement(): HTMLElement {
     return targetElement;
   }
 
-  function playCustomAnimation(
+  export function playCustomAnimation(
     defaultSubject: HTMLElement,
     trialOptions: Options,
     animationOptions?: TrialAnimationOptions,
@@ -47,14 +42,7 @@
       targetElement.style.borderColor = 'red';
     }
 
-    animationOptions?.complete?.call(null, trialOptions);
-  }
-
-  export function getTrialControls(): TrialControls {
-    return {
-      getTargetElement,
-      playCustomAnimation,
-    };
+    animationOptions?.complete?.(trialOptions);
   }
 </script>
 

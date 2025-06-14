@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from '$app/state';
-  import { allDemos } from '$lib/demos/demos';
-  import DemoCard from '../../components/DemoCard.svelte';
+  import { allDemos } from '$lib/demos/demos.svelte';
+  import DemoCard from '$components/demos/ui/DemoCard.svelte';
 </script>
 
 <svelte:head>
@@ -10,7 +10,7 @@
 
 <div class="all-demos-container">
   {#each allDemos as demo}
-    <DemoCard {demo} href={`/demos/${demo.name}${page.url.search}`} />
+    <DemoCard demoName={demo.name} href={`/demos/${demo.name}${page.url.search}`} />
   {/each}
 </div>
 

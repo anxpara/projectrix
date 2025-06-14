@@ -1,6 +1,5 @@
 <script lang="ts">
   import { preventDefault } from 'svelte/legacy';
-
   import {
     measureSubject,
     setInlineStyles,
@@ -11,34 +10,27 @@
   import { animate, utils, type JSAnimation } from 'animejs';
   import { mat4, quat, vec3 } from 'gl-matrix';
   import { onDestroy, onMount, tick } from 'svelte';
-  import type { Writable } from 'svelte/store';
-  import type { Options } from '$lib/options';
+  import type { DemoProps } from '$lib/demos/demos.svelte';
 
   // options are part of demos infrastructure
-  interface Props {
-    options: Writable<Options>;
-  }
-
-  let { options }: Props = $props();
-  let log = $derived($options.log);
+  let { options }: DemoProps = $props();
+  const log = $derived(options.value.log);
 
   const NumGoals = 5;
   let goals: HTMLElement[] = $state([]);
 
-  let startTarget: HTMLElement = $state();
-  let hitTarget: HTMLElement = $state();
-
-  let spinnerModifier: HTMLElement = $state();
-  let slider1Modifier: HTMLElement = $state();
-  let slider2Modifier: HTMLElement = $state();
-
-  let pulseContainer: HTMLElement = $state();
-  let pulseTemplate: HTMLElement = $state();
+  let startTarget = $state() as HTMLElement;
+  let hitTarget = $state() as HTMLElement;
+  let spinnerModifier = $state() as HTMLElement;
+  let slider1Modifier = $state() as HTMLElement;
+  let slider2Modifier = $state() as HTMLElement;
+  let pulseContainer = $state() as HTMLElement;
+  let pulseTemplate = $state() as HTMLElement;
 
   /* game state */
 
   let currentTarget: HTMLElement | null;
-  let currentModifier: HTMLElement | null = $state();
+  let currentModifier: HTMLElement | null = $state(null);
   let hitAnim: JSAnimation | undefined;
 
   let startTime = 0;
@@ -442,6 +434,7 @@
         onmousedown={handleGoalTap}
         ontouchstart={preventDefault(handleGoalTap)}
         onkeydown={handleGoalKeyDown}
+        aria-label="goal 0"
       >
         <div class="golf-target child-target"></div>
       </button>
@@ -452,6 +445,7 @@
         onmousedown={handleGoalTap}
         ontouchstart={preventDefault(handleGoalTap)}
         onkeydown={handleGoalKeyDown}
+        aria-label="goal 1"
       >
         <div class="golf-target child-target"></div>
       </button>
@@ -462,6 +456,7 @@
         onmousedown={handleGoalTap}
         ontouchstart={preventDefault(handleGoalTap)}
         onkeydown={handleGoalKeyDown}
+        aria-label="goal 2"
       >
         <div class="golf-target child-target"></div>
       </button>
@@ -472,6 +467,7 @@
         onmousedown={handleGoalTap}
         ontouchstart={preventDefault(handleGoalTap)}
         onkeydown={handleGoalKeyDown}
+        aria-label="goal 3"
       >
         <div class="golf-target child-target"></div>
       </button>
@@ -482,6 +478,7 @@
         onmousedown={handleGoalTap}
         ontouchstart={preventDefault(handleGoalTap)}
         onkeydown={handleGoalKeyDown}
+        aria-label="goal 4"
       >
         <div class="golf-target child-target"></div>
       </button>
@@ -496,6 +493,7 @@
         onmousedown={handleModifierTap}
         ontouchstart={preventDefault(handleModifierTap)}
         onkeydown={handleModifierKeyDown}
+        aria-label="spinner modifier"
       >
         <div class="golf-target child-target"></div>
       </button>
@@ -507,6 +505,7 @@
         onmousedown={handleModifierTap}
         ontouchstart={preventDefault(handleModifierTap)}
         onkeydown={handleModifierKeyDown}
+        aria-label="slider modifier 1"
       >
         <div class="golf-target child-target"></div>
       </button>
@@ -518,6 +517,7 @@
         onmousedown={handleModifierTap}
         ontouchstart={preventDefault(handleModifierTap)}
         onkeydown={handleModifierKeyDown}
+        aria-label="slider modifier 2"
       >
         <div class="golf-target child-target"></div>
       </button>

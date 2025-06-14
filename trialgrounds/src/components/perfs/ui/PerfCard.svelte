@@ -1,20 +1,24 @@
 <script lang="ts">
   import type { Options } from '$lib/options';
-  import { PerfInProgress, type Perf } from '$lib/perf/perfs';
+  import { PerfInProgress, perfsByName, type Perf } from '$lib/perf/perfs.svelte';
   import { runPerf } from '$lib/perf/runPerf';
   import { getContext } from 'svelte';
-  import type { Writable } from 'svelte/store';
+  import type { Store } from '$lib/stores/Store';
+  import type { PerfName } from '$lib/perf/perfNames';
 
   interface Props {
-    perf: Perf;
+    perfName: PerfName;
     href: string;
   }
+  let { perfName, href }: Props = $props();
+  const perf: Perf = perfsByName.get(perfName)!;
+  const durationMs: number | undefined = $derived(perf.durationMs);
 
-  let { perf = $bindable(), href }: Props = $props();
+  const optionsStore: Store<Options> = getContext('optionsStore');
 
-  let durationMs = $derived(perf.durationMs);
-
-  const options = getContext<Writable<Options>>('options');
+  function reRunPerf(): void {
+    runPerf(perf, optionsStore.value);
+  }
 </script>
 
 <div class="perf-card">
@@ -24,20 +28,20 @@
   </a>
 
   <div class="perf-container prevent-select">
-    <perf.perfType bind:this={perf.perfComponent} {perf} {options} />
+    <perf.Component bind:this={perf.instance} />
 
     <div class="duration-container">
-      {#if !$durationMs || $durationMs === PerfInProgress}
+      {#if !durationMs || durationMs === PerfInProgress}
         <p>-</p>
       {:else}
-        <p>{$durationMs}ms</p>
+        <p>{durationMs}ms</p>
       {/if}
     </div>
 
     <div class="rerun-container">
-      <button onclick={() => runPerf(perf, $options)}
-        ><span class="material-symbols-outlined"> replay </span></button
-      >
+      <button onclick={reRunPerf}>
+        <span class="material-symbols-outlined"> replay </span>
+      </button>
     </div>
   </div>
 </div>

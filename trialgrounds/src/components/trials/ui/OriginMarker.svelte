@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getProjection, setInlineStyles } from 'projectrix';
 
-  let marker: HTMLElement = $state();
+  let marker: HTMLElement;
   let marked = $state(false);
 
   export function markOrigin(target: HTMLElement): void {

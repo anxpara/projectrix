@@ -1,19 +1,17 @@
 <script lang="ts">
-  import type { PerfControls } from '$lib/perf/perfs';
   import { onMount } from 'svelte';
 
   interface Props {
+    target: HTMLElement;
+    subject: HTMLElement;
     n: number;
   }
+  let { target = $bindable(), subject = $bindable(), n }: Props = $props();
 
-  let { n }: Props = $props();
-
-  let subjectContainerTemplate: HTMLElement = $state();
-  let targetContainerTemplate: HTMLElement = $state();
-  let baseSubjectContainer: HTMLElement = $state();
-  let baseTargetContainer: HTMLElement = $state();
-  let target: HTMLElement = $state();
-  let subject: HTMLElement = $state();
+  let subjectContainerTemplate = $state() as HTMLElement;
+  let targetContainerTemplate = $state() as HTMLElement;
+  let baseSubjectContainer = $state() as HTMLElement;
+  let baseTargetContainer = $state() as HTMLElement;
 
   onMount(() => {
     reset();
@@ -43,13 +41,6 @@
       currentLayer.style.transform = `rotate(${(dir * 360) / n}deg)`;
     }
     currentLayer.append(element);
-  }
-
-  export function getPerfControls(): PerfControls {
-    return {
-      getTargetElement: () => target,
-      getSubjectElement: () => subject,
-    };
   }
 </script>
 
