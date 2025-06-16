@@ -1,10 +1,10 @@
 <script lang="ts">
+  import { getContext } from 'svelte';
   import type { Options } from '$lib/options';
+  import type { PerfName } from '$lib/perf/perfNames';
   import { PerfInProgress, perfsByName, type Perf } from '$lib/perf/perfs.svelte';
   import { runPerf } from '$lib/perf/runPerf';
-  import { getContext } from 'svelte';
   import type { Store } from '$lib/stores/Store';
-  import type { PerfName } from '$lib/perf/perfNames';
 
   interface Props {
     perfName: PerfName;
@@ -49,8 +49,9 @@
 <style lang="scss">
   button {
     all: unset;
-    cursor: pointer;
     -webkit-tap-highlight-color: transparent;
+    
+    cursor: pointer;
   }
 
   .prevent-select {
@@ -65,22 +66,23 @@
   }
 
   .title-link {
+    -webkit-tap-highlight-color: transparent;
+
+    position: relative;
     width: 100%;
     height: 2.8em;
 
     display: flex;
     align-items: center;
-    position: relative;
 
     color: #111521;
-    text-underline-offset: 0.2em;
     text-decoration-thickness: 0.125em;
-    -webkit-tap-highlight-color: transparent;
+    text-underline-offset: 0.2em;
 
     .title-bg {
+      z-index: -1;
       position: absolute;
       left: 0.93em;
-      z-index: -1;
 
       width: 100%;
       height: 100%;
@@ -103,18 +105,18 @@
 
   .perf-container {
     position: relative;
+    border: solid 1px coral;
 
     width: 14em;
     height: 14em;
-    border: solid 1px coral;
 
     overflow: hidden;
     pointer-events: none;
 
     .duration-container {
       position: absolute;
-      bottom: 0.5em;
       right: 0.5em;
+      bottom: 0.5em;
 
       pointer-events: all;
 
@@ -125,8 +127,8 @@
 
     .rerun-container {
       position: absolute;
-      top: 0.5em;
       right: 0.5em;
+      top: 0.5em;
 
       pointer-events: all;
     }

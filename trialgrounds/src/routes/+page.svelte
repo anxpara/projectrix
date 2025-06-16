@@ -1,14 +1,14 @@
 <script lang="ts">
-  import { allTrials, getTrials, type Trial } from '../lib/trials/trials.svelte';
   import { getContext, onDestroy, onMount, tick } from 'svelte';
+  import { browser } from '$app/environment';
   import { page } from '$app/state';
-  import OriginMarker from '$components/trials/ui/OriginMarker.svelte';
-  import { animateTrial, animateTrialReturn } from '$lib/trials/animateTrial';
   import { utils } from 'animejs';
   import type { Options } from '$lib/options';
   import type { Store } from '$lib/stores/Store';
+  import { animateTrial, animateTrialReturn } from '$lib/trials/animateTrial';
+  import { allTrials, getTrials, type Trial } from '../lib/trials/trials.svelte';
   import type { LayoutData } from './$types';
-  import { browser } from '$app/environment';
+  import OriginMarker from '$components/trials/ui/OriginMarker.svelte';
 
   interface Props {
     data: LayoutData;
@@ -127,8 +127,8 @@
     top: 14em;
 
     display: flex;
-    justify-content: center;
     flex-wrap: wrap;
+    justify-content: center;
     gap: 2em;
   }
 

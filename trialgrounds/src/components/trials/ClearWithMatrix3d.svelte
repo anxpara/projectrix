@@ -1,12 +1,12 @@
 <script lang="ts">
-  import type { Options } from '$lib/options';
-  import type { TrialAnimationOptions, TrialProps } from '$lib/trials/trials.svelte';
   import {
     clearInlineStyles,
     getProjection,
     setInlineStyles,
     type PartialProjectionResults,
   } from 'projectrix';
+  import type { Options } from '$lib/options';
+  import type { TrialAnimationOptions, TrialProps } from '$lib/trials/trials.svelte';
 
   let { trial }: TrialProps = $props();
 
@@ -52,7 +52,7 @@
 
 <style lang="scss">
   .target-element {
-    outline: none;
     border: solid 2px limegreen;
+    outline: none;
   }
 </style>

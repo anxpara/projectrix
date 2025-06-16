@@ -21,7 +21,7 @@
 
   .target-element {
     position: fixed;
-    top: 1em;
     right: 1em;
+    top: 1em;
   }
 </style>

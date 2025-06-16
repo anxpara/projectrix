@@ -30,16 +30,16 @@
 
 <style lang="scss">
   .subject-element-3d {
-    top: 1em;
     left: 1em;
-    pointer-events: none;
+    top: 1em;
     transform: rotateY(25deg);
+    pointer-events: none;
   }
 
   .target-container {
+    padding: 1em;
     width: fit-content;
     height: fit-content;
-    padding: 1em;
 
     transform-style: preserve-3d;
     -webkit-transform-style: preserve-3d;

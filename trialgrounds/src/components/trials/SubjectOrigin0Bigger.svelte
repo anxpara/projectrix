@@ -24,10 +24,10 @@
 
 <style lang="scss">
   .subject-element {
-    transform-origin: top left;
-    pointer-events: none;
     width: 6em;
     height: 5em;
+    transform-origin: top left;
+    pointer-events: none;
   }
 
   .target-container {

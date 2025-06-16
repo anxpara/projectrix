@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { TrialProps } from '$lib/trials/trials.svelte';
   import type { ProjectionOptions } from 'projectrix';
+  import type { TrialProps } from '$lib/trials/trials.svelte';
 
   let { trial, hideSubject }: TrialProps = $props();
 
@@ -46,8 +46,8 @@
   }
 
   .subject-perspective {
-    top: 1em;
     left: 1em;
+    top: 1em;
 
     transform: rotateX(20deg) rotateZ(15deg);
   }
@@ -56,15 +56,16 @@
     padding: 1em;
 
     perspective: 200px;
-
     transform-origin: left;
     transform: rotateY(315deg);
+
     transform-style: preserve-3d;
   }
 
   .inner {
     transform-origin: bottom;
     transform: rotateX(47deg);
+
     transform-style: preserve-3d;
   }
 

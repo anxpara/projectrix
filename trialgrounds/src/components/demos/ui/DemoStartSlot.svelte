@@ -33,28 +33,28 @@
     transform: skew(-34deg);
   }
   .right {
-    height: calc(100% + -5px);
     left: unset;
     right: 1.2em;
     bottom: 0px;
+    height: calc(100% + -5px);
 
     color: coral;
     background-color: coral;
   }
   .target-slot {
-    color: transparent;
-    background-color: transparent;
+    border: solid 3px limegreen;
     width: calc(2em - 6px);
 
-    border: solid 3px limegreen;
-
     opacity: 0;
+    color: transparent;
+    background-color: transparent;
+    
     cursor: default;
   }
   .slot-1 {
     right: calc(-3.3em + 1px);
 
-    cursor: default;
     pointer-events: none;
+    cursor: default;
   }
 </style>

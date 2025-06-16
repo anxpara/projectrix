@@ -1,14 +1,14 @@
 import type { Component } from 'svelte';
-import { DemoName } from './demoNames';
-import MatchDemo from '$components/demos/MatchDemo.svelte';
-import AnimateDemo from '$components/demos/AnimateDemo.svelte';
-import FlipDemo from '$components/demos/FlipDemo.svelte';
-import DivGolfDemo from '$components/demos/DivGolfDemo.svelte';
-import CssIsAwesomeDemo from '$components/demos/CssIsAwesomeDemo.svelte';
-import FauxFlipDemo from '$components/demos/FauxFlipDemo.svelte';
-import DemoStartSlot from '$components/demos/ui/DemoStartSlot.svelte';
-import type { Store } from '$lib/stores/Store';
 import type { Options } from '$lib/options';
+import type { Store } from '$lib/stores/Store';
+import { DemoName } from './demoNames';
+import AnimateDemo from '$components/demos/AnimateDemo.svelte';
+import CssIsAwesomeDemo from '$components/demos/CssIsAwesomeDemo.svelte';
+import DivGolfDemo from '$components/demos/DivGolfDemo.svelte';
+import FauxFlipDemo from '$components/demos/FauxFlipDemo.svelte';
+import FlipDemo from '$components/demos/FlipDemo.svelte';
+import MatchDemo from '$components/demos/MatchDemo.svelte';
+import DemoStartSlot from '$components/demos/ui/DemoStartSlot.svelte';
 
 export interface DemoProps {
   startSlot: DemoStartSlot;

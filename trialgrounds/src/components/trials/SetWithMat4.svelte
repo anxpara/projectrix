@@ -1,7 +1,7 @@
 <script lang="ts">
+  import type { ProjectionOptions } from 'projectrix';
   import type { Options } from '$lib/options';
   import type { TrialProps } from '$lib/trials/trials.svelte';
-  import type { ProjectionOptions } from 'projectrix';
 
   let { trial }: TrialProps = $props();
 

@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { setInlineStyles, getProjection, type PartialProjectionResults } from 'projectrix';
-  import { animate } from 'animejs';
   import { onMount, tick } from 'svelte';
+  import { animate } from 'animejs';
+  import { getProjection, setInlineStyles, type PartialProjectionResults } from 'projectrix';
   import type { DemoProps } from '$lib/demos/demos.svelte';
 
   // startSlot and options are part of demos infrastructure
@@ -85,9 +85,9 @@
 
   .size-container {
     position: relative;
+    margin-top: 1.5em;
     width: 100%;
     aspect-ratio: 4 / 1;
-    margin-top: 1.5em;
 
     container-type: size;
   }
@@ -104,9 +104,9 @@
   }
 
   .demo-subject {
+    border: dashed 3px yellow;
     width: 14.25cqw;
     height: 14.25cqw;
-    border: dashed 3px yellow;
 
     cursor: pointer;
   }
@@ -124,8 +124,8 @@
 
     .child {
       position: absolute;
-      top: 0px;
       left: 0px;
+      top: 0px;
 
       width: 10.75cqw;
       height: 10.75cqw;

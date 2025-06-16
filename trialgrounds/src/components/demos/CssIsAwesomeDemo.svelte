@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { setInlineStyles, getProjection, clearInlineStyles } from 'projectrix';
-  import { waapi, type WAAPIAnimation } from 'animejs';
   import { onDestroy, onMount, tick } from 'svelte';
+  import { waapi, type WAAPIAnimation } from 'animejs';
+  import { clearInlineStyles, getProjection, setInlineStyles } from 'projectrix';
   import type { DemoProps } from '$lib/demos/demos.svelte';
 
   // options are part of demos infrastructure
@@ -224,11 +224,11 @@
     width: 9.4em;
     height: 12em;
 
-    transform: translateY(-4em) rotateX(280deg) rotateY(360deg) translateY(-4em);
-
-    font-weight: 300;
     color: limegreen;
     background-color: #12415a55;
+    font-weight: 300;
+
+    transform: translateY(-4em) rotateX(280deg) rotateY(360deg) translateY(-4em);
 
     span {
       font-size: 3.6em;

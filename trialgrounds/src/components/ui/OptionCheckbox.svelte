@@ -1,8 +1,8 @@
 <script lang="ts">
+  import { getContext } from 'svelte';
+  import { Checkbox, Label } from 'bits-ui';
   import type { Options } from '$lib/options';
   import type { Store } from '$lib/stores/Store';
-  import { Checkbox, Label } from 'bits-ui';
-  import { getContext } from 'svelte';
 
   interface Props {
     name: string;
@@ -34,10 +34,10 @@
     font-weight: 600;
 
     > :global(.check-button) {
-      width: 1.4em;
-      height: 1.4em;
       border: solid 3px coral;
       padding: 0;
+      width: 1.4em;
+      height: 1.4em;
 
       background-color: #111521;
       cursor: pointer;

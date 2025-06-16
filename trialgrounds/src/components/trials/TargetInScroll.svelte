@@ -41,9 +41,9 @@
   }
 
   .spacer {
-    outline: dotted 2px purple;
     width: 4em;
     height: 8em;
+    outline: dotted 2px purple;
   }
 
   .target-element {
@@ -51,7 +51,7 @@
 
   .subject-element {
     position: absolute;
-    bottom: 0em;
     right: 0em;
+    bottom: 0em;
   }
 </style>

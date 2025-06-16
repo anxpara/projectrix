@@ -1,14 +1,14 @@
 <script lang="ts">
-  import OptionCheckbox from './OptionCheckbox.svelte';
-  import { afterNavigate } from '$app/navigation';
-  import { browser } from '$app/environment';
-  import { sharedOptionNames, trialOptionNames } from '$lib/optionNames';
-  import { clearInlineStyles, getProjection } from 'projectrix';
-  import { animate, JSAnimation, utils } from 'animejs';
-  import { page } from '$app/state';
-  import { MediaQuery } from 'svelte/reactivity';
   import { onDestroy, onMount } from 'svelte';
+  import { MediaQuery } from 'svelte/reactivity';
+  import { browser } from '$app/environment';
+  import { afterNavigate } from '$app/navigation';
+  import { page } from '$app/state';
+  import { animate, type JSAnimation, utils } from 'animejs';
+  import { clearInlineStyles, getProjection } from 'projectrix';
   import { watch } from 'runed';
+  import { sharedOptionNames, trialOptionNames } from '$lib/optionNames';
+  import OptionCheckbox from './OptionCheckbox.svelte';
 
   const isHoverDeviceMQ = new MediaQuery('(hover: hover)', true);
 
@@ -236,48 +236,48 @@
 
 <style lang="scss">
   .centerer {
+    z-index: 3;
     position: relative;
     width: 100%;
     height: 4em;
-    z-index: 3;
+
+    container-type: inline-size;
 
     display: flex;
     flex-direction: column;
     align-items: center;
-
-    container-type: inline-size;
 
     pointer-events: none;
   }
 
   .menu-header {
     all: unset;
+    -webkit-tap-highlight-color: transparent;
 
     font-size: clamp(0.5em, 1em, 3.7cqw);
     position: relative;
     margin-top: 1em;
-    border-radius: 0.3em;
     padding: 0.5em;
     padding-inline: 1.2em;
 
     display: flex;
     justify-content: center;
     gap: 0.8em;
+    border-radius: 0.3em;
 
     pointer-events: all;
     cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
 
     .menu-header-bg {
+      z-index: -1;
       position: absolute;
-      top: 0;
       left: 0;
       right: 0;
+      top: 0;
       bottom: 0;
-      z-index: -1;
 
       background: hsla(225, 32%, 10%, 0.8);
       transform: skew(-31deg);
@@ -293,56 +293,56 @@
   .title {
     z-index: 2;
     margin: 0;
-    line-height: 1.3em;
 
     font-family: 'rubik';
+    line-height: 1.3em;
     text-align: center;
   }
 
   .menu-button-base {
+    font-size: 1.8em;
+    z-index: 1;
     position: relative;
     top: 0.05em;
-    z-index: 1;
-
-    font-size: 1.8em;
     width: 0.8em;
     height: 1.1em;
-    line-height: 1.1em;
 
     display: flex;
     justify-content: center;
     align-items: center;
 
-    font-weight: 500;
     color: #111521;
+    font-weight: 500;
+    line-height: 1.1em;
 
     .menu-button {
-      position: absolute;
-      z-index: -1;
-      width: 100%;
-      height: 100%;
+      -webkit-tap-highlight-color: transparent;
 
+      z-index: -1;
+      position: absolute;
       border: none;
       padding: 0;
+      width: 100%;
+      height: 100%;
 
       background: coral;
       transform: skew(-31deg);
 
       cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
     }
   }
 
   .menus-container {
+    -webkit-tap-highlight-color: transparent;
+
+    z-index: 1;
     position: relative;
     top: -1px;
-    transform: translateX(clamp(-3.219cqw, -0.87em, 0em));
-    z-index: 1;
-
-    width: auto;
     border: solid 2px;
     border-top: 1px;
     padding: 1em;
+
+    width: auto;
 
     display: flex;
     flex-direction: column;
@@ -353,14 +353,14 @@
     opacity: 0;
     color: coral;
     background: hsla(225, 32%, 10%, 0.93);
-
-    will-change: transform;
+    transform: translateX(clamp(-3.219cqw, -0.87em, 0em));
 
     pointer-events: none;
-    -webkit-tap-highlight-color: transparent;
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
+
+    will-change: transform;
   }
   .menus-container.open {
     opacity: 1;
@@ -381,9 +381,9 @@
   }
 
   .option-groups {
+    padding-left: 2em;
     display: flex;
     gap: 1.2em;
-    padding-left: 2em;
 
     fieldset {
       all: unset;
@@ -405,8 +405,8 @@
   }
 
   a {
-    text-underline-offset: 0.2em;
     color: coral;
+    text-underline-offset: 0.2em;
   }
 
   a:visited {

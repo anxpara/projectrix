@@ -34,8 +34,8 @@
   }
 
   .subject-perspective {
-    top: 1em;
     left: 1em;
+    top: 1em;
     transform: rotateX(20deg) rotateZ(15deg);
   }
 

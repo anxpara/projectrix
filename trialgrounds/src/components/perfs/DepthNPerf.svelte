@@ -79,12 +79,12 @@
   }
 
   .perf-subject-container {
-    transform-origin: bottom left;
     color: yellow;
+    transform-origin: bottom left;
   }
   .perf-target-container {
-    transform-origin: bottom right;
     color: lime;
+    transform-origin: bottom right;
   }
 
   .perf-target {

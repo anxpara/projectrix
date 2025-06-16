@@ -1,10 +1,10 @@
 <script lang="ts">
+  import { getContext } from 'svelte';
+  import type { DemoName } from '$lib/demos/demoNames';
   import { demosByName, type Demo } from '$lib/demos/demos.svelte';
   import type { Options } from '$lib/options';
-  import { getContext } from 'svelte';
-  import DemoStartSlot from './DemoStartSlot.svelte';
   import type { Store } from '$lib/stores/Store';
-  import type { DemoName } from '$lib/demos/demoNames';
+  import DemoStartSlot from './DemoStartSlot.svelte';
 
   interface Props {
     demoName: DemoName;
@@ -57,46 +57,42 @@
   .demo-card {
     position: relative;
 
-    width: min(700px, calc(100% - 2px));
-
     border: solid 1px coral;
+    width: min(700px, calc(100% - 2px));
 
     container-type: inline-size;
     will-change: transform;
   }
 
   .title-link {
+    -webkit-tap-highlight-color: transparent;
     font-size: min(1em, 3.6cqw);
-
-    display: block;
     width: fit-content;
 
-    color: #111521;
-    text-underline-offset: 0.3em;
-    text-decoration-thickness: calc(3 / $pxem * 1em);
+    display: block;
 
-    -webkit-tap-highlight-color: transparent;
+    color: #111521;
+    text-decoration-thickness: calc(3 / $pxem * 1em);
+    text-underline-offset: 0.3em;
 
     .title {
+      z-index: 2;
       position: relative;
-
-      top: 0;
       left: 0em;
+      top: 0;
 
       padding-left: 3em;
-      padding-top: 0.4em;
       padding-right: 1.3em;
+      padding-top: 0.4em;
       padding-bottom: 0.7em;
-
-      z-index: 2;
 
       background: coral;
 
       h1 {
+        font-size: 2.1em;
         margin-block: 0;
 
         font-family: 'Rubik', sans-serif;
-        font-size: 2.1em;
         font-weight: 600;
         font-style: italic;
       }
@@ -104,11 +100,10 @@
   }
 
   .corner-right-container {
-    position: absolute;
-    top: 0;
-    right: -2.5em;
     z-index: -1;
-
+    position: absolute;
+    right: -2.5em;
+    top: 0;
     width: 7em;
     height: calc(100%);
 
@@ -118,7 +113,6 @@
 
   .corner {
     position: absolute;
-
     width: 3em;
     height: 3.55em;
 
@@ -126,21 +120,19 @@
   }
   .left {
     font-size: 1em;
-    top: -1px;
-    left: -1.9em;
-
     z-index: 3;
+    left: -1.9em;
+    top: -1px;
 
     color: #111521;
     background-color: #111521;
-
     cursor: default;
   }
   .right {
-    height: calc(100% + 0.25em);
     left: unset;
     right: 1.2em;
     bottom: -1px;
+    height: calc(100% + 0.25em);
 
     color: coral;
     background-color: coral;
@@ -155,8 +147,8 @@
 
     p {
       font-size: min(1.8em, 5.9cqw);
-      padding-inline: 1em;
       margin-block: 0.5em;
+      padding-inline: 1em;
     }
   }
 </style>

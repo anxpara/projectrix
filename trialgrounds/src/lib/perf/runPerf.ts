@@ -1,7 +1,7 @@
-import { clearInlineStyles, getProjection, setInlineStyles } from 'projectrix';
-import { PerfInProgress, type Perf } from './perfs.svelte';
-import type { Options } from '$lib/options';
 import { browser } from '$app/environment';
+import { clearInlineStyles, getProjection, setInlineStyles } from 'projectrix';
+import type { Options } from '$lib/options';
+import { PerfInProgress, type Perf } from './perfs.svelte';
 
 export function runPerf(perf: Perf, options: Options): void {
   if (!browser) return;

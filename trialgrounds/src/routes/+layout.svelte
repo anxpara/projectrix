@@ -1,15 +1,15 @@
 <script lang="ts">
-  import '$styles/app.scss';
-  import { getUrlForOptions, type Options } from '$lib/options';
   import { setContext, type Snippet } from 'svelte';
-  import { goto } from '$app/navigation';
   import { browser } from '$app/environment';
-  import MainMenu from '$components/ui/MainMenu.svelte';
-  import { store, type Store } from '$lib/stores/Store';
+  import { goto } from '$app/navigation';
   import { page } from '$app/state';
-  import type { LayoutData } from './$types';
+  import { getUrlForOptions, type Options } from '$lib/options';
   import { onStoreChange } from '$lib/stores/onStoreChange.svelte';
+  import { store, type Store } from '$lib/stores/Store';
   import { allTrials, type Trial } from '$lib/trials/trials.svelte';
+  import type { LayoutData } from './$types';
+  import MainMenu from '$components/ui/MainMenu.svelte';
+  import '$styles/app.scss';
 
   interface Props {
     data: LayoutData;

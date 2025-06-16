@@ -28,17 +28,17 @@
 
 <style lang="scss">
   .subject-element-3d {
-    top: 1em;
     left: 1em;
-    pointer-events: none;
+    top: 1em;
     transform: rotateX(20deg) rotateZ(15deg);
+    pointer-events: none;
   }
 
   .target-container {
     position: relative;
+    transform: rotateX(-30deg) rotateZ(-30deg);
     transform-style: preserve-3d;
     -webkit-transform-style: preserve-3d;
-    transform: rotateX(-30deg) rotateZ(-30deg);
   }
 
   .target-element {

@@ -26,7 +26,7 @@
 
   .target-element {
     position: absolute;
-    top: 0.5em;
     left: 0.5em;
+    top: 0.5em;
   }
 </style>

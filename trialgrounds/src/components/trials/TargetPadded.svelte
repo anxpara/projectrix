@@ -15,8 +15,8 @@
 
 <style lang="scss">
   .target-element {
+    padding: 1em;
     width: 3em;
     height: 2em;
-    padding: 1em;
   }
 </style>

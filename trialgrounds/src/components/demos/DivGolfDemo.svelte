@@ -1,15 +1,15 @@
 <script lang="ts">
+  import { onDestroy, onMount, tick } from 'svelte';
   import { preventDefault } from 'svelte/legacy';
+  import { animate, utils, type JSAnimation } from 'animejs';
+  import { mat4, quat, vec3 } from 'gl-matrix';
   import {
+    getProjection,
     measureSubject,
     setInlineStyles,
-    getProjection,
     type Measurement,
     type PartialProjectionResults,
   } from 'projectrix';
-  import { animate, utils, type JSAnimation } from 'animejs';
-  import { mat4, quat, vec3 } from 'gl-matrix';
-  import { onDestroy, onMount, tick } from 'svelte';
   import type { DemoProps } from '$lib/demos/demos.svelte';
 
   // options are part of demos infrastructure
@@ -552,8 +552,8 @@
 
   button {
     all: unset;
-    cursor: pointer;
     -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
   }
 
   .prevent-select {
@@ -581,14 +581,14 @@
 
   .restart {
     position: absolute;
-    top: min(4.4em, 16.8cqw);
     left: 0.8em;
+    top: min(4.4em, 16.8cqw);
   }
 
   .scores {
     position: absolute;
-    top: 0.5em;
     right: 1em;
+    top: 0.5em;
 
     display: flex;
     gap: 1.1em;
@@ -596,9 +596,9 @@
 
     .tracker {
       display: flex;
+      flex-direction: column;
       align-items: center;
       gap: 0.1em;
-      flex-direction: column;
 
       p {
         margin: 0;
@@ -612,10 +612,10 @@
   .centerer {
     width: 100%;
 
+    container-type: inline-size;
+
     display: flex;
     justify-content: center;
-
-    container-type: inline-size;
   }
 
   .course-sizer {
@@ -645,18 +645,18 @@
 
   .golf-target {
     position: absolute;
+    border: solid 3px #32cd32;
 
     width: calc(35 / $pxem * 1em);
     height: calc(35 / $pxem * 1em);
-    border: solid 3px #32cd32;
     outline: dotted 3px transparent;
 
     pointer-events: none;
   }
 
   .start-target {
-    top: calc(60 / $pxem * 1em);
     left: calc(10 / $pxem * 1em);
+    top: calc(60 / $pxem * 1em);
   }
 
   .child-target {
@@ -670,10 +670,10 @@
 
   .modifier {
     position: absolute;
+    border: dashed 3px darkmagenta;
 
     width: calc(150 / $pxem * 1em);
     height: calc(150 / $pxem * 1em);
-    border: dashed 3px darkmagenta;
 
     will-change: transform;
   }
@@ -683,8 +683,8 @@
   }
 
   .spinner {
-    top: calc(70 / $pxem * 1em);
     left: calc(60 / $pxem * 1em);
+    top: calc(70 / $pxem * 1em);
   }
 
   .slider1,
@@ -695,14 +695,14 @@
   }
 
   .slider1 {
-    top: calc(160 / $pxem * 1em);
     left: calc(235 / $pxem * 1em);
+    top: calc(160 / $pxem * 1em);
 
     transform: rotate(-45deg);
   }
   .slider2 {
-    top: calc(160 / $pxem * 1em);
     left: calc(479 / $pxem * 1em);
+    top: calc(160 / $pxem * 1em);
 
     transform: rotate(225deg);
   }
@@ -715,28 +715,28 @@
     border-color: red;
   }
   .goal-0 {
-    top: calc(210 / $pxem * 1em);
     left: calc(415 / $pxem * 1em);
+    top: calc(210 / $pxem * 1em);
     transform: rotate(45deg);
   }
   .goal-1 {
-    top: calc(57 / $pxem * 1em);
     left: calc(223 / $pxem * 1em);
+    top: calc(57 / $pxem * 1em);
     transform: rotate(24deg);
   }
   .goal-2 {
-    top: calc(104 / $pxem * 1em);
     left: calc(564 / $pxem * 1em);
+    top: calc(104 / $pxem * 1em);
     transform: rotate(20deg);
   }
   .goal-3 {
-    top: calc(57 / $pxem * 1em);
     left: calc(559 / $pxem * 1em);
+    top: calc(57 / $pxem * 1em);
     transform: rotate(14deg);
   }
   .goal-4 {
-    top: calc(11 / $pxem * 1em);
     left: calc(551 / $pxem * 1em);
+    top: calc(11 / $pxem * 1em);
     transform: rotate(9deg);
   }
 
@@ -745,10 +745,10 @@
   }
 
   .pulse-template {
+    opacity: 0;
     border-color: transparent;
     outline: solid 2px transparent;
     outline-offset: 0px;
     outline-color: rgba(50, 205, 50, 1);
-    opacity: 0;
   }
 </style>

@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { TrialProps } from '$lib/trials/trials.svelte';
   import type { ProjectionOptions } from 'projectrix';
+  import type { TrialProps } from '$lib/trials/trials.svelte';
 
   let { trial }: TrialProps = $props();
 
@@ -30,9 +30,9 @@
   }
 
   .target-element {
-    outline: none;
-    border-style: dashed;
     border-width: 1px 4px 8px 12px;
+    border-style: dashed;
     border-radius: 25px 10px 7px 3px;
+    outline: none;
   }
 </style>

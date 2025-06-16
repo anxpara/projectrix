@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { page } from '$app/state';
-  import PerfCard from '$components/perfs/ui/PerfCard.svelte';
-  import { allPerfs } from '$lib/perf/perfs.svelte';
   import { getContext, onMount, tick } from 'svelte';
-  import { runPerf } from '$lib/perf/runPerf';
+  import { page } from '$app/state';
   import type { Options } from '$lib/options';
+  import { allPerfs } from '$lib/perf/perfs.svelte';
+  import { runPerf } from '$lib/perf/runPerf';
   import type { Store } from '$lib/stores/Store';
+  import PerfCard from '$components/perfs/ui/PerfCard.svelte';
 
   let optionsStore: Store<Options> = getContext('optionsStore');
 

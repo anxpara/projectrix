@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { demosByName, type Demo } from '$lib/demos/demos.svelte';
-  import { getProjection, setInlineStyles, clearInlineStyles } from 'projectrix';
+  import { Tabs } from 'bits-ui';
   import { animate } from 'motion';
+  import { clearInlineStyles, getProjection, setInlineStyles } from 'projectrix';
   import { codesByDemoName } from '$lib/demos/codesByDemoName';
   import type { DemoName } from '$lib/demos/demoNames';
-  import { Tabs } from 'bits-ui';
+  import { demosByName, type Demo } from '$lib/demos/demos.svelte';
 
   interface Props {
     demoName: DemoName;
@@ -157,42 +157,42 @@
 
   .tab {
     all: unset;
+    -webkit-tap-highlight-color: transparent;
 
     font-size: 1.5em;
-    display: block;
+    z-index: 1;
 
     position: relative;
-    z-index: 1;
 
     margin-right: 0.3em;
     padding: 0.5em 1.4em 0.5em 1.3em;
+    display: block;
 
     font-weight: 800;
     font-style: italic;
     letter-spacing: 0.03em;
 
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-
     transition: color 0.1s $coralBezier;
+
+    cursor: pointer;
 
     .tab-decor {
       position: absolute;
-      top: 0;
       left: 0;
+      top: 0;
+      border: solid 2px coral;
 
       width: calc(100% - 4px);
       height: calc(100% - 4px);
-      border: solid 2px coral;
 
       transform: skew(-34deg);
     }
 
     .tab-bg {
       z-index: -1;
+      opacity: 0;
 
       background: coral;
-      opacity: 0;
     }
   }
   .tab.selected {
@@ -223,26 +223,25 @@
 
   .content-container {
     position: relative;
-
-    width: 100%;
     border-left: solid 1px coral;
-
-    background: hsla(16, 100%, 58%, 0.06);
+    width: 100%;
 
     overflow: hidden;
 
-    figure {
-      display: block !important;
+    background: hsla(16, 100%, 58%, 0.06);
 
+    figure {
       position: absolute;
       top: 0;
-
-      width: 100%;
       margin: 0;
+      width: 100%;
 
-      pointer-events: none;
+      display: block !important;
+
       opacity: 0;
       transition: 0.1s linear opacity;
+
+      pointer-events: none;
 
       :global(pre.shiki) {
         margin: 0;
@@ -251,9 +250,9 @@
     }
     figure.showTab {
       position: relative;
+      opacity: 1;
 
       pointer-events: all;
-      opacity: 1;
     }
   }
 </style>

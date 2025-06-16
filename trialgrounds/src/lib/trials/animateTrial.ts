@@ -1,16 +1,16 @@
-import { animate, JSAnimation, utils } from 'animejs';
-import type { Trial, TrialAnimationOptions } from './trials.svelte';
+import { animate, utils, type JSAnimation } from 'animejs';
+import { mat4 } from 'gl-matrix';
 import {
   clearInlineStyles,
   getProjection,
-  setInlineStyles,
-  type ProjectionOptions,
   measureSubject,
+  setInlineStyles,
   type Measurement,
   type Projection,
+  type ProjectionOptions,
 } from 'projectrix';
-import { mat4 } from 'gl-matrix';
-import type { Options } from '../options';
+import type { Options } from '$lib/options';
+import type { Trial, TrialAnimationOptions } from './trials.svelte';
 
 // probably needs more refactoring
 export function animateTrial(

@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { page } from '$app/state';
   import { getContext, onDestroy, onMount, tick } from 'svelte';
-  import { trialsByName, type Trial } from '$lib/trials/trials.svelte';
-  import type { TrialName } from '$lib/trials/trialNames';
-  import OriginMarker from '$components/trials/ui/OriginMarker.svelte';
-  import { animateTrial, stopTrial } from '$lib/trials/animateTrial';
+  import { browser } from '$app/environment';
+  import { page } from '$app/state';
   import type { Options } from '$lib/options';
   import { type Store } from '$lib/stores/Store';
-  import { browser } from '$app/environment';
+  import { animateTrial, stopTrial } from '$lib/trials/animateTrial';
+  import type { TrialName } from '$lib/trials/trialNames';
+  import { trialsByName, type Trial } from '$lib/trials/trials.svelte';
+  import OriginMarker from '$components/trials/ui/OriginMarker.svelte';
 
   let optionsStore: Store<Options> = getContext('optionsStore');
   const defaultSubjectStore: Store<HTMLElement> = getContext('defaultSubjectStore');

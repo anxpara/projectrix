@@ -16,15 +16,15 @@
 
 <style lang="scss">
   .all-demos-container {
-    width: calc(100% - 2em);
     padding: 1em;
+    width: calc(100% - 2em);
+
+    overflow: hidden;
 
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 1.5em;
-
-    overflow: hidden;
   }
 </style>
