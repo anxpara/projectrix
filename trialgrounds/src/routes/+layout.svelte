@@ -1,5 +1,5 @@
 <script lang="ts">
-  import '../app.scss';
+  import '$styles/app.scss';
   import { getUrlForOptions, type Options } from '$lib/options';
   import { setContext, type Snippet } from 'svelte';
   import { goto } from '$app/navigation';
