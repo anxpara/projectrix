@@ -19,7 +19,6 @@
     ".*\\.(css|scss|less|sass)$"
   ],
   "importOrderTypeScriptVersion": "5.0.0",
-  "_comment": "The following css sort order is not exhaustive; add properties as needed.",
   "cssDeclarationSorterCustomOrder": [
     "font-size",
     "z-index",
