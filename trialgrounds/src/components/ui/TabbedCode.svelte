@@ -1,6 +1,6 @@
 <script lang="ts">
+  import { waapi } from 'animejs';
   import { Tabs } from 'bits-ui';
-  import { animate } from 'motion';
   import { clearInlineStyles, getProjection, setInlineStyles } from 'projectrix';
   import { codesByDemoName } from '$lib/demos/codesByDemoName';
   import type { DemoName } from '$lib/demos/demoNames';
@@ -64,30 +64,21 @@
     const { toSubject, toTargetOrigin } = getProjection(oldTabBg, newTabBg);
 
     setInlineStyles(newTabBg, toSubject);
-    animate(
-      newTabBg,
-      {
-        ...toTargetOrigin,
-      },
-      {
-        duration: 0.2,
-        easing: 'ease-out',
-      },
-    ).finished.then(() => clearInlineStyles(newTabBg));
+    waapi.animate(newTabBg, {
+      ...toTargetOrigin,
+      duration: 200,
+      ease: 'out(2)',
+      onComplete: () => clearInlineStyles(newTabBg),
+    });
   }
 
   function animateContentHeight(newTabId: string, _oldTabId: string, skipAnimation = false): void {
     const height = getComputedStyle(tabsById[newTabId].figure).height;
-    animate(
-      contentContainer,
-      {
-        height,
-      },
-      {
-        duration: skipAnimation ? 0 : 0.3,
-        easing: 'ease-in-out',
-      },
-    );
+    waapi.animate(contentContainer, {
+      height,
+      duration: skipAnimation ? 0 : 300,
+      ease: 'inOut(2)',
+    });
   }
 
   function cap(word: string): string {
