@@ -80,13 +80,9 @@
     }
   }
 
-  p,
-  h1 {
+  p {
     font-size: 1.5em;
     margin-block: 0.67em;
-  }
-
-  p {
     font-weight: 600;
   }
 
