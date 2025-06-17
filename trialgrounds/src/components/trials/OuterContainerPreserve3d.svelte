@@ -42,9 +42,9 @@
     height: fit-content;
   }
   .outer {
+    transform: rotateY(65deg);
     transform-style: preserve-3d;
     -webkit-transform-style: preserve-3d;
-    transform: rotateY(65deg);
   }
   .inner {
     transform: rotateY(253deg);

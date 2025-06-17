@@ -50,7 +50,7 @@
   button {
     all: unset;
     -webkit-tap-highlight-color: transparent;
-    
+
     cursor: pointer;
   }
 

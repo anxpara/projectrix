@@ -4,7 +4,7 @@
   import { browser } from '$app/environment';
   import { afterNavigate } from '$app/navigation';
   import { page } from '$app/state';
-  import { animate, type JSAnimation, utils } from 'animejs';
+  import { animate, utils, type JSAnimation } from 'animejs';
   import { clearInlineStyles, getProjection } from 'projectrix';
   import { watch } from 'runed';
   import { sharedOptionNames, trialOptionNames } from '$lib/optionNames';

@@ -48,7 +48,7 @@
     opacity: 0;
     color: transparent;
     background-color: transparent;
-    
+
     cursor: default;
   }
   .slot-1 {
