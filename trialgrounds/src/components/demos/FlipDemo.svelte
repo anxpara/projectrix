@@ -20,6 +20,7 @@
     startSlot.show();
 
     currentTimeout = setTimeout(() => {
+      swapSlotForTarget(target);
       flipTargetToNextParent(target, rightParent);
     }, 1000);
   });
@@ -30,19 +31,21 @@
   });
 
   function swapSlotForTarget(target: HTMLElement): void {
+    const toSlot = getProjection(startSlot.getSlotSubject(), target).toSubject;
+    utils.set(target, {
+      ...toSlot,
+      opacity: 1,
+    });
     startSlot.hide();
-    target.style.opacity = '1';
   }
 
   function flipTargetToNextParent(target: HTMLElement, nextParent: HTMLElement): void {
-    let subjectEl = startSlot.isShowing() ? startSlot.getSlotSubject() : target;
-    const subject = measureSubject(subjectEl);
-
+    const subject = measureSubject(target); // include any slot projection styles in the measurement...
+    
     nextParent.append(target);
+    clearInlineStyles(target); // set to proper origin under nextParent by removing slot projection styles
 
     requestAnimationFrame(() => {
-      if (startSlot.isShowing()) swapSlotForTarget(target);
-
       const { toSubject, toTargetOrigin } = getProjection(subject, target, { log });
 
       utils.set(target, toSubject);
