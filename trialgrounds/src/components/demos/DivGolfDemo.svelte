@@ -1,6 +1,5 @@
 <script lang="ts">
   import { onDestroy, onMount, tick } from 'svelte';
-  import { preventDefault } from 'svelte/legacy';
   import { animate, utils, type JSAnimation } from 'animejs';
   import { mat4, quat, vec3 } from 'gl-matrix';
   import {
@@ -374,8 +373,9 @@
   }
 
   function handleModifierTap(e: Event): void {
-    const modifier = e.currentTarget as HTMLElement;
+    e.preventDefault();
     countMove();
+    const modifier = e.currentTarget as HTMLElement;
     activateModifier(modifier);
   }
   function handleModifierKeyDown(e: KeyboardEvent): void {
@@ -435,7 +435,7 @@
         class="modifier spinner"
         class:current={spinnerModifier?.isSameNode(currentModifier)}
         onmousedown={handleModifierTap}
-        ontouchstart={preventDefault(handleModifierTap)}
+        ontouchstart={handleModifierTap}
         onkeydown={handleModifierKeyDown}
         aria-label="spinner modifier"
       >
@@ -447,7 +447,7 @@
         class="modifier slider1"
         class:current={slider1Modifier?.isSameNode(currentModifier)}
         onmousedown={handleModifierTap}
-        ontouchstart={preventDefault(handleModifierTap)}
+        ontouchstart={handleModifierTap}
         onkeydown={handleModifierKeyDown}
         aria-label="slider modifier 1"
       >
@@ -459,7 +459,7 @@
         class="modifier slider2"
         class:current={slider2Modifier?.isSameNode(currentModifier)}
         onmousedown={handleModifierTap}
-        ontouchstart={preventDefault(handleModifierTap)}
+        ontouchstart={handleModifierTap}
         onkeydown={handleModifierKeyDown}
         aria-label="slider modifier 2"
       >
