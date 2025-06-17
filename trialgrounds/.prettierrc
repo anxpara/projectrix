@@ -8,7 +8,6 @@
     "@ianvs/prettier-plugin-sort-imports",
     "prettier-plugin-css-order"
   ],
-  "pluginSearchDirs": ["."],
   "overrides": [{ "files": "*.svelte", "options": { "parser": "svelte" } }],
   "importOrder": [
     "^svelte",
