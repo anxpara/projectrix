@@ -1,5 +1,4 @@
 <script lang="ts">
-  import type { ProjectionOptions } from 'projectrix';
   import type { TrialProps } from '$lib/trials/trials.svelte';
 
   let { trial, hideSubject }: TrialProps = $props();
@@ -12,13 +11,6 @@
   let subjectElement = $state() as HTMLElement;
   export function getSubjectElement(): HTMLElement {
     return subjectElement;
-  }
-
-  export function getProjectionOptions(): ProjectionOptions {
-    return {
-      // use anime.js, since motion one can't handle this perspective animation
-      transformType: 'matrix3d',
-    };
   }
 </script>
 
