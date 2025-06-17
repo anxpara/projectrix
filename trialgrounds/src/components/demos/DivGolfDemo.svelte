@@ -392,23 +392,6 @@
     activateModifier(modifier);
   }
 
-  function handleGoalTap(e: Event): void {
-    countMove();
-    attemptGoalHit(e.currentTarget as HTMLElement);
-  }
-  function handleGoalKeyDown(e: KeyboardEvent): void {
-    const key = e.key;
-    const goal = e.currentTarget as HTMLElement;
-    if (!isEnterKey(key)) {
-      return;
-    }
-    if (pressKeyDownBad(key)) {
-      return;
-    }
-    countMove();
-    attemptGoalHit(goal);
-  }
-
   function handleRestartClick(): void {
     countMove();
     restart();
@@ -428,60 +411,21 @@
 <div class="centerer prevent-select disable-touch-zoom">
   <div class="course-sizer portrait-size-toggle">
     <div class="course portrait-rotate-toggle">
-      <button
-        bind:this={goals[0]}
-        class="modifier goal goal-0"
-        onmousedown={handleGoalTap}
-        ontouchstart={preventDefault(handleGoalTap)}
-        onkeydown={handleGoalKeyDown}
-        aria-label="goal 0"
-      >
+      <div bind:this={goals[0]} class="modifier goal goal-0" aria-label="goal 0">
         <div class="golf-target child-target"></div>
-      </button>
-
-      <button
-        bind:this={goals[1]}
-        class="modifier goal goal-1"
-        onmousedown={handleGoalTap}
-        ontouchstart={preventDefault(handleGoalTap)}
-        onkeydown={handleGoalKeyDown}
-        aria-label="goal 1"
-      >
+      </div>
+      <div bind:this={goals[1]} class="modifier goal goal-1" aria-label="goal 1">
         <div class="golf-target child-target"></div>
-      </button>
-
-      <button
-        bind:this={goals[2]}
-        class="modifier goal goal-2"
-        onmousedown={handleGoalTap}
-        ontouchstart={preventDefault(handleGoalTap)}
-        onkeydown={handleGoalKeyDown}
-        aria-label="goal 2"
-      >
+      </div>
+      <div bind:this={goals[2]} class="modifier goal goal-2" aria-label="goal 2">
         <div class="golf-target child-target"></div>
-      </button>
-
-      <button
-        bind:this={goals[3]}
-        class="modifier goal goal-3"
-        onmousedown={handleGoalTap}
-        ontouchstart={preventDefault(handleGoalTap)}
-        onkeydown={handleGoalKeyDown}
-        aria-label="goal 3"
-      >
+      </div>
+      <div bind:this={goals[3]} class="modifier goal goal-3" aria-label="goal 3">
         <div class="golf-target child-target"></div>
-      </button>
-
-      <button
-        bind:this={goals[4]}
-        class="modifier goal goal-4"
-        onmousedown={handleGoalTap}
-        ontouchstart={preventDefault(handleGoalTap)}
-        onkeydown={handleGoalKeyDown}
-        aria-label="goal 4"
-      >
+      </div>
+      <div bind:this={goals[4]} class="modifier goal goal-4" aria-label="goal 4">
         <div class="golf-target child-target"></div>
-      </button>
+      </div>
 
       <div bind:this={startTarget} class="golf-target start-target"></div>
       <div bind:this={hitTarget} class="golf-target hit-target"></div>
