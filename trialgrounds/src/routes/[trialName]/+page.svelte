@@ -8,17 +8,20 @@
     optionsStoreContext,
   } from '$lib/contexts/contexts';
   import type { Options } from '$lib/options';
-  import { type Store } from '$lib/stores/Store';
+  import { store, type Store } from '$lib/stores/Store';
   import { animateTrial, stopTrial } from '$lib/trials/animateTrial';
   import type { TrialName } from '$lib/trials/trialNames';
   import { trialsByName, type Trial } from '$lib/trials/trials.svelte';
   import OriginMarker from '$components/trials/ui/OriginMarker.svelte';
 
   let optionsStore: Store<Options> = optionsStoreContext.get();
-  const defaultSubjectStore: Store<HTMLElement> = defaultSubjectStoreContext.get();
 
   const currentTrialStore: Store<Trial> = currentTrialStoreContext.get();
   currentTrialStore.value = trialsByName.get(page.params.trialName as TrialName)!;
+  const hideSubject = $derived(!!currentTrialStore.value.instance?.getSubjectElement?.());
+
+  const defaultSubjectStore = $state(store()) as Store<HTMLElement>;
+  defaultSubjectStoreContext.set(defaultSubjectStore);
 
   let animateInterval: NodeJS.Timeout | undefined = undefined;
   let projected = false;
@@ -50,6 +53,14 @@
 <svelte:head>
   <title>Projectrix Trialgrounds | {currentTrialStore.value.name} trial</title>
 </svelte:head>
+
+<div
+  bind:this={defaultSubjectStore.value}
+  class="subject-element default-subject-element"
+  class:hideSubject
+>
+  subject
+</div>
 
 <div class="lone-trial-container">
   {#if currentTrialStore.value}
