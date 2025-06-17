@@ -3,6 +3,7 @@ import { includeIgnoreFile } from '@eslint/compat';
 import js from '@eslint/js';
 import prettier from 'eslint-config-prettier';
 import svelte from 'eslint-plugin-svelte';
+import { defineConfig, globalIgnores } from 'eslint/config';
 import globals from 'globals';
 import ts from 'typescript-eslint';
 import svelteConfig from './svelte.config.js';
@@ -20,6 +21,7 @@ const ignorePatterns = [
   'yarn.lock',
   '.vercel/',
   '.vscode/',
+  'src/lib/demos/usage/'
 ];
 
 const gitignorePath = fileURLToPath(new URL('./.gitignore', import.meta.url));
