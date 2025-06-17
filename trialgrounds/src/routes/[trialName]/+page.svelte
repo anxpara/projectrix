@@ -1,7 +1,12 @@
 <script lang="ts">
-  import { getContext, onDestroy, onMount, tick } from 'svelte';
+  import { onDestroy, onMount, tick } from 'svelte';
   import { browser } from '$app/environment';
   import { page } from '$app/state';
+  import {
+    currentTrialStoreContext,
+    defaultSubjectStoreContext,
+    optionsStoreContext,
+  } from '$lib/contexts/contexts';
   import type { Options } from '$lib/options';
   import { type Store } from '$lib/stores/Store';
   import { animateTrial, stopTrial } from '$lib/trials/animateTrial';
@@ -9,10 +14,10 @@
   import { trialsByName, type Trial } from '$lib/trials/trials.svelte';
   import OriginMarker from '$components/trials/ui/OriginMarker.svelte';
 
-  let optionsStore: Store<Options> = getContext('optionsStore');
-  const defaultSubjectStore: Store<HTMLElement> = getContext('defaultSubjectStore');
+  let optionsStore: Store<Options> = optionsStoreContext.get();
+  const defaultSubjectStore: Store<HTMLElement> = defaultSubjectStoreContext.get();
 
-  const currentTrialStore: Store<Trial> = getContext('currentTrialStore');
+  const currentTrialStore: Store<Trial> = currentTrialStoreContext.get();
   currentTrialStore.value = trialsByName.get(page.params.trialName as TrialName)!;
 
   let animateInterval: NodeJS.Timeout | undefined = undefined;

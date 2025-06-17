@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
+  import { optionsStoreContext } from '$lib/contexts/contexts';
   import type { DemoName } from '$lib/demos/demoNames';
   import { demosByName, type Demo } from '$lib/demos/demos.svelte';
   import type { Options } from '$lib/options';
@@ -13,7 +13,7 @@
   let { demoName, href }: Props = $props();
   const demo: Demo = demosByName.get(demoName)!;
 
-  const optionsStore: Store<Options> = getContext('optionsStore');
+  const optionsStore: Store<Options> = optionsStoreContext.get();
 
   let startSlot = $state() as DemoStartSlot;
 </script>

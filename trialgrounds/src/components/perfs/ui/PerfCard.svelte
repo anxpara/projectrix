@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
+  import { optionsStoreContext } from '$lib/contexts/contexts';
   import type { Options } from '$lib/options';
   import type { PerfName } from '$lib/perf/perfNames';
   import { PerfInProgress, perfsByName, type Perf } from '$lib/perf/perfs.svelte';
@@ -14,7 +14,7 @@
   const perf: Perf = perfsByName.get(perfName)!;
   const durationMs: number | undefined = $derived(perf.durationMs);
 
-  const optionsStore: Store<Options> = getContext('optionsStore');
+  const optionsStore: Store<Options> = optionsStoreContext.get();
 
   function reRunPerf(): void {
     runPerf(perf, optionsStore.value);

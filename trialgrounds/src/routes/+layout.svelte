@@ -1,8 +1,9 @@
 <script lang="ts">
-  import { setContext, type Snippet } from 'svelte';
+  import { type Snippet } from 'svelte';
   import { browser } from '$app/environment';
   import { goto } from '$app/navigation';
   import { page } from '$app/state';
+  import { currentTrialStoreContext, optionsStoreContext } from '$lib/contexts/contexts';
   import { getUrlForOptions, type Options } from '$lib/options';
   import { onStoreChange } from '$lib/stores/onStoreChange.svelte';
   import { store, type Store } from '$lib/stores/Store';
@@ -18,11 +19,11 @@
   let { data, children }: Props = $props();
 
   const optionsStore: Store<Options> = $state(store(data.options));
-  setContext('optionsStore', optionsStore);
+  optionsStoreContext.set(optionsStore);
   onStoreChange(() => optionsStore, handleOptionsChanged);
 
   const currentTrialStore: Store<Trial> = $state(store(allTrials[0]));
-  setContext('currentTrialStore', currentTrialStore);
+  currentTrialStoreContext.set(currentTrialStore);
 
   if (browser) {
     window.addEventListener('popstate', handlePopstate);

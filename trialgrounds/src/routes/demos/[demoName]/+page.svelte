@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
   import { page } from '$app/state';
+  import { optionsStoreContext } from '$lib/contexts/contexts';
   import type { DemoName } from '$lib/demos/demoNames';
   import type { Options } from '$lib/options';
   import type { Store } from '$lib/stores/Store';
   import DemoCard from '$components/demos/ui/DemoCard.svelte';
   import TabbedCode from '$components/ui/TabbedCode.svelte';
 
-  let optionsStore: Store<Options> = getContext('optionsStore');
+  let optionsStore: Store<Options> = optionsStoreContext.get();
   const hideUI = $derived(optionsStore.value.hideUI);
 
   const demoName = $derived(page.params.demoName as DemoName);

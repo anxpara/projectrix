@@ -1,8 +1,9 @@
 <script lang="ts">
-  import { getContext, onDestroy, onMount, tick } from 'svelte';
+  import { onDestroy, onMount, tick } from 'svelte';
   import { browser } from '$app/environment';
   import { page } from '$app/state';
   import { utils } from 'animejs';
+  import { currentTrialStoreContext, optionsStoreContext } from '$lib/contexts/contexts';
   import type { Options } from '$lib/options';
   import type { Store } from '$lib/stores/Store';
   import { animateTrial, animateTrialReturn } from '$lib/trials/animateTrial';
@@ -19,9 +20,9 @@
     return trialNames.length ? getTrials(trialNames) : allTrials;
   }
 
-  const optionsStore: Store<Options> = getContext('optionsStore');
+  const optionsStore: Store<Options> = optionsStoreContext.get();
 
-  const currentTrialStore: Store<Trial> = getContext('currentTrialStore');
+  const currentTrialStore: Store<Trial> = currentTrialStoreContext.get();
   const hideDefaultSubject = $derived(!!currentTrialStore.value.instance?.getSubjectElement?.());
 
   let defaultSubject: HTMLElement;

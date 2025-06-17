@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
   import { Checkbox, Label } from 'bits-ui';
+  import { optionsStoreContext } from '$lib/contexts/contexts';
   import type { Options } from '$lib/options';
   import type { Store } from '$lib/stores/Store';
 
@@ -10,7 +10,7 @@
   }
   let { name, irrelevant = false }: Props = $props();
 
-  const optionsStore: Store<Options> = getContext('optionsStore');
+  const optionsStore: Store<Options> = optionsStoreContext.get();
 </script>
 
 <div class="check-container {name}" class:irrelevant>

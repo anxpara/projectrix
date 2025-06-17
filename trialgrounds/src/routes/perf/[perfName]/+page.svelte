@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { getContext, onMount, tick } from 'svelte';
+  import { onMount, tick } from 'svelte';
   import { page } from '$app/state';
+  import { optionsStoreContext } from '$lib/contexts/contexts';
   import type { Options } from '$lib/options';
   import type { PerfName } from '$lib/perf/perfNames';
   import { perfsByName } from '$lib/perf/perfs.svelte';
@@ -8,7 +9,7 @@
   import type { Store } from '$lib/stores/Store';
   import PerfCard from '$components/perfs/ui/PerfCard.svelte';
 
-  let optionsStore: Store<Options> = getContext('optionsStore');
+  let optionsStore: Store<Options> = optionsStoreContext.get();
 
   const perf = $derived(perfsByName.get(page.params.perfName as PerfName)!);
 
