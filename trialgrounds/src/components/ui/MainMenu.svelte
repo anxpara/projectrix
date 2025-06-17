@@ -1,18 +1,18 @@
 <script lang="ts">
-  import { onDestroy, onMount } from 'svelte';
+  import { onDestroy } from 'svelte';
   import { MediaQuery } from 'svelte/reactivity';
   import { browser } from '$app/environment';
   import { afterNavigate } from '$app/navigation';
   import { page } from '$app/state';
   import { animate, utils, type JSAnimation } from 'animejs';
   import { clearInlineStyles, getProjection } from 'projectrix';
-  import { watch } from 'runed';
+  import { onClickOutside, watch } from 'runed';
   import { sharedOptionNames, trialOptionNames } from '$lib/optionNames';
   import OptionCheckbox from './OptionCheckbox.svelte';
 
   const isHoverDeviceMQ = new MediaQuery('(hover: hover)', true);
 
-  let root = $state() as HTMLElement;
+  let sizer = $state() as HTMLElement;
   let header = $state() as HTMLElement;
   let headerBg = $state() as HTMLElement;
   let buttonBg = $state() as HTMLElement;
@@ -42,10 +42,6 @@
     },
   );
 
-  onMount(() => {
-    document.addEventListener('click', handleDocumentClick);
-  });
-
   afterNavigate((navigation) => {
     if (
       navigation.from?.route.id === navigation.to?.route.id &&
@@ -55,6 +51,8 @@
     }
     closeMenu();
   });
+
+  onClickOutside(() => sizer, closeMenu);
 
   onDestroy(() => {
     currentHeaderAnim?.pause();
@@ -164,16 +162,10 @@
       if (!overHeader) toggledOpen = false;
     }, 1);
   }
-
-  function handleDocumentClick(e: MouseEvent): void {
-    const target = e.target as HTMLElement;
-    if (!open || root?.isSameNode(target) || root?.contains(target)) return;
-    closeMenu();
-  }
 </script>
 
-<div bind:this={root} class="centerer">
-  <div class="sizer">
+<div class="centerer">
+  <div bind:this={sizer} class="sizer">
     <!-- svelte-ignore a11y_click_events_have_key_events -->
     <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div
