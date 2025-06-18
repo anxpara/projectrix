@@ -79,6 +79,7 @@
 
     width: 100%;
     height: 100svh;
+    overflow: hidden;
 
     display: grid;
     justify-content: center;
