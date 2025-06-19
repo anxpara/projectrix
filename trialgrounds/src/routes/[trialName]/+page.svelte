@@ -8,6 +8,7 @@
     optionsStoreContext,
   } from '$lib/contexts/contexts';
   import type { Options } from '$lib/options';
+  import { onStateChange } from '$lib/stores/onStateChange.svelte';
   import { store, type Store } from '$lib/stores/Store';
   import { animateTrial, stopTrial } from '$lib/trials/animateTrial';
   import type { TrialName } from '$lib/trials/trialNames';
@@ -30,6 +31,8 @@
   const currentTrialStore: Store<Trial> = currentTrialStoreContext.get();
   $effect(() => {
     currentTrialStore.value = trialsByName.get(page.params.trialName as TrialName)!;
+    currentTrialStore.value.originMarker = originMarker;
+    originMarker.unmark();
   });
 
   const hideSubject = $derived(!!currentTrialStore.value.instance?.getSubjectElement?.());
@@ -39,18 +42,20 @@
   const defaultSubjectStore = $state(store()) as Store<HTMLElement>;
   defaultSubjectStoreContext.set(defaultSubjectStore);
 
+  let originMarker: OriginMarker;
   let animateInterval: NodeJS.Timeout | undefined = undefined;
   let projected = false;
 
   onMount(async () => {
+    onStateChange(() => currentTrialStore.value.name, handleTrialChange);
+
     await tick();
 
     if (!currentTrialStore.value?.instance) {
       throw new Error('trial component failed to load');
     }
 
-    startAnimation();
-    animateInterval = setInterval(startAnimation, 2000);
+    runTrial(currentTrialStore.value);
   });
 
   onDestroy(() => {
@@ -59,9 +64,27 @@
     stopTrial(currentTrialStore.value);
   });
 
-  function startAnimation(): void {
+  async function handleTrialChange(
+    newTrialName: TrialName,
+    oldTrialName: TrialName,
+  ): Promise<void> {
+    clearInterval(animateInterval);
+    stopTrial(trialsByName.get(oldTrialName)!);
+
+    requestAnimationFrame(() => {
+      runTrial(currentTrialStore.value);
+    });
+  }
+
+  function runTrial(trial: Trial): void {
+    projected = false;
+    startAnimation(trial);
+    animateInterval = setInterval(startAnimation.bind(null, trial), 2000);
+  }
+
+  function startAnimation(trial: Trial): void {
     if (optionsStore.value.projectOnce && projected) return;
-    animateTrial(currentTrialStore.value, defaultSubjectStore.value, optionsStore.value);
+    animateTrial(trial, defaultSubjectStore.value, optionsStore.value);
     projected = true;
   }
 </script>
@@ -79,8 +102,9 @@
 </div>
 
 <div class="lone-trial-container">
+  <OriginMarker bind:this={originMarker} />
+
   {#if currentTrialStore.value}
-    <OriginMarker bind:this={currentTrialStore.value.originMarker} />
     <currentTrialStore.value.Component
       bind:this={currentTrialStore.value.instance}
       trial={currentTrialStore.value}
