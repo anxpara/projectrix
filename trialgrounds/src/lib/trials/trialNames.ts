@@ -49,4 +49,4 @@ export const TrialName = {
   MeasureSubjectSmaller: 'measure-subject-smaller',
 } as const;
 export type TrialName = (typeof TrialName)[keyof typeof TrialName];
-export const trialNames: string[] = Object.values(TrialName);
+export const trialNames: TrialName[] = Object.values(TrialName);

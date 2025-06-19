@@ -1,18 +1,11 @@
 <script lang="ts">
-  import type { Trial, TrialControls } from '$lib/trials/trials';
+  import type { TrialProps } from '$lib/trials/trials.svelte';
 
-  export let trial: Trial;
-  export let hideSubject: boolean | undefined = undefined;
+  let { trial }: TrialProps = $props();
 
-  let targetElement: HTMLElement;
-  function getTargetElement(): HTMLElement {
+  let targetElement = $state() as HTMLElement;
+  export function getTargetElement(): HTMLElement {
     return targetElement;
-  }
-
-  export function getTrialControls(): TrialControls {
-    return {
-      getTargetElement,
-    };
   }
 </script>
 
@@ -23,7 +16,7 @@
 <style lang="scss">
   .target-element {
     position: relative;
-    top: 1em;
     left: 1em;
+    top: 1em;
   }
 </style>

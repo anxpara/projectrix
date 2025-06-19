@@ -1,19 +1,16 @@
 <script lang="ts">
-  import { measureSubject, getProjection, clearInlineStyles } from 'projectrix';
-  import { animate, utils, type JSAnimation } from 'animejs';
   import { onDestroy, onMount, tick } from 'svelte';
-  import type { Writable } from 'svelte/store';
-  import type { Options } from '$lib/options';
-  import type DemoStartSlot from '../DemoStartSlot.svelte';
+  import { animate, utils, type JSAnimation } from 'animejs';
+  import { clearInlineStyles, getProjection, measureSubject } from 'projectrix';
+  import { type DemoProps } from '$lib/demos/demos.svelte';
 
-  // start slot and options are part of demos infrastructure
-  export let startSlot: DemoStartSlot;
-  export let options: Writable<Options>;
-  $: log = $options.log;
+  // startSlot and options are part of demos infrastructure
+  let { startSlot, options }: DemoProps = $props();
+  const log = $derived(options.value.log);
 
-  let target: HTMLElement;
-  let leftParent: HTMLElement;
-  let rightParent: HTMLElement;
+  let target = $state() as HTMLElement;
+  let leftParent = $state() as HTMLElement;
+  let rightParent = $state() as HTMLElement;
 
   let currentAnim: JSAnimation | undefined;
   let currentTimeout: NodeJS.Timeout | undefined;
@@ -23,6 +20,7 @@
     startSlot.show();
 
     currentTimeout = setTimeout(() => {
+      swapSlotForTarget(target);
       flipTargetToNextParent(target, rightParent);
     }, 1000);
   });
@@ -33,19 +31,21 @@
   });
 
   function swapSlotForTarget(target: HTMLElement): void {
+    const toSlot = getProjection(startSlot.getSlotSubject(), target).toSubject;
+    utils.set(target, {
+      ...toSlot,
+      opacity: 1,
+    });
     startSlot.hide();
-    target.style.opacity = '1';
   }
 
   function flipTargetToNextParent(target: HTMLElement, nextParent: HTMLElement): void {
-    let subjectEl = startSlot.isShowing() ? startSlot.getSlotSubject() : target;
-    const subject = measureSubject(subjectEl);
-
+    const subject = measureSubject(target); // include any slot projection styles in the measurement...
+    
     nextParent.append(target);
+    clearInlineStyles(target); // set to proper origin under nextParent by removing slot projection styles
 
     requestAnimationFrame(() => {
-      if (startSlot.isShowing()) swapSlotForTarget(target);
-
       const { toSubject, toTargetOrigin } = getProjection(subject, target, { log });
 
       utils.set(target, toSubject);
@@ -95,7 +95,7 @@
 <div class="size-container">
   <div class="parents-container">
     <div bind:this={leftParent} class="parent left">
-      <div bind:this={target} class="demo-target child" />
+      <div bind:this={target} class="demo-target child"></div>
     </div>
 
     <div bind:this={rightParent} class="parent right"></div>
@@ -105,9 +105,9 @@
 <style lang="scss">
   .size-container {
     position: relative;
+    margin-top: 1.5em;
     width: 100%;
     aspect-ratio: 4 / 1;
-    margin-top: 1.5em;
 
     container-type: size;
   }
@@ -124,20 +124,19 @@
   }
 
   .parent {
+    border: dashed 3px darkmagenta;
     width: 21cqw;
     height: 21cqw;
-    border: dashed 3px darkmagenta;
 
     will-change: transform;
 
     .demo-target {
       position: absolute;
-      top: 0px;
       left: 0px;
-
+      top: 0px;
+      border: solid 3px limegreen;
       width: 10.75cqw;
       height: 10.75cqw;
-      border: solid 3px limegreen;
 
       opacity: 0;
     }

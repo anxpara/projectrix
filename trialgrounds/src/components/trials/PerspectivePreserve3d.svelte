@@ -1,33 +1,16 @@
 <script lang="ts">
-  import type { Trial, TrialControls } from '$lib/trials/trials';
-  import type { ProjectionOptions } from 'projectrix';
+  import type { TrialProps } from '$lib/trials/trials.svelte';
 
-  export let trial: Trial;
-  export let hideSubject: boolean | undefined = undefined;
+  let { trial, hideSubject }: TrialProps = $props();
 
-  let targetElement: HTMLElement;
-  function getTargetElement(): HTMLElement {
+  let targetElement = $state() as HTMLElement;
+  export function getTargetElement(): HTMLElement {
     return targetElement;
   }
 
-  let subjectElement: HTMLElement;
-  function getSubjectElement(): HTMLElement {
+  let subjectElement = $state() as HTMLElement;
+  export function getSubjectElement(): HTMLElement {
     return subjectElement;
-  }
-
-  function getProjectionOptions(): ProjectionOptions {
-    return {
-      // use anime.js, since motion one can't handle this perspective animation
-      transformType: 'matrix3d',
-    };
-  }
-
-  export function getTrialControls(): TrialControls {
-    return {
-      getTargetElement,
-      getSubjectElement,
-      getProjectionOptions,
-    };
   }
 </script>
 
@@ -55,8 +38,8 @@
   }
 
   .subject-perspective {
-    top: 1em;
     left: 1em;
+    top: 1em;
 
     transform: rotateX(20deg) rotateZ(15deg);
   }
@@ -65,15 +48,16 @@
     padding: 1em;
 
     perspective: 200px;
-
     transform-origin: left;
     transform: rotateY(315deg);
+
     transform-style: preserve-3d;
   }
 
   .inner {
     transform-origin: bottom;
     transform: rotateX(47deg);
+
     transform-style: preserve-3d;
   }
 

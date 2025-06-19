@@ -1,16 +1,16 @@
-import { demoNames } from './src/lib/demos/demoNames';
+import fs from 'node:fs';
+import watch from 'node-watch';
+import { getHighlighter, type Highlighter } from 'shiki/bundle/web';
 import {
-  DemoCodeMapEntries,
   computeCodesByDemoNameFile,
+  DemoCodeMapEntries,
+  getCodeFileNameForDemo,
   getCodeLocation,
   getCodesByDemoNameFilename,
-  getCodeFileNameForDemo,
   getUsageFileNameForDemo,
   getUsageLocation,
 } from './src/lib/demos/demoCodes';
-import { getHighlighter, type Highlighter } from 'shiki/bundle/web';
-import fs from 'node:fs';
-import watch from 'node-watch';
+import { demoNames } from './src/lib/demos/demoNames';
 
 const langs = ['typescript', 'svelte'];
 const themes = ['min-dark', 'one-dark-pro', 'tokyo-night'];

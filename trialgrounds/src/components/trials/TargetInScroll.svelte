@@ -1,32 +1,24 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import type { Trial, TrialControls } from '$lib/trials/trials';
+  import type { TrialProps } from '$lib/trials/trials.svelte';
 
-  export let trial: Trial;
-  export let hideSubject: boolean | undefined = undefined;
+  let { trial, hideSubject }: TrialProps = $props();
 
-  let container: HTMLElement;
+  let container = $state() as HTMLElement;
+
+  let subjectElement = $state() as HTMLElement;
+  export function getSubjectElement(): HTMLElement {
+    return subjectElement;
+  }
+
+  let targetElement = $state() as HTMLElement;
+  export function getTargetElement(): HTMLElement {
+    return targetElement;
+  }
 
   onMount(() => {
     container.scrollTop = 400;
   });
-
-  let subjectElement: HTMLElement;
-  function getSubjectElement(): HTMLElement {
-    return subjectElement;
-  }
-
-  let targetElement: HTMLElement;
-  function getTargetElement(): HTMLElement {
-    return targetElement;
-  }
-
-  export function getTrialControls(): TrialControls {
-    return {
-      getTargetElement,
-      getSubjectElement,
-    };
-  }
 </script>
 
 <div class="container-container">
@@ -34,7 +26,7 @@
     subject
   </div>
   <div bind:this={container} class="target-container">
-    <div class="spacer" />
+    <div class="spacer"></div>
     <div bind:this={targetElement} class="target-element {trial.name}">{trial.name}</div>
   </div>
 </div>
@@ -49,9 +41,9 @@
   }
 
   .spacer {
-    outline: dotted 2px purple;
     width: 4em;
     height: 8em;
+    outline: dotted 2px purple;
   }
 
   .target-element {
@@ -59,7 +51,7 @@
 
   .subject-element {
     position: absolute;
-    bottom: 0em;
     right: 0em;
+    bottom: 0em;
   }
 </style>

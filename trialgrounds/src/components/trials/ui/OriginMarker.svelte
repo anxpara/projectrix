@@ -2,7 +2,7 @@
   import { getProjection, setInlineStyles } from 'projectrix';
 
   let marker: HTMLElement;
-  let marked = false;
+  let marked = $state(false);
 
   export function markOrigin(target: HTMLElement): void {
     const { toSubject } = getProjection(target, marker, {
@@ -23,8 +23,8 @@
 <style lang="scss">
   .marker {
     position: absolute;
-    top: 0;
     left: 0;
+    top: 0;
     border: dotted 3px green;
     color: green;
     pointer-events: none;

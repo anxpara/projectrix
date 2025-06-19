@@ -1,16 +1,24 @@
 <script lang="ts">
+  import { optionsStoreContext } from '$lib/contexts/contexts';
   import type { Options } from '$lib/options';
-  import { PerfInProgress, type Perf } from '$lib/perf/perfs';
+  import type { PerfName } from '$lib/perf/perfNames';
+  import { PerfInProgress, perfsByName, type Perf } from '$lib/perf/perfs.svelte';
   import { runPerf } from '$lib/perf/runPerf';
-  import { getContext } from 'svelte';
-  import type { Writable } from 'svelte/store';
+  import type { Store } from '$lib/stores/Store';
 
-  export let perf: Perf;
-  export let href: string;
+  interface Props {
+    perfName: PerfName;
+    href: string;
+  }
+  let { perfName, href }: Props = $props();
+  const perf: Perf = perfsByName.get(perfName)!;
+  const durationMs: number | undefined = $derived(perf.durationMs);
 
-  $: durationMs = perf.durationMs;
+  const optionsStore: Store<Options> = optionsStoreContext.get();
 
-  const options = getContext<Writable<Options>>('options');
+  function reRunPerf(): void {
+    runPerf(perf, optionsStore.value);
+  }
 </script>
 
 <div class="perf-card">
@@ -20,20 +28,20 @@
   </a>
 
   <div class="perf-container prevent-select">
-    <svelte:component this={perf.perfType} bind:this={perf.perfComponent} {perf} {options} />
+    <perf.Component bind:this={perf.instance} />
 
     <div class="duration-container">
-      {#if !$durationMs || $durationMs === PerfInProgress}
+      {#if !durationMs || durationMs === PerfInProgress}
         <p>-</p>
       {:else}
-        <p>{$durationMs}ms</p>
+        <p>{durationMs}ms</p>
       {/if}
     </div>
 
     <div class="rerun-container">
-      <button on:click={() => runPerf(perf, $options)}
-        ><span class="material-symbols-outlined"> replay </span></button
-      >
+      <button onclick={reRunPerf}>
+        <span class="material-symbols-outlined"> replay </span>
+      </button>
     </div>
   </div>
 </div>
@@ -41,8 +49,9 @@
 <style lang="scss">
   button {
     all: unset;
-    cursor: pointer;
     -webkit-tap-highlight-color: transparent;
+
+    cursor: pointer;
   }
 
   .prevent-select {
@@ -57,22 +66,23 @@
   }
 
   .title-link {
+    -webkit-tap-highlight-color: transparent;
+
+    position: relative;
     width: 100%;
     height: 2.8em;
 
     display: flex;
     align-items: center;
-    position: relative;
 
     color: #111521;
-    text-underline-offset: 0.2em;
     text-decoration-thickness: 0.125em;
-    -webkit-tap-highlight-color: transparent;
+    text-underline-offset: 0.2em;
 
     .title-bg {
+      z-index: -1;
       position: absolute;
       left: 0.93em;
-      z-index: -1;
 
       width: 100%;
       height: 100%;
@@ -95,18 +105,18 @@
 
   .perf-container {
     position: relative;
+    border: solid 1px coral;
 
     width: 14em;
     height: 14em;
-    border: solid 1px coral;
 
     overflow: hidden;
     pointer-events: none;
 
     .duration-container {
       position: absolute;
-      bottom: 0.5em;
       right: 0.5em;
+      bottom: 0.5em;
 
       pointer-events: all;
 
@@ -117,8 +127,8 @@
 
     .rerun-container {
       position: absolute;
-      top: 0.5em;
       right: 0.5em;
+      top: 0.5em;
 
       pointer-events: all;
     }

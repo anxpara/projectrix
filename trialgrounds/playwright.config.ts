@@ -3,7 +3,7 @@ import { defineConfig, devices } from '@playwright/test';
 const config = defineConfig({
   use: {
     headless: true,
-    screenshot: 'on',
+    screenshot: 'only-on-failure',
     trace: 'retain-on-failure',
   },
   expect: {

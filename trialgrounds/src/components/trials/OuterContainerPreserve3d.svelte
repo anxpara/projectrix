@@ -1,24 +1,16 @@
 <script lang="ts">
-  import type { Trial, TrialControls } from '$lib/trials/trials';
+  import type { TrialProps } from '$lib/trials/trials.svelte';
 
-  export let trial: Trial;
-  export let hideSubject: boolean | undefined = undefined;
+  let { trial, hideSubject }: TrialProps = $props();
 
-  let targetElement: HTMLElement;
-  function getTargetElement(): HTMLElement {
+  let targetElement = $state() as HTMLElement;
+  export function getTargetElement(): HTMLElement {
     return targetElement;
   }
 
-  let subjectElement: HTMLElement;
-  function getSubjectElement(): HTMLElement {
+  let subjectElement = $state() as HTMLElement;
+  export function getSubjectElement(): HTMLElement {
     return subjectElement;
-  }
-
-  export function getTrialControls(): TrialControls {
-    return {
-      getTargetElement,
-      getSubjectElement,
-    };
   }
 </script>
 
@@ -38,21 +30,21 @@
 
 <style lang="scss">
   .subject-element-3d {
-    top: 1em;
     left: 1em;
-    pointer-events: none;
+    top: 1em;
     transform: rotateY(25deg);
+    pointer-events: none;
   }
 
   .target-container {
+    padding: 1em;
     width: fit-content;
     height: fit-content;
-    padding: 1em;
   }
   .outer {
+    transform: rotateY(65deg);
     transform-style: preserve-3d;
     -webkit-transform-style: preserve-3d;
-    transform: rotateY(65deg);
   }
   .inner {
     transform: rotateY(253deg);

@@ -1,34 +1,33 @@
 <script lang="ts">
-  import { page } from '$app/stores';
+  import { page } from '$app/state';
+  import { optionsStoreContext } from '$lib/contexts/contexts';
   import type { DemoName } from '$lib/demos/demoNames';
-  import { demosByName } from '$lib/demos/demos';
-  import { getContext } from 'svelte';
-  import DemoCard from '../../../components/DemoCard.svelte';
-  import TabbedCode from '../../../components/TabbedCode.svelte';
-  import type { Writable } from 'svelte/store';
   import type { Options } from '$lib/options';
+  import type { Store } from '$lib/stores/Store';
+  import DemoCard from '$components/demos/ui/DemoCard.svelte';
+  import TabbedCode from '$components/ui/TabbedCode.svelte';
 
-  let options = getContext<Writable<Options>>('options');
+  let optionsStore: Store<Options> = optionsStoreContext.get();
+  const hideUI = $derived(optionsStore.value.hideUI);
 
-  $: demo = demosByName.get($page.params.demoName as DemoName)!;
-  $: hideUI = $options.hideUI;
+  const demoName = $derived(page.params.demoName as DemoName);
 </script>
 
 <svelte:head>
-  <title>Projectrix Trialgrounds | {demo.name} demo</title>
+  <title>Projectrix Trialgrounds | {demoName} demo</title>
 </svelte:head>
 
 <div class="centerer" class:hideUI>
-  <DemoCard {demo} href={`/demos/${demo.name}${$page.url.search}`}></DemoCard>
+  <DemoCard {demoName} href={`/demos/${demoName}${page.url.search}`}></DemoCard>
   {#if !hideUI}
-    <TabbedCode {demo}></TabbedCode>
+    <TabbedCode {demoName}></TabbedCode>
   {/if}
 </div>
 
 <style lang="scss">
   .centerer {
-    width: calc(100% - 2em);
     padding: 1em;
+    width: calc(100% - 2em);
 
     display: flex;
     flex-direction: column;
@@ -37,8 +36,8 @@
   }
 
   .centerer.hideUI {
-    height: 100svh;
     padding-block: 0;
+    height: 100svh;
 
     justify-content: center;
   }

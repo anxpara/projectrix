@@ -1,25 +1,17 @@
 <script lang="ts">
-  import type { Trial, TrialControls } from '$lib/trials/trials';
   import type { ProjectionOptions } from 'projectrix';
+  import type { TrialProps } from '$lib/trials/trials.svelte';
 
-  export let trial: Trial;
-  export let hideSubject: boolean | undefined = undefined;
+  let { trial }: TrialProps = $props();
 
-  let targetElement: HTMLElement;
-  function getTargetElement(): HTMLElement {
+  let targetElement = $state() as HTMLElement;
+  export function getTargetElement(): HTMLElement {
     return targetElement;
   }
 
-  function getProjectionOptions(): ProjectionOptions {
+  export function getProjectionOptions(): ProjectionOptions {
     return {
       useBorder: 'target',
-    };
-  }
-
-  export function getTrialControls(): TrialControls {
-    return {
-      getTargetElement,
-      getProjectionOptions,
     };
   }
 </script>
@@ -30,8 +22,8 @@
 
 <style lang="scss">
   .target-element {
-    padding: 0.5em;
-    border: solid 5px;
     box-sizing: border-box;
+    border: solid 5px;
+    padding: 0.5em;
   }
 </style>

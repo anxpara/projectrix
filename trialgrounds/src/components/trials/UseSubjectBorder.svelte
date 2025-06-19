@@ -1,31 +1,22 @@
 <script lang="ts">
-  import type { Trial, TrialControls } from '$lib/trials/trials';
   import type { ProjectionOptions } from 'projectrix';
+  import type { TrialProps } from '$lib/trials/trials.svelte';
 
-  export let trial: Trial;
-  export let hideSubject: boolean | undefined = undefined;
+  let { trial, hideSubject }: TrialProps = $props();
 
-  let subjectElement: HTMLElement;
-  function getSubjectElement(): HTMLElement {
+  let subjectElement = $state() as HTMLElement;
+  export function getSubjectElement(): HTMLElement {
     return subjectElement;
   }
 
-  let targetElement: HTMLElement;
-  function getTargetElement(): HTMLElement {
+  let targetElement = $state() as HTMLElement;
+  export function getTargetElement(): HTMLElement {
     return targetElement;
   }
 
-  function getProjectionOptions(): ProjectionOptions {
+  export function getProjectionOptions(): ProjectionOptions {
     return {
       useBorder: 'subject',
-    };
-  }
-
-  export function getTrialControls(): TrialControls {
-    return {
-      getTargetElement,
-      getSubjectElement,
-      getProjectionOptions,
     };
   }
 </script>
@@ -40,11 +31,11 @@
 
 <style lang="scss">
   .subject-element {
-    pointer-events: none;
-    border-style: dashed;
     border-width: 1px 4px 8px 12px;
+    border-style: dashed;
     border-radius: 25px 10px 7px 3px;
     outline: none;
+    pointer-events: none;
   }
 
   .target-container {

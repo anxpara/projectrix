@@ -1,20 +1,17 @@
 <script lang="ts">
-  import { getProjection, clearInlineStyles } from 'projectrix';
-  import { animate, utils, type JSAnimation } from 'animejs';
   import { onDestroy, onMount, tick } from 'svelte';
-  import type { Writable } from 'svelte/store';
-  import type DemoStartSlot from '../DemoStartSlot.svelte';
-  import type { Options } from '$lib/options';
+  import { animate, utils, type JSAnimation } from 'animejs';
+  import { clearInlineStyles, getProjection } from 'projectrix';
+  import type { DemoProps } from '$lib/demos/demos.svelte';
 
-  // start slot and options are part of demos infrastructure
-  export let startSlot: DemoStartSlot;
-  export let options: Writable<Options>;
-  $: log = $options.log;
+  // startSlot and options are part of demos infrastructure
+  let { startSlot, options }: DemoProps = $props();
+  const log = $derived(options.value.log);
 
-  let leftParent: HTMLElement;
-  let leftChildTarget: HTMLElement;
-  let rightParent: HTMLElement;
-  let rightChildTarget: HTMLElement;
+  let leftParent = $state() as HTMLElement;
+  let leftChildTarget = $state() as HTMLElement;
+  let rightParent = $state() as HTMLElement;
+  let rightChildTarget = $state() as HTMLElement;
 
   let currentAnim: JSAnimation | undefined;
   let currentTimeout: NodeJS.Timeout | undefined;
@@ -93,11 +90,11 @@
 <div class="size-container">
   <div class="parents-container">
     <div bind:this={leftParent} class="parent left">
-      <div bind:this={leftChildTarget} class="demo-target child" />
+      <div bind:this={leftChildTarget} class="demo-target child"></div>
     </div>
 
     <div bind:this={rightParent} class="parent right">
-      <div bind:this={rightChildTarget} class="demo-target child" />
+      <div bind:this={rightChildTarget} class="demo-target child"></div>
     </div>
   </div>
 </div>
@@ -105,9 +102,9 @@
 <style lang="scss">
   .size-container {
     position: relative;
+    margin-top: 1.5em;
     width: 100%;
     aspect-ratio: 4 / 1;
-    margin-top: 1.5em;
 
     container-type: size;
   }
@@ -124,20 +121,19 @@
   }
 
   .parent {
+    border: dashed 3px darkmagenta;
     width: 21cqw;
     height: 21cqw;
-    border: dashed 3px darkmagenta;
 
     will-change: transform;
 
     .demo-target {
       position: absolute;
-      top: 0px;
       left: 0px;
-
+      top: 0px;
+      border: solid 3px limegreen;
       width: 10.75cqw;
       height: 10.75cqw;
-      border: solid 3px limegreen;
 
       opacity: 0;
     }

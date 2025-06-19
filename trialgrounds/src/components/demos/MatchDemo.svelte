@@ -1,16 +1,13 @@
 <script lang="ts">
-  import { setInlineStyles, getProjection } from 'projectrix';
   import { onMount, tick } from 'svelte';
-  import type { Writable } from 'svelte/store';
-  import type DemoStartSlot from '../DemoStartSlot.svelte';
-  import type { Options } from '$lib/options';
+  import { getProjection, setInlineStyles } from 'projectrix';
+  import type { DemoProps } from '$lib/demos/demos.svelte';
 
-  // start slot and options are part of demos infrastructure
-  export let startSlot: DemoStartSlot;
-  export let options: Writable<Options>;
-  $: log = $options.log;
+  // startSlot and options are part of demos infrastructure
+  let { startSlot, options }: DemoProps = $props();
+  const log = $derived(options.value.log);
 
-  let target: HTMLElement;
+  let target = $state() as HTMLElement;
 
   onMount(async () => {
     await tick();
@@ -35,15 +32,16 @@
 
 <div class="size-container">
   <div class="subject-flex">
-    <button class="demo-subject" on:click={subjectClickHandler} />
-    <button class="demo-subject rotated" on:click={subjectClickHandler} />
-    <button class="demo-subject parent" on:click={subjectClickHandler}>
-      <button class="demo-subject child" />
+    <button class="demo-subject" onclick={subjectClickHandler} aria-label="basic subject"></button>
+    <button class="demo-subject rotated" onclick={subjectClickHandler} aria-label="rotated subject"
+    ></button>
+    <button class="demo-subject parent" onclick={subjectClickHandler} aria-label="parent subject">
+      <div class="demo-subject child" aria-label="child subject"></div>
     </button>
   </div>
 </div>
 
-<div bind:this={target} class="demo-target" />
+<div bind:this={target} class="demo-target"></div>
 
 <style lang="scss">
   button {
@@ -66,9 +64,9 @@
 
   .size-container {
     position: relative;
+    margin-top: 1.5em;
     width: 100%;
     aspect-ratio: 4 / 1;
-    margin-top: 1.5em;
 
     container-type: size;
   }
@@ -85,9 +83,9 @@
   }
 
   .demo-subject {
+    border: dashed 3px yellow;
     width: 14.25cqw;
     height: 14.25cqw;
-    border: dashed 3px yellow;
 
     cursor: pointer;
   }
@@ -100,15 +98,15 @@
   .parent {
     width: 21cqw;
     height: 21cqw;
-    border-color: darkmagenta;
     border-style: dashed;
+    border-color: darkmagenta;
 
     transform: skew(-15deg);
 
     .child {
       position: absolute;
-      top: 0px;
       left: 0px;
+      top: 0px;
 
       width: 10.75cqw;
       height: 10.75cqw;

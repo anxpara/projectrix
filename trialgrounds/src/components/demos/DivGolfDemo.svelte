@@ -1,47 +1,44 @@
 <script lang="ts">
+  import { onDestroy, onMount, tick } from 'svelte';
+  import { animate, utils, type JSAnimation } from 'animejs';
+  import { mat4, quat, vec3 } from 'gl-matrix';
   import {
+    getProjection,
     measureSubject,
     setInlineStyles,
-    getProjection,
     type Measurement,
     type PartialProjectionResults,
   } from 'projectrix';
-  import { animate, utils, type JSAnimation } from 'animejs';
-  import { mat4, quat, vec3 } from 'gl-matrix';
-  import { onDestroy, onMount, tick } from 'svelte';
-  import type { Writable } from 'svelte/store';
-  import type { Options } from '$lib/options';
+  import type { DemoProps } from '$lib/demos/demos.svelte';
 
   // options are part of demos infrastructure
-  export let options: Writable<Options>;
-  $: log = $options.log;
+  let { options }: DemoProps = $props();
+  const log = $derived(options.value.log);
 
   const NumGoals = 5;
-  let goals: HTMLElement[] = [];
+  let goals: HTMLElement[] = $state([]);
 
-  let startTarget: HTMLElement;
-  let hitTarget: HTMLElement;
-
-  let spinnerModifier: HTMLElement;
-  let slider1Modifier: HTMLElement;
-  let slider2Modifier: HTMLElement;
-
-  let pulseContainer: HTMLElement;
-  let pulseTemplate: HTMLElement;
+  let startTarget = $state() as HTMLElement;
+  let hitTarget = $state() as HTMLElement;
+  let spinnerModifier = $state() as HTMLElement;
+  let slider1Modifier = $state() as HTMLElement;
+  let slider2Modifier = $state() as HTMLElement;
+  let pulseContainer = $state() as HTMLElement;
+  let pulseTemplate = $state() as HTMLElement;
 
   /* game state */
 
   let currentTarget: HTMLElement | null;
-  let currentModifier: HTMLElement | null;
+  let currentModifier: HTMLElement | null = $state(null);
   let hitAnim: JSAnimation | undefined;
 
   let startTime = 0;
-  let timer = 0;
+  let timer = $state(0);
   let timerInterval: NodeJS.Timeout | undefined;
 
-  let moves = 0;
+  let moves = $state(0);
   const goalsCompleted = new Set<HTMLElement>();
-  let courseCompleted = false;
+  let courseCompleted = $state(false);
 
   onMount(async () => {
     await tick();
@@ -376,8 +373,9 @@
   }
 
   function handleModifierTap(e: Event): void {
-    const modifier = e.currentTarget as HTMLElement;
+    e.preventDefault();
     countMove();
+    const modifier = e.currentTarget as HTMLElement;
     activateModifier(modifier);
   }
   function handleModifierKeyDown(e: KeyboardEvent): void {
@@ -394,23 +392,6 @@
     activateModifier(modifier);
   }
 
-  function handleGoalTap(e: Event): void {
-    countMove();
-    attemptGoalHit(e.currentTarget as HTMLElement);
-  }
-  function handleGoalKeyDown(e: KeyboardEvent): void {
-    const key = e.key;
-    const goal = e.currentTarget as HTMLElement;
-    if (!isEnterKey(key)) {
-      return;
-    }
-    if (pressKeyDownBad(key)) {
-      return;
-    }
-    countMove();
-    attemptGoalHit(goal);
-  }
-
   function handleRestartClick(): void {
     countMove();
     restart();
@@ -423,107 +404,76 @@
 
 <!-- prettier-ignore -->
 <svelte:window 
-  on:keyup={(e) => handleWindowKeyUp(e.key)} 
-  on:keydown={(e) => handleWindowKeyDown(e.key)}
+  onkeyup={(e) => handleWindowKeyUp(e.key)} 
+  onkeydown={(e) => handleWindowKeyDown(e.key)}
 />
 
 <div class="centerer prevent-select disable-touch-zoom">
   <div class="course-sizer portrait-size-toggle">
     <div class="course portrait-rotate-toggle">
-      <button
-        bind:this={goals[0]}
-        class="modifier goal goal-0"
-        on:mousedown={handleGoalTap}
-        on:touchstart|preventDefault={handleGoalTap}
-        on:keydown={handleGoalKeyDown}
-      >
-        <div class="golf-target child-target" />
-      </button>
+      <div bind:this={goals[0]} class="modifier goal goal-0" aria-label="goal 0">
+        <div class="golf-target child-target"></div>
+      </div>
+      <div bind:this={goals[1]} class="modifier goal goal-1" aria-label="goal 1">
+        <div class="golf-target child-target"></div>
+      </div>
+      <div bind:this={goals[2]} class="modifier goal goal-2" aria-label="goal 2">
+        <div class="golf-target child-target"></div>
+      </div>
+      <div bind:this={goals[3]} class="modifier goal goal-3" aria-label="goal 3">
+        <div class="golf-target child-target"></div>
+      </div>
+      <div bind:this={goals[4]} class="modifier goal goal-4" aria-label="goal 4">
+        <div class="golf-target child-target"></div>
+      </div>
 
-      <button
-        bind:this={goals[1]}
-        class="modifier goal goal-1"
-        on:mousedown={handleGoalTap}
-        on:touchstart|preventDefault={handleGoalTap}
-        on:keydown={handleGoalKeyDown}
-      >
-        <div class="golf-target child-target" />
-      </button>
-
-      <button
-        bind:this={goals[2]}
-        class="modifier goal goal-2"
-        on:mousedown={handleGoalTap}
-        on:touchstart|preventDefault={handleGoalTap}
-        on:keydown={handleGoalKeyDown}
-      >
-        <div class="golf-target child-target" />
-      </button>
-
-      <button
-        bind:this={goals[3]}
-        class="modifier goal goal-3"
-        on:mousedown={handleGoalTap}
-        on:touchstart|preventDefault={handleGoalTap}
-        on:keydown={handleGoalKeyDown}
-      >
-        <div class="golf-target child-target" />
-      </button>
-
-      <button
-        bind:this={goals[4]}
-        class="modifier goal goal-4"
-        on:mousedown={handleGoalTap}
-        on:touchstart|preventDefault={handleGoalTap}
-        on:keydown={handleGoalKeyDown}
-      >
-        <div class="golf-target child-target" />
-      </button>
-
-      <div bind:this={startTarget} class="golf-target start-target" />
-      <div bind:this={hitTarget} class="golf-target hit-target" />
+      <div bind:this={startTarget} class="golf-target start-target"></div>
+      <div bind:this={hitTarget} class="golf-target hit-target"></div>
 
       <button
         bind:this={spinnerModifier}
         class="modifier spinner"
         class:current={spinnerModifier?.isSameNode(currentModifier)}
-        on:mousedown={handleModifierTap}
-        on:touchstart|preventDefault={handleModifierTap}
-        on:keydown={handleModifierKeyDown}
+        onmousedown={handleModifierTap}
+        ontouchstart={handleModifierTap}
+        onkeydown={handleModifierKeyDown}
+        aria-label="spinner modifier"
       >
-        <div class="golf-target child-target" />
+        <div class="golf-target child-target"></div>
       </button>
 
       <button
         bind:this={slider1Modifier}
         class="modifier slider1"
         class:current={slider1Modifier?.isSameNode(currentModifier)}
-        on:mousedown={handleModifierTap}
-        on:touchstart|preventDefault={handleModifierTap}
-        on:keydown={handleModifierKeyDown}
+        onmousedown={handleModifierTap}
+        ontouchstart={handleModifierTap}
+        onkeydown={handleModifierKeyDown}
+        aria-label="slider modifier 1"
       >
-        <div class="golf-target child-target" />
+        <div class="golf-target child-target"></div>
       </button>
 
       <button
         bind:this={slider2Modifier}
         class="modifier slider2"
         class:current={slider2Modifier?.isSameNode(currentModifier)}
-        on:mousedown={handleModifierTap}
-        on:touchstart|preventDefault={handleModifierTap}
-        on:keydown={handleModifierKeyDown}
+        onmousedown={handleModifierTap}
+        ontouchstart={handleModifierTap}
+        onkeydown={handleModifierKeyDown}
+        aria-label="slider modifier 2"
       >
-        <div class="golf-target child-target" />
+        <div class="golf-target child-target"></div>
       </button>
     </div>
   </div>
 </div>
 
 <div bind:this={pulseContainer} class="pulse-container">
-  <div bind:this={pulseTemplate} class="golf-target pulse-template" />
+  <div bind:this={pulseTemplate} class="golf-target pulse-template"></div>
 </div>
 
-<button class="restart" on:click={handleRestartClick}>
+<button class="restart" onclick={handleRestartClick}>
   <span class="material-symbols-outlined"> replay </span>
 </button>
 <div class="scores">
@@ -536,7 +486,7 @@
     <p>{timer}s</p>
   </div>
 
-  <button class="reset" on:click={handleResetClick}>
+  <button class="reset" onclick={handleResetClick}>
     <span class="material-symbols-outlined"> delete </span>
   </button>
 </div>
@@ -546,8 +496,8 @@
 
   button {
     all: unset;
-    cursor: pointer;
     -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
   }
 
   .prevent-select {
@@ -575,14 +525,14 @@
 
   .restart {
     position: absolute;
-    top: min(4.4em, 16.8cqw);
     left: 0.8em;
+    top: min(4.4em, 16.8cqw);
   }
 
   .scores {
     position: absolute;
-    top: 0.5em;
     right: 1em;
+    top: 0.5em;
 
     display: flex;
     gap: 1.1em;
@@ -590,9 +540,9 @@
 
     .tracker {
       display: flex;
+      flex-direction: column;
       align-items: center;
       gap: 0.1em;
-      flex-direction: column;
 
       p {
         margin: 0;
@@ -606,10 +556,10 @@
   .centerer {
     width: 100%;
 
+    container-type: inline-size;
+
     display: flex;
     justify-content: center;
-
-    container-type: inline-size;
   }
 
   .course-sizer {
@@ -639,18 +589,18 @@
 
   .golf-target {
     position: absolute;
+    border: solid 3px #32cd32;
 
     width: calc(35 / $pxem * 1em);
     height: calc(35 / $pxem * 1em);
-    border: solid 3px #32cd32;
     outline: dotted 3px transparent;
 
     pointer-events: none;
   }
 
   .start-target {
-    top: calc(60 / $pxem * 1em);
     left: calc(10 / $pxem * 1em);
+    top: calc(60 / $pxem * 1em);
   }
 
   .child-target {
@@ -664,10 +614,10 @@
 
   .modifier {
     position: absolute;
+    border: dashed 3px darkmagenta;
 
     width: calc(150 / $pxem * 1em);
     height: calc(150 / $pxem * 1em);
-    border: dashed 3px darkmagenta;
 
     will-change: transform;
   }
@@ -677,8 +627,8 @@
   }
 
   .spinner {
-    top: calc(70 / $pxem * 1em);
     left: calc(60 / $pxem * 1em);
+    top: calc(70 / $pxem * 1em);
   }
 
   .slider1,
@@ -689,14 +639,14 @@
   }
 
   .slider1 {
-    top: calc(160 / $pxem * 1em);
     left: calc(235 / $pxem * 1em);
+    top: calc(160 / $pxem * 1em);
 
     transform: rotate(-45deg);
   }
   .slider2 {
-    top: calc(160 / $pxem * 1em);
     left: calc(479 / $pxem * 1em);
+    top: calc(160 / $pxem * 1em);
 
     transform: rotate(225deg);
   }
@@ -709,28 +659,28 @@
     border-color: red;
   }
   .goal-0 {
-    top: calc(210 / $pxem * 1em);
     left: calc(415 / $pxem * 1em);
+    top: calc(210 / $pxem * 1em);
     transform: rotate(45deg);
   }
   .goal-1 {
-    top: calc(57 / $pxem * 1em);
     left: calc(223 / $pxem * 1em);
+    top: calc(57 / $pxem * 1em);
     transform: rotate(24deg);
   }
   .goal-2 {
-    top: calc(104 / $pxem * 1em);
     left: calc(564 / $pxem * 1em);
+    top: calc(104 / $pxem * 1em);
     transform: rotate(20deg);
   }
   .goal-3 {
-    top: calc(57 / $pxem * 1em);
     left: calc(559 / $pxem * 1em);
+    top: calc(57 / $pxem * 1em);
     transform: rotate(14deg);
   }
   .goal-4 {
-    top: calc(11 / $pxem * 1em);
     left: calc(551 / $pxem * 1em);
+    top: calc(11 / $pxem * 1em);
     transform: rotate(9deg);
   }
 
@@ -739,10 +689,10 @@
   }
 
   .pulse-template {
+    opacity: 0;
     border-color: transparent;
     outline: solid 2px transparent;
     outline-offset: 0px;
     outline-color: rgba(50, 205, 50, 1);
-    opacity: 0;
   }
 </style>

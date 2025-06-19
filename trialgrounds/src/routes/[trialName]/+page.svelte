@@ -1,72 +1,125 @@
 <script lang="ts">
-  import { page } from '$app/stores';
-  import { getContext, onDestroy, onMount, tick } from 'svelte';
-  import { trialsByName } from '../../lib/trials/trials';
-  import type { TrialName } from '../../lib/trials/trialNames';
-  import OriginMarker from '../../components/OriginMarker.svelte';
-  import { animateTrial } from '$lib/trials/animateTrial';
-  import { utils } from 'animejs';
-  import type { Writable } from 'svelte/store';
-  import { showDefaultSubject } from '$lib/trials/showDefaultSubject';
+  import { onDestroy, onMount, tick } from 'svelte';
+  import { browser } from '$app/environment';
+  import { page } from '$app/state';
+  import {
+    currentTrialStoreContext,
+    defaultSubjectStoreContext,
+    optionsStoreContext,
+  } from '$lib/contexts/contexts';
   import type { Options } from '$lib/options';
+  import { onStateChange } from '$lib/stores/onStateChange.svelte';
+  import { store, type Store } from '$lib/stores/Store';
+  import { animateTrial, stopTrial } from '$lib/trials/animateTrial';
+  import type { TrialName } from '$lib/trials/trialNames';
+  import {
+    getNextTrial,
+    getPreviousTrial,
+    trialsByName,
+    type Trial,
+  } from '$lib/trials/trials.svelte';
+  import type { LayoutData } from '../$types';
+  import OriginMarker from '$components/trials/ui/OriginMarker.svelte';
 
-  let options = getContext<Writable<Options>>('options');
+  interface Props {
+    data: LayoutData;
+  }
+  let { data }: Props = $props();
 
-  $: trial = trialsByName.get($page.params.trialName as TrialName)!;
-  $: trialSubject = trial.trialComponent?.getTrialControls
-    ?.call(null)
-    .getSubjectElement?.call(null);
-  $: updateShowDefaultSubject(!trialSubject);
-  const defaultSubject = getContext<Writable<HTMLElement | undefined>>('default-subject');
+  let optionsStore: Store<Options> = optionsStoreContext.get();
 
+  const currentTrialStore: Store<Trial> = currentTrialStoreContext.get();
+  $effect(() => {
+    currentTrialStore.value = trialsByName.get(page.params.trialName as TrialName)!;
+    currentTrialStore.value.originMarker = originMarker;
+    originMarker.unmark();
+  });
+
+  const hideSubject = $derived(!!currentTrialStore.value.instance?.getSubjectElement?.());
+  const previousTrial = $derived(getPreviousTrial(currentTrialStore.value, data.trialNames));
+  const nextTrial = $derived(getNextTrial(currentTrialStore.value, data.trialNames));
+
+  const defaultSubjectStore = $state(store()) as Store<HTMLElement>;
+  defaultSubjectStoreContext.set(defaultSubjectStore);
+
+  let originMarker: OriginMarker;
   let animateInterval: NodeJS.Timeout | undefined = undefined;
   let projected = false;
 
   onMount(async () => {
+    onStateChange(() => currentTrialStore.value.name, handleTrialChange);
+
     await tick();
 
-    if (!trial?.trialComponent) {
+    if (!currentTrialStore.value?.instance) {
       throw new Error('trial component failed to load');
     }
 
-    startAnimation();
-    animateInterval = setInterval(startAnimation, 2000);
+    runTrial(currentTrialStore.value);
   });
 
   onDestroy(() => {
+    if (!browser) return;
     clearInterval(animateInterval);
-    if (trial.animation?.currentTime && trial.animation.currentTime < 1) {
-      trial.animation.stop();
-      trial.animation = undefined;
-    }
-    const target = trial.trialComponent?.getTrialControls().getTargetElement();
-    if (!target) {
-      return;
-    }
-    utils.remove(target);
+    stopTrial(currentTrialStore.value);
   });
 
-  function startAnimation(): void {
-    if ($options.projectOnce && projected) {
-      return;
-    }
-    animateTrial(trial, $defaultSubject!, $options);
-    projected = true;
+  async function handleTrialChange(
+    newTrialName: TrialName,
+    oldTrialName: TrialName,
+  ): Promise<void> {
+    clearInterval(animateInterval);
+    stopTrial(trialsByName.get(oldTrialName)!);
+
+    requestAnimationFrame(() => {
+      runTrial(currentTrialStore.value);
+    });
   }
 
-  function updateShowDefaultSubject(showDefault: boolean): void {
-    $showDefaultSubject = showDefault;
+  function runTrial(trial: Trial): void {
+    projected = false;
+    startAnimation(trial);
+    animateInterval = setInterval(startAnimation.bind(null, trial), 2000);
+  }
+
+  function startAnimation(trial: Trial): void {
+    if (optionsStore.value.projectOnce && projected) return;
+    animateTrial(trial, defaultSubjectStore.value, optionsStore.value);
+    projected = true;
   }
 </script>
 
 <svelte:head>
-  <title>Projectrix Trialgrounds | {trial.name} trial</title>
+  <title>Projectrix Trialgrounds | {currentTrialStore.value.name} trial</title>
 </svelte:head>
 
+<div
+  bind:this={defaultSubjectStore.value}
+  class="subject-element default-subject-element"
+  class:hideSubject
+>
+  subject
+</div>
+
 <div class="lone-trial-container">
-  {#if trial}
-    <OriginMarker bind:this={trial.originMarker} />
-    <svelte:component this={trial.trialType} bind:this={trial.trialComponent} {trial} />
+  <OriginMarker bind:this={originMarker} />
+
+  {#if currentTrialStore.value}
+    <currentTrialStore.value.Component
+      bind:this={currentTrialStore.value.instance}
+      trial={currentTrialStore.value}
+    />
+  {/if}
+
+  {#if !optionsStore.value.hideUI}
+    <nav>
+      {#if previousTrial}
+        <a href="/{previousTrial.name}{page.url.search}">{'<'} Previous</a>
+      {/if}
+      {#if nextTrial}
+        <a href="/{nextTrial.name}{page.url.search}">Next {'>'} </a>
+      {/if}
+    </nav>
   {/if}
 </div>
 
@@ -77,9 +130,26 @@
 
     width: 100%;
     height: 100svh;
+    overflow: hidden;
 
     display: grid;
     justify-content: center;
     align-items: center;
+  }
+
+  nav {
+    font-size: 1.5em;
+    position: absolute;
+    bottom: 1.5em;
+    width: 100vw;
+
+    display: flex;
+    justify-content: center;
+    gap: 1em;
+
+    a {
+      color: coral;
+      text-underline-offset: 0.2em;
+    }
   }
 </style>

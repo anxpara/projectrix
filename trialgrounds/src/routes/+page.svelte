@@ -1,64 +1,58 @@
 <script lang="ts">
-  import { allTrials, getTrials, type Trial } from '../lib/trials/trials';
-  import { getContext, onDestroy, onMount, tick } from 'svelte';
-  import { page } from '$app/stores';
-  import OriginMarker from '../components/OriginMarker.svelte';
-  import { animateTrial, animateTrialReturn } from '$lib/trials/animateTrial';
+  import { onDestroy, onMount, tick } from 'svelte';
+  import { browser } from '$app/environment';
+  import { page } from '$app/state';
   import { utils } from 'animejs';
-  import { showDefaultSubject } from '$lib/trials/showDefaultSubject';
-  import type { Writable } from 'svelte/store';
+  import { currentTrialStoreContext, optionsStoreContext } from '$lib/contexts/contexts';
   import type { Options } from '$lib/options';
+  import type { Store } from '$lib/stores/Store';
+  import { animateTrial, animateTrialReturn } from '$lib/trials/animateTrial';
+  import { allTrials, getTrials, type Trial } from '../lib/trials/trials.svelte';
+  import type { LayoutData } from './$types';
+  import OriginMarker from '$components/trials/ui/OriginMarker.svelte';
 
-  export let data;
-
-  let options = getContext<Writable<Options>>('options');
-
-  const trials = getCurrentTrials(data.trialNames);
-  function getCurrentTrials(trialNames: string[]): Trial[] {
+  interface Props {
+    data: LayoutData;
+  }
+  let { data }: Props = $props();
+  const activeTrials = getActiveTrials(data.trialNames);
+  function getActiveTrials(trialNames: string[]): Trial[] {
     return trialNames.length ? getTrials(trialNames) : allTrials;
   }
 
-  let trialsLoaded = false;
-  let autoSelectIndex: number = -1;
-  let autoSelectInterval: NodeJS.Timeout | undefined = undefined;
-  let currentTrial: Trial | undefined = undefined;
-  $: trialSubject = currentTrial?.trialComponent?.getTrialControls().getSubjectElement?.call(null);
-  $: updateShowDefaultSubject(!trialSubject);
+  const optionsStore: Store<Options> = optionsStoreContext.get();
+
+  const currentTrialStore: Store<Trial> = currentTrialStoreContext.get();
+  const hideDefaultSubject = $derived(!!currentTrialStore.value.instance?.getSubjectElement?.());
 
   let defaultSubject: HTMLElement;
+  let autoSelectIndex: number = -1;
+  let autoSelectInterval: NodeJS.Timeout | undefined = undefined;
 
   onMount(async () => {
     await tick();
-    trialsLoaded = true;
 
-    setTimeout(autoSelectNextTrial, 500);
-
-    if ($options.projectOnce) {
-      return;
-    }
+    setTimeout(autoSelectNextTrial.bind(null, true), 500);
+    if (optionsStore.value.projectOnce) return;
 
     autoSelectInterval = setInterval(autoSelectNextTrial, 2000);
   });
 
   onDestroy(() => {
-    clearInterval(autoSelectInterval);
+    if (browser) clearInterval(autoSelectInterval);
+
     allTrials.forEach((trial) => {
-      const target = trial.trialComponent?.getTrialControls().getTargetElement();
+      const target = trial.instance?.getTargetElement();
       if (target) {
         utils.remove(target);
       }
     });
   });
 
-  function autoSelectNextTrial(): void {
+  function autoSelectNextTrial(isFirstTrial = false): void {
     autoSelectIndex++;
-    autoSelectIndex %= trials.length;
-    const nextTrial = trials[autoSelectIndex];
-
-    // trial component was probably garbage collected
-    if (!nextTrial?.trialComponent || !defaultSubject) return;
-
-    selectTrial(nextTrial);
+    autoSelectIndex %= activeTrials.length;
+    selectTrial(activeTrials[autoSelectIndex], isFirstTrial);
   }
 
   function hoverTrial(trial: Trial): void {
@@ -66,21 +60,22 @@
     autoSelectInterval = undefined;
     autoSelectIndex = -1;
 
-    if (currentTrial === trial) {
+    if (currentTrialStore.value === trial) {
       return;
     }
 
     selectTrial(trial);
   }
 
-  function selectTrial(trial: Trial): void {
-    if (currentTrial === trial) return;
-    if (currentTrial) unselectTrial(currentTrial);
+  function selectTrial(trial: Trial, isFirstTrial = false): void {
+    if (!trial.instance) return; // trial component was probably garbage collected
+    if (!isFirstTrial && currentTrialStore.value === trial) return;
+    if (!isFirstTrial && currentTrialStore.value) unselectTrial(currentTrialStore.value);
 
-    currentTrial = trial;
-    animateTrial(trial, defaultSubject, $options, {
+    currentTrialStore.value = trial;
+    animateTrial(trial, defaultSubject, optionsStore.value, {
       complete: (options) => {
-        if (currentTrial !== trial) {
+        if (currentTrialStore.value !== trial) {
           animateTrialReturn(trial, options, 0);
         }
       },
@@ -89,21 +84,12 @@
 
   function unselectTrial(trial: Trial): void {
     const skipAnimation =
-      $options.skipAnimation ||
-      !!trial.trialComponent?.getTrialControls?.call(null).getTrialOptionOverrides?.call(null)
-        .skipAnimation;
+      optionsStore.value.skipAnimation ||
+      !!trial.instance?.getTrialOptionOverrides?.().skipAnimation;
+    if (!trial.animation?.completed && !skipAnimation) return;
 
-    const transformType =
-      trial.trialComponent?.getTrialControls?.call(null).getProjectionOptions?.call(null)
-        .transformType ?? 'transform';
-
-    if (transformType !== 'transform' || trial.animation?.currentTime === 0 || skipAnimation) {
-      animateTrialReturn(trial, $options);
-    }
-  }
-
-  function updateShowDefaultSubject(showDefault: boolean): void {
-    $showDefaultSubject = showDefault;
+    const durationMs = skipAnimation ? 0 : undefined;
+    animateTrialReturn(trial, optionsStore.value, durationMs);
   }
 </script>
 
@@ -114,24 +100,23 @@
 <div
   bind:this={defaultSubject}
   class="subject-element default-subject-element"
-  class:hideSubject={!$showDefaultSubject}
+  class:hideSubject={hideDefaultSubject}
 >
   subject
 </div>
 
 <div class="all-trials-container">
-  {#each trials as trial}
+  {#each activeTrials as trial}
     <a
-      href="/{trial.name}{$page.url.search}"
-      on:mouseenter={() => hoverTrial(trial)}
-      on:focus={() => hoverTrial(trial)}
+      href="/{trial.name}{page.url.search}"
+      onmouseenter={() => hoverTrial(trial)}
+      onfocus={() => hoverTrial(trial)}
     >
       <OriginMarker bind:this={trial.originMarker} />
-      <svelte:component
-        this={trial.trialType}
-        bind:this={trial.trialComponent}
+      <trial.Component
+        bind:this={trial.instance}
         {trial}
-        hideSubject={currentTrial !== trial || !trialSubject}
+        hideSubject={!hideDefaultSubject || trial != currentTrialStore.value}
       />
     </a>
   {/each}
@@ -143,8 +128,8 @@
     top: 14em;
 
     display: flex;
-    justify-content: center;
     flex-wrap: wrap;
+    justify-content: center;
     gap: 2em;
   }
 

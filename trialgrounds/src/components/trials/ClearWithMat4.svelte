@@ -1,22 +1,21 @@
 <script lang="ts">
-  import type { Options } from '$lib/options';
-  import type { Trial, TrialAnimationOptions, TrialControls } from '$lib/trials/trials';
   import {
     clearInlineStyles,
     getProjection,
     setInlineStyles,
     type PartialProjectionResults,
   } from 'projectrix';
+  import type { Options } from '$lib/options';
+  import type { TrialAnimationOptions, TrialProps } from '$lib/trials/trials.svelte';
 
-  export let trial: Trial;
-  export let hideSubject: boolean | undefined = undefined;
+  let { trial }: TrialProps = $props();
 
-  let targetElement: HTMLElement;
-  function getTargetElement(): HTMLElement {
+  let targetElement = $state() as HTMLElement;
+  export function getTargetElement(): HTMLElement {
     return targetElement;
   }
 
-  function playCustomAnimation(
+  export function playCustomAnimation(
     defaultSubject: HTMLElement,
     trialOptions: Options,
     animationOptions?: TrialAnimationOptions,
@@ -43,14 +42,7 @@
       targetElement.style.borderColor = 'red';
     }
 
-    animationOptions?.complete?.call(null, trialOptions);
-  }
-
-  export function getTrialControls(): TrialControls {
-    return {
-      getTargetElement,
-      playCustomAnimation,
-    };
+    animationOptions?.complete?.(trialOptions);
   }
 </script>
 
@@ -60,7 +52,7 @@
 
 <style lang="scss">
   .target-element {
-    outline: none;
     border: solid 2px limegreen;
+    outline: none;
   }
 </style>

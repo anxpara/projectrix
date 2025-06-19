@@ -1,20 +1,19 @@
 <script lang="ts">
-  import { setInlineStyles, getProjection, clearInlineStyles } from 'projectrix';
+  import { onDestroy, onMount, tick } from 'svelte';
   import { waapi, type WAAPIAnimation } from 'animejs';
-  import { onMount, onDestroy, tick } from 'svelte';
-  import type { Writable } from 'svelte/store';
-  import type { Options } from '$lib/options';
+  import { clearInlineStyles, getProjection, setInlineStyles } from 'projectrix';
+  import type { DemoProps } from '$lib/demos/demos.svelte';
 
   // options are part of demos infrastructure
-  export let options: Writable<Options>;
-  $: log = $options.log;
+  let { options }: DemoProps = $props();
+  const log = $derived(options.value.log);
 
-  let leftOuter: HTMLElement;
-  let leftInner: HTMLElement;
-  let leftTarget: HTMLElement;
-  let rightOuter: HTMLElement;
-  let rightInner: HTMLElement;
-  let rightTarget: HTMLElement;
+  let leftOuter = $state() as HTMLElement;
+  let leftInner = $state() as HTMLElement;
+  let leftTarget = $state() as HTMLElement;
+  let rightOuter = $state() as HTMLElement;
+  let rightInner = $state() as HTMLElement;
+  let rightTarget = $state() as HTMLElement;
 
   type Side = 'left' | 'right';
   const InitialSide = 'left';
@@ -225,11 +224,11 @@
     width: 9.4em;
     height: 12em;
 
-    transform: translateY(-4em) rotateX(280deg) rotateY(360deg) translateY(-4em);
-
-    font-weight: 300;
     color: limegreen;
     background-color: #12415a55;
+    font-weight: 300;
+
+    transform: translateY(-4em) rotateX(280deg) rotateY(360deg) translateY(-4em);
 
     span {
       font-size: 3.6em;

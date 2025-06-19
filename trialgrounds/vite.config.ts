@@ -1,8 +1,9 @@
 import { sveltekit } from '@sveltejs/kit/vite';
+import devtoolsJson from 'vite-plugin-devtools-json';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
-  plugins: [sveltekit()],
+  plugins: [sveltekit(), devtoolsJson()],
 
   build: {
     // minify: false,
@@ -15,7 +16,9 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: '@use "src/variables.scss" as *;',
+        api: 'modern-compiler',
+        additionalData: `@use "$styles/variables.scss" as *;
+        @use "$styles/mixins.scss" as *;`,
       },
     },
   },

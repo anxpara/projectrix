@@ -1,12 +1,15 @@
 <script lang="ts">
-  import type { PerfControls } from '$lib/perf/perfs';
   import DepthNPerf from './DepthNPerf.svelte';
 
-  let depthNPerf: DepthNPerf;
+  let target = $state() as HTMLElement;
+  export function getTargetElement(): HTMLElement {
+    return target;
+  }
 
-  export function getPerfControls(): PerfControls {
-    return depthNPerf.getPerfControls();
+  let subject = $state() as HTMLElement;
+  export function getSubjectElement(): HTMLElement {
+    return subject;
   }
 </script>
 
-<DepthNPerf bind:this={depthNPerf} n={1000}></DepthNPerf>
+<DepthNPerf bind:target bind:subject n={1000}></DepthNPerf>
