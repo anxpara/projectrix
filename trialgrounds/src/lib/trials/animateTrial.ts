@@ -191,6 +191,7 @@ function onReturnComplete(target: HTMLElement, trial: Trial): void {
 }
 
 export function stopTrial(trial: Trial): void {
+  trial.originMarker?.unmark();
   const target = trial.instance?.getTargetElement();
   if (!target) return;
   utils.remove(target);
