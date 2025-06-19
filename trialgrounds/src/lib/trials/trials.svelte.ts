@@ -2,7 +2,7 @@ import type { Component } from 'svelte';
 import type { JSAnimation } from 'animejs';
 import type { Projection, ProjectionOptions } from 'projectrix';
 import type { Options } from '$lib/options';
-import { TrialName } from './trialNames';
+import { TrialName, trialNames } from './trialNames';
 import BothPerspective from '$components/trials/BothPerspective.svelte';
 import ClearWithMat4 from '$components/trials/ClearWithMat4.svelte';
 import ClearWithMatrix3d from '$components/trials/ClearWithMatrix3d.svelte';
@@ -144,4 +144,24 @@ export function getTrials(trialNames: string[]): Trial[] {
   return trialNames
     .map((name) => trialsByName.get(name as TrialName))
     .filter((trial) => !!trial) as Trial[];
+}
+
+export function getPreviousTrial(trial: Trial, activeTrialNames?: TrialName[]): Trial | undefined {
+  if (!activeTrialNames?.length) activeTrialNames = trialNames;
+
+  let index = activeTrialNames.indexOf(trial.name);
+  if (index === -1) index = 1;
+
+  index = (index - 1 + activeTrialNames.length) % activeTrialNames.length;
+  return trialsByName.get(activeTrialNames[index] as TrialName);
+}
+
+export function getNextTrial(trial: Trial, activeTrialNames?: TrialName[]): Trial | undefined {
+  if (!activeTrialNames?.length) activeTrialNames = trialNames;
+
+  let index = activeTrialNames.indexOf(trial.name);
+  if (index === -1) index = activeTrialNames.length - 2;
+
+  index = (index + 1) % activeTrialNames.length;
+  return trialsByName.get(activeTrialNames[index]);
 }

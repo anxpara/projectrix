@@ -11,14 +11,30 @@
   import { store, type Store } from '$lib/stores/Store';
   import { animateTrial, stopTrial } from '$lib/trials/animateTrial';
   import type { TrialName } from '$lib/trials/trialNames';
-  import { trialsByName, type Trial } from '$lib/trials/trials.svelte';
+  import {
+    getNextTrial,
+    getPreviousTrial,
+    trialsByName,
+    type Trial,
+  } from '$lib/trials/trials.svelte';
+  import type { LayoutData } from '../$types';
   import OriginMarker from '$components/trials/ui/OriginMarker.svelte';
+
+  interface Props {
+    data: LayoutData;
+  }
+  let { data }: Props = $props();
 
   let optionsStore: Store<Options> = optionsStoreContext.get();
 
   const currentTrialStore: Store<Trial> = currentTrialStoreContext.get();
-  currentTrialStore.value = trialsByName.get(page.params.trialName as TrialName)!;
+  $effect(() => {
+    currentTrialStore.value = trialsByName.get(page.params.trialName as TrialName)!;
+  });
+
   const hideSubject = $derived(!!currentTrialStore.value.instance?.getSubjectElement?.());
+  const previousTrial = $derived(getPreviousTrial(currentTrialStore.value, data.trialNames));
+  const nextTrial = $derived(getNextTrial(currentTrialStore.value, data.trialNames));
 
   const defaultSubjectStore = $state(store()) as Store<HTMLElement>;
   defaultSubjectStoreContext.set(defaultSubjectStore);
@@ -70,6 +86,17 @@
       trial={currentTrialStore.value}
     />
   {/if}
+
+  {#if !optionsStore.value.hideUI}
+    <nav>
+      {#if previousTrial}
+        <a href="/{previousTrial.name}{page.url.search}">{'<'} Previous</a>
+      {/if}
+      {#if nextTrial}
+        <a href="/{nextTrial.name}{page.url.search}">Next {'>'} </a>
+      {/if}
+    </nav>
+  {/if}
 </div>
 
 <style lang="scss">
@@ -84,5 +111,21 @@
     display: grid;
     justify-content: center;
     align-items: center;
+  }
+
+  nav {
+    font-size: 1.5em;
+    position: absolute;
+    bottom: 1.5em;
+    width: 100vw;
+
+    display: flex;
+    justify-content: center;
+    gap: 1em;
+
+    a {
+      color: coral;
+      text-underline-offset: 0.2em;
+    }
   }
 </style>
