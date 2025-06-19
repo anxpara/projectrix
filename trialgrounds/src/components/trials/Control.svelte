@@ -10,5 +10,5 @@
 </script>
 
 <div class="target-container">
-  <div bind:this={targetElement} class="target-element {trial.name}">target-{trial.name}</div>
+  <div bind:this={targetElement} class="target-element {trial.name}">{trial.name}</div>
 </div>
