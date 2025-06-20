@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onDestroy, onMount, tick } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
   import { waapi, type WAAPIAnimation } from 'animejs';
   import { clearInlineStyles, getProjection, setInlineStyles } from 'projectrix';
   import type { DemoProps } from '$lib/demos/demos.svelte';
@@ -30,8 +30,7 @@
   const ToFlipAnglesDurationMs = 2000;
   const FlipDurationMs = 750;
 
-  onMount(async () => {
-    await tick();
+  onMount(() => {
     toNeutralForSide(InitialSide);
   });
 

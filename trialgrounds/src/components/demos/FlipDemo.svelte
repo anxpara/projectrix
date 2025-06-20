@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onDestroy, onMount, tick } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
   import { animate, utils, type JSAnimation } from 'animejs';
   import { clearInlineStyles, getProjection, measureSubject } from 'projectrix';
   import { type DemoProps } from '$lib/demos/demos.svelte';
@@ -15,10 +15,7 @@
   let currentAnim: JSAnimation | undefined;
   let currentTimeout: NodeJS.Timeout | undefined;
 
-  onMount(async () => {
-    await tick();
-    startSlot.show();
-
+  onMount(() => {
     currentTimeout = setTimeout(() => {
       swapSlotForTarget(target);
       flipTargetToNextParent(target, rightParent);
@@ -41,7 +38,7 @@
 
   function flipTargetToNextParent(target: HTMLElement, nextParent: HTMLElement): void {
     const subject = measureSubject(target); // include any slot projection styles in the measurement...
-    
+
     nextParent.append(target);
     clearInlineStyles(target); // set to proper origin under nextParent by removing slot projection styles
 

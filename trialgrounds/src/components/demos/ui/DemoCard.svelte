@@ -26,7 +26,7 @@
         <div class="corner right"></div>
       </div>
 
-      <DemoStartSlot bind:this={startSlot}></DemoStartSlot>
+      <DemoStartSlot bind:this={startSlot} showing={!!demo.useSlot}></DemoStartSlot>
 
       <h1>/{demo.name}</h1>
     </div>

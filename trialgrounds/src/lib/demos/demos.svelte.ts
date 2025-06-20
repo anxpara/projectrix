@@ -22,6 +22,7 @@ export type Demo = {
   summary: string;
   Component: DemoComponent;
   instance?: ReturnType<DemoComponent>;
+  useSlot?: boolean;
 };
 
 export const allDemos: Demo[] = $state([
@@ -29,16 +30,19 @@ export const allDemos: Demo[] = $state([
     name: DemoName.Flip,
     summary: 'animate target between two parents using the first-last-invert-play technique',
     Component: FlipDemo,
+    useSlot: true,
   },
   {
     name: DemoName.Animate,
     summary: "click to animate target directly to the subject's projection",
     Component: AnimateDemo,
+    useSlot: true,
   },
   {
     name: DemoName.Match,
     summary: "click to set target's inline styles to the subject's projection",
     Component: MatchDemo,
+    useSlot: true,
   },
   {
     name: DemoName.DivGolf,
@@ -50,6 +54,7 @@ export const allDemos: Demo[] = $state([
     name: DemoName.FauxFlip,
     summary: 'flip without modifying the dom by toggling the opacities of coexisting targets',
     Component: FauxFlipDemo,
+    useSlot: true,
   },
   {
     name: DemoName.CssIsAwesome,
