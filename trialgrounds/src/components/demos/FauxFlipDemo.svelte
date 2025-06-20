@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onDestroy, onMount, tick } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
   import { animate, utils, type JSAnimation } from 'animejs';
   import { clearInlineStyles, getProjection } from 'projectrix';
   import type { DemoProps } from '$lib/demos/demos.svelte';
@@ -16,10 +16,7 @@
   let currentAnim: JSAnimation | undefined;
   let currentTimeout: NodeJS.Timeout | undefined;
 
-  onMount(async () => {
-    await tick();
-    startSlot.show();
-
+  onMount(() => {
     currentTimeout = setTimeout(() => {
       const currentTarget: HTMLElement = startSlot.getSlotSubject();
       flipToNextTarget(currentTarget, rightChildTarget);

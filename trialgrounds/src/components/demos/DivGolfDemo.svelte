@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onDestroy, onMount, tick } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
   import { animate, utils, type JSAnimation } from 'animejs';
   import { mat4, quat, vec3 } from 'gl-matrix';
   import {
@@ -40,8 +40,7 @@
   const goalsCompleted = new Set<HTMLElement>();
   let courseCompleted = $state(false);
 
-  onMount(async () => {
-    await tick();
+  onMount(() => {
     reset();
   });
 

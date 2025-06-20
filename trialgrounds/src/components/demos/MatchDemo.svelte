@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { onMount, tick } from 'svelte';
   import { getProjection, setInlineStyles } from 'projectrix';
   import type { DemoProps } from '$lib/demos/demos.svelte';
 
@@ -8,11 +7,6 @@
   const log = $derived(options.value.log);
 
   let target = $state() as HTMLElement;
-
-  onMount(async () => {
-    await tick();
-    startSlot.show();
-  });
 
   function swapSlotForTarget(target: HTMLElement): void {
     startSlot.hide();
