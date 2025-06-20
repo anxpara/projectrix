@@ -29,6 +29,8 @@
     padding: 1em;
     width: calc(100% - 2em);
 
+    overflow-x: hidden;
+
     display: flex;
     flex-direction: column;
     align-items: center;
