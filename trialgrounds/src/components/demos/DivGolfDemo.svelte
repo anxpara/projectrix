@@ -198,21 +198,18 @@
     // schedule the bulk of the goal checking work till after
     // the next animation frame to minimize hiccups
     requestAnimationFrame(() => {
-      goals.forEach((goal) => attemptGoalHit(goal, subject, false));
+      goals.forEach((goal) => attemptGoalHit(goal, subject));
     });
   }
 
-  function attemptGoalHit(goal: HTMLElement, subject?: Measurement, goalClicked = true): void {
+  function attemptGoalHit(goal: HTMLElement, subject?: Measurement): void {
     subject = subject ?? measureSubject(currentTarget!);
     const hit = checkIfTolerancesHit(goal, subject);
+    if (!hit) return;
 
-    if (hit) {
-      currentModifier = null;
-      markGoalCompleted(goal);
-      animateHit(goal);
-    } else if (goalClicked) {
-      animateMiss(goal);
-    }
+    currentModifier = null;
+    markGoalCompleted(goal);
+    animateHit(goal);
   }
 
   const distanceTolerancePx = 10;
@@ -280,16 +277,6 @@
 
         hitAnim = undefined;
       },
-    });
-  }
-
-  function animateMiss(goal: HTMLElement): void {
-    goal.style.backgroundColor = 'rgba(255, 0, 0, 1)';
-    animate(goal, {
-      backgroundColor: 'rgba(255, 0, 0, 0)',
-
-      duration: 300,
-      ease: 'outQuad',
     });
   }
 
@@ -410,19 +397,19 @@
 <div class="centerer prevent-select disable-touch-zoom">
   <div class="course-sizer portrait-size-toggle">
     <div class="course portrait-rotate-toggle">
-      <div bind:this={goals[0]} class="modifier goal goal-0" aria-label="goal 0">
+      <div bind:this={goals[0]} class="modifier goal goal-0">
         <div class="golf-target child-target"></div>
       </div>
-      <div bind:this={goals[1]} class="modifier goal goal-1" aria-label="goal 1">
+      <div bind:this={goals[1]} class="modifier goal goal-1">
         <div class="golf-target child-target"></div>
       </div>
-      <div bind:this={goals[2]} class="modifier goal goal-2" aria-label="goal 2">
+      <div bind:this={goals[2]} class="modifier goal goal-2">
         <div class="golf-target child-target"></div>
       </div>
-      <div bind:this={goals[3]} class="modifier goal goal-3" aria-label="goal 3">
+      <div bind:this={goals[3]} class="modifier goal goal-3">
         <div class="golf-target child-target"></div>
       </div>
-      <div bind:this={goals[4]} class="modifier goal goal-4" aria-label="goal 4">
+      <div bind:this={goals[4]} class="modifier goal goal-4">
         <div class="golf-target child-target"></div>
       </div>
 
