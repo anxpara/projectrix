@@ -177,6 +177,36 @@ export function setInlineStyles(target: HTMLElement, partialProjection: PartialP
 export function clearInlineStyles(target: HTMLElement, partialProjection?: PartialProjection): void;
 ```
 
+## Testing
+
+All trial scenarios are defined in the /trialgrounds directory, and can be viewed at https://trialgrounds.projectrix.dev
+
+* While the trials are animated by default on the site, the tests run by Playwright only consider the static projection results (toSubject and toTargetOrigin).
+* The mobile safari configuration for Playwright has a decent number of false failures; any such trials are effectively disabled and tested manually.
+* The Playwright screenshots in the repo are created on Windows, and Playwright might not use the right configurations if run from another environment.
+
+```
+$ cd trialgrounds
+$ npm run link
+$ npm run test
+```
+
+## Roadmap
+
+I chip away at this library here and there, and it's in a fairly stable state for my purposes. I will mark the library as beta once I complete the following:
+
+* Make a proper landing page and docs site
+* Set up a daily test runner Github action
+
+Other plans:
+
+* Projectrix, and more specifically getActualClientRect, have not been optimized yet. I will eventually optimize when the time is right.
+* SVGs, canvases, and 3D libraries will be considered in the future.
+
+"Does Projectrix support layout projection and animation like Framer Motion?"
+
+Not currently, Projectrix does not care about the contents of the subject and target elements. I haven't decided if layout projection will be in-scope for this library, but that would be a long ways off.
+
 ## Limitations
 
 - Projectrix will not attempt to match, emulate, or mitigate bugs in rendering engines
@@ -191,8 +221,6 @@ export function clearInlineStyles(target: HTMLElement, partialProjection?: Parti
   - some engines might animate perspective incorrectly in particular scenarios
 - Targeting an element with an ["internal" display value](https://developer.mozilla.org/en-US/docs/Web/CSS/display#internal), or any value that causes the element to control its own size, will lead to undefined behavior, since the projected width and height will be ignored:
   - display: inline | table | inline-table | table-row | table-column | table-cell | table-row-group | table-column-group | table-header-group | table-footer-group | ruby-base | ruby-text | ruby-base-container | ruby-text-container | run-in
-- Performance (e.g. as dom depth increases) has not yet been optimized; will focus on that next, but probably not very soon
-- SVGs are not yet officially supported, but might happen to work in certain scenarios
 
 # Contribute
 
