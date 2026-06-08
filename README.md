@@ -25,7 +25,7 @@ Also provided...
 * **clearInlineStyles()**: clears the projection styles from setInlineStyles
 
 # Usage examples
-###### See all demos here: https://tg.projectrix.dev/demos
+###### Build and run the /trialgrounds svelte app to see all demos
 ## Animate target directly to subject using Anime.js
 
 ```ts
@@ -179,7 +179,7 @@ export function clearInlineStyles(target: HTMLElement, partialProjection?: Parti
 
 ## Testing
 
-All trial scenarios are defined in the /trialgrounds directory, and can be viewed at https://trialgrounds.projectrix.dev
+Build and run the /trialgrounds Svelte app to see all trials.
 
 * While the trials are animated by default on the site, the tests run by Playwright only consider the static projection results (toSubject and toTargetOrigin).
 * The mobile safari configuration for Playwright has a decent number of false failures; any such trials are effectively disabled and tested manually.
@@ -193,19 +193,14 @@ $ npm run test
 
 ## Roadmap
 
-I chip away at this library here and there, and it's in a fairly stable state for my purposes. I will mark the library as beta once I complete the following:
+The library is in a stable state for my purposes, and further development is not a priority for me, so the project is paused. Here is the roadmap before the pause:
 
-* Make a proper landing page and docs site
-* Set up a daily test runner Github action
-
-Other plans:
-
-* Projectrix, and more specifically getActualClientRect, have not been optimized yet. I will eventually optimize when the time is right.
-* SVGs, canvases, and 3D libraries will be considered in the future.
+* Optimize
+* Consider support for SVGs, canvases, and 3D libraries
 
 "Does Projectrix support layout projection and animation like Framer Motion?"
 
-Not currently, Projectrix does not care about the contents of the subject and target elements. I haven't decided if layout projection will be in-scope for this library, but that would be a long ways off.
+No, Projectrix does not care about the contents of the subject and target elements.
 
 ## Limitations
 
@@ -221,13 +216,6 @@ Not currently, Projectrix does not care about the contents of the subject and ta
   - some engines might animate perspective incorrectly in particular scenarios
 - Targeting an element with an ["internal" display value](https://developer.mozilla.org/en-US/docs/Web/CSS/display#internal), or any value that causes the element to control its own size, will lead to undefined behavior, since the projected width and height will be ignored:
   - display: inline | table | inline-table | table-row | table-column | table-cell | table-row-group | table-column-group | table-header-group | table-footer-group | ruby-base | ruby-text | ruby-base-container | ruby-text-container | run-in
-
-# Contribute
-
-All contributions are greatly appreciated!
-
-- If you find a bug, please [file an issue](https://github.com/anxpara/projectrix/issues)
-- Feedback and help requests can be posted in the [Projectrix Discord](https://discord.gg/YxVAUFqW4e)
 
 <3 anxpara
 
