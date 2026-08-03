@@ -1,7 +1,7 @@
 <!-- prettier-ignore-start -->
 
 <div align="center">
-    <img width="300px" src="https://raw.githubusercontent.com/anxpara/projectrix/main/assets/logo/projectrix-logo-temp.png"/>
+    <img width="300px" src="https://raw.githubusercontent.com/serranocirrus/projectrix/main/assets/logo/projectrix-logo-temp.png"/>
     <h1>Projectrix</h1>
     <h3 align="center">minimalist dom projection library in js/ts | alpha</h3>
 </div>
@@ -45,7 +45,7 @@ function animateTargetToSubject(target: HTMLElement, subject: HTMLElement): void
 }
 ```
 
-https://github.com/anxpara/projectrix/assets/90604943/37132aed-57eb-43ee-8bec-18fcb1a9d0f7
+https://github.com/serranocirrus/projectrix/assets/90604943/37132aed-57eb-43ee-8bec-18fcb1a9d0f7
 
 ## FLIP target between parents using Anime.js
 
@@ -81,7 +81,7 @@ function flipTargetToNextParent(target: HTMLElement, nextParent: HTMLElement): v
 }
 ```
 
-https://github.com/anxpara/projectrix/assets/90604943/ccbe959b-1fe4-43bd-b4fd-8b24cc55b0d4
+https://github.com/serranocirrus/projectrix/assets/90604943/ccbe959b-1fe4-43bd-b4fd-8b24cc55b0d4
 
 # API / Types / Documentation
 
@@ -216,7 +216,5 @@ No, Projectrix does not care about the contents of the subject and target elemen
   - some engines might animate perspective incorrectly in particular scenarios
 - Targeting an element with an ["internal" display value](https://developer.mozilla.org/en-US/docs/Web/CSS/display#internal), or any value that causes the element to control its own size, will lead to undefined behavior, since the projected width and height will be ignored:
   - display: inline | table | inline-table | table-row | table-column | table-cell | table-row-group | table-column-group | table-header-group | table-footer-group | ruby-base | ruby-text | ruby-base-container | ruby-text-container | run-in
-
-<3 anxpara
 
 <!-- prettier-ignore-end -->
