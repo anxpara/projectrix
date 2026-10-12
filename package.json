@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/anxpara/projectrix.git"
+    "url": "git+https://github.com/serranocirrus/projectrix.git"
   },
   "keywords": [
     "dom projection",
@@ -32,16 +32,12 @@
     "getBoundingClientRect",
     "getActualClientRect"
   ],
-  "author": "anxpara anx@anxpara.com",
+  "author": "Serrano Cirrus serrano@serranocirrus.com",
   "license": "MIT",
-  "funding": {
-    "type": "patreon",
-    "url": "https://www.patreon.com/anxpara"
-  },
   "bugs": {
-    "url": "https://github.com/anxpara/projectrix/issues"
+    "url": "https://github.com/serranocirrus/projectrix/issues"
   },
-  "homepage": "https://github.com/anxpara/projectrix#readme",
+  "homepage": "https://github.com/serranocirrus/projectrix#readme",
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.0.1",
     "rollup": "^3.7.4",
@@ -53,7 +49,7 @@
     "watch": "^0.13.0"
   },
   "dependencies": {
-    "actual-client-rect": "^0.2.2",
+    "actual-client-rect": "^0.2.3",
     "gl-matrix": "^3.4.3"
   }
 }

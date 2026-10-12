@@ -156,7 +156,7 @@ export type PartialProjectionResults = {
 export function measureSubject(subject: HTMLElement): Measurement;
 
 export type Measurement = {
-  acr: ActualClientRect; // from https://github.com/anxpara/getActualClientRect
+  acr: ActualClientRect; // from https://github.com/serranocirrus/getActualClientRect
   border: BorderMeasurement;
 };
 export type BorderMeasurement = { /* style, top, right, bottom, left, and radius properties */ };
